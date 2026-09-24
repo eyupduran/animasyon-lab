@@ -12,3 +12,6 @@ renders/
 .tmp/
 .DS_Store
 Thumbs.db
+
+# temporary session handoff note
+HANDOFF.md
