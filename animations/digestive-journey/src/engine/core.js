@@ -510,7 +510,7 @@ function blobGeo(r = 1, detail = 5, amp = 0.12, seed = 0, colorFn = null) {
   return g;
 }
 const _pink = new THREE.Color(0xe8789e), _sug = new THREE.Color(0xfff0f4), _pis = new THREE.Color(0x8fb850);
-function lokumColors(v) { const n = noise3(v.x * 3.1, v.y * 3.1, v.z * 3.1) + 0.5 * noise3(v.x * 9, v.y * 9, v.z * 9); const k = sstep(0.1, 0.5, n); const pz = sstep(0.62, 0.7, noise3(v.x * 6 + 9, v.y * 6, v.z * 6)); const c = _pink.clone().lerp(_sug, k * 0.8).lerp(_pis, pz * 0.9); return [c.r, c.g, c.b]; }
+function sweetColors(v) { const n = noise3(v.x * 3.1, v.y * 3.1, v.z * 3.1) + 0.5 * noise3(v.x * 9, v.y * 9, v.z * 9); const k = sstep(0.1, 0.5, n); const pz = sstep(0.62, 0.7, noise3(v.x * 6 + 9, v.y * 6, v.z * 6)); const c = _pink.clone().lerp(_sug, k * 0.8).lerp(_pis, pz * 0.9); return [c.r, c.g, c.b]; }
 
 // ---------------- Point sprites (motes, plasma, dust) ----------------
 function motes(count, place, o = {}) {

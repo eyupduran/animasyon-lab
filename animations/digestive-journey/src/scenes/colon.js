@@ -60,7 +60,7 @@ defChapter({
   leg: ['10–40 sa', 'Lifler bakterilerce mayalanır, su geri emilir, atık vücuttan atılır.'],
   clock: [6 * 3600, 30 * 3600], ph: [[0, 6.0], [23, 6.9]], scale: '~6 cm', state: [[0, 'Lifler ve atıklar'], [11, 'Katılaşan atık']], loc: [[0, 'Çıkan kolon'], [6, 'Enine kolon'], [11, 'İnen kolon'], [17, 'Rektum']],
   cues: [
-    [0.3, 'Peki lokumun geri kalanı? Fıstığın lifleri gibi sindirilemeyen kısımlar kalın bağırsağa ulaşır.'],
+    [0.3, 'Peki besinin geri kalanı? Fıstığın lifleri gibi sindirilemeyen kısımlar kalın bağırsağa ulaşır.'],
     [5.4, 'Burada trilyonlarca bakteri yaşar. Lifleri mayalayıp vücuda faydalı kısa zincirli yağ asitleri üretirler.'],
     [10.8, 'Kalın bağırsak içerikteki suyun büyük kısmını geri emer; atık yavaş yavaş katılaşır.'],
     [16.4, 'Yolculuğun son durağı rektum. Bir iki gün içinde geriye kalanlar vücuttan atılır.'],

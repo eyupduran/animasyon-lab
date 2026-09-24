@@ -1,8 +1,8 @@
 // ============================================================
 //  LOKUM factory (shared by the café scene and the mouth)
 // ============================================================
-function lokumTex() {
-  if (TEXCACHE.has('lokum')) return TEXCACHE.get('lokum');
+function sweetTex() {
+  if (TEXCACHE.has('sweet')) return TEXCACHE.get('sweet');
   const S = 512, pn = periodicNoise(21), pn2 = periodicNoise(22);
   const c = canvasOf(S, S), x = c.getContext('2d'), img = x.createImageData(S, S), d = img.data;
   const H = new Float32Array(S * S);
@@ -30,21 +30,21 @@ function lokumTex() {
   }
   nx.putImageData(ni, 0, 0);
   const res = { map: texFromCanvas(c, true), normal: texFromCanvas(nc, false) };
-  TEXCACHE.set('lokum', res); return res;
+  TEXCACHE.set('sweet', res); return res;
 }
-function lokumMat() {
-  const tx = lokumTex();
+function sweetMat() {
+  const tx = sweetTex();
   return new THREE.MeshPhysicalMaterial({ color: 0xffffff, map: tx.map, normalMap: tx.normal, normalScale: new THREE.Vector2(0.5, 0.5), roughness: 0.66, clearcoat: 0.12, clearcoatRoughness: 0.5,
     sheen: 1, sheenColor: new THREE.Color(0xffe6ef), sheenRoughness: 0.8, emissive: new THREE.Color(0xd23a6a), emissiveIntensity: 0.1 });
 }
 function pistachioMat() { return new THREE.MeshPhysicalMaterial({ color: 0x86b04a, roughness: 0.55, sheen: 0.6, sheenColor: new THREE.Color(0xc8f080), emissive: new THREE.Color(0x2c4a10), emissiveIntensity: 0.25 }); }
-function makeLokum(size = 1) {
+function makeSweet(size = 1) {
   const grp = new THREE.Group();
   const g = new RoundedBoxGeometry(size, size * 0.9, size, 6, size * 0.16);
   const p = g.attributes.position, v = new THREE.Vector3();
   for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i); const k = 1 + 0.035 * noise3(v.x * 3 / size, v.y * 3 / size, v.z * 3 / size); v.multiplyScalar(k); p.setXYZ(i, v.x, v.y, v.z); }
   g.computeVertexNormals();
-  const body = new THREE.Mesh(g, lokumMat()); grp.add(body);
+  const body = new THREE.Mesh(g, sweetMat()); grp.add(body);
   const pm = pistachioMat(), r = rngOf(9);
   for (let k = 0; k < 9; k++) {
     const ch = new THREE.Mesh(new THREE.IcosahedronGeometry(size * (0.06 + r() * 0.05), 0), pm);

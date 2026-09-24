@@ -1,24 +1,28 @@
 # Animasyon Lab — çalışma kuralları
 
-Bu depo birden çok bağımsız eğitim animasyonu barındırır. Kullanıcı her yeni oturumda genellikle yeni bir animasyon ister; önceki animasyonlar örnek ve başlangıç noktası olarak kullanılır.
+Bu depo, kullanıcının tüm eğitim animasyonlarını ve denemelerini bir arada tutan bir **koleksiyondur**. Ortak bir motoru ya da ortak bir stili yoktur. Her animasyon kendi başına tasarlanır ve yazılır.
 
 ## Yeni animasyon isteğinde
 
-1. `npm run new -- <slug> "<Başlık>"` ile başla. İstenen şeye en yakın animasyon varsa `--from <o-animasyon>` kullan (ör. karakterli bir açılış gerekiyorsa `--from digestive-journey`).
-2. Yalnızca `animations/<slug>/` içinde çalış. Başka bir animasyonun dosyalarını değiştirme; ortak bir şey gerekiyorsa kopyala.
-3. `animation.json` içindeki `slug`, `title`, `description`, `tech`, `build`, `output` alanlarını doldur. Sitenin kartı bunlardan üretilir.
-4. Animasyonun `README.md` dosyasını yaz: ne anlattığı, bölümler, komutlar.
-5. Kök `README.md` içindeki "Animasyonlar" tablosuna bir satır ekle.
-6. `node build.mjs` (animasyon klasöründe) ve kökte `npm run build -- <slug>` çalıştır, ardından sayfayı tarayıcıda (headless Chrome ile ekran görüntüsü) kontrol et.
-7. Kullanıcı isterse commit edip `main`'e gönder. Pages yayını otomatik.
+1. **Sıfırdan tasarla.** Başka animasyonların kodunu, motorunu, arayüzünü, renklerini ya da yazı tiplerini örnek alma; onları açıp okuma. Konunun ve hedef kitlenin ne gerektirdiğini düşün: teknik (Three.js, Babylon.js, WebGPU, Canvas 2D, SVG, CSS, Vite, React…), görsel dil, anlatım yapısı, arayüz ve ses tümüyle bu animasyon için seçilir. Kullanıcı açıkça "şu animasyon gibi" ya da "şundan başla" demedikçe önceki bir animasyonu temel alma.
+2. `npm run new -- <slug> "<Başlık>"` yalnızca boş bir klasör ile `animation.json` ve `README.md` açar. Paketler, derleme düzeni ve klasör yapısı animasyonun kendi ihtiyacına göre kurulur (kendi `package.json`'ı olabilir; derlemede gereken paketler `dependencies`, yalnızca yerel araçlar `devDependencies` altına).
+3. Yalnızca `animations/<slug>/` içinde çalış. Başka bir animasyonun dosyalarını değiştirme.
+4. `animation.json` içindeki `slug`, `title`, `description`, `tech`, `build`, `output` alanlarını doldur. Sitenin kartı bunlardan üretilir. `build` komutu animasyon klasöründe çalışır ve `output` klasörüne kendi başına açılan bir `index.html` üretmelidir.
+5. Animasyonun `README.md` dosyasını yaz: ne anlattığı, bölümleri ve komutları.
+6. Kök `README.md` içindeki "Animasyonlar" tablosuna bir satır ekle.
+7. Kökte `npm run build -- <slug>` çalıştır, ardından sayfayı headless Chrome ile ekran görüntüsü alarak kontrol et (masaüstü ve telefon genişliği). Metinlerin hızlı akışta okunabildiğini de kontrol et.
+8. Kullanıcı isterse commit edip `main`'e gönder. Pages yayını otomatik.
 
-## Teknik
+## Ortak kaynaklar (isteğe bağlı)
 
-- Animasyonlar farklı tekniklerle yazılabilir. Tek şart: `build` komutu `output` klasörüne kendi başına açılan bir `index.html` üretsin.
-- Three.js animasyonlarında motor `src/engine/` altındadır (`shell.html`, `core.js`, `engine.js`); sahneler `src/scenes/` altında `defWorld` (3D dünya) ve `defChapter` (zaman çizelgesi bölümü) ile tanımlanır, sıralama `animation.json` → `scenes`.
-- Test için sayfaya `?ch=<bölüm-id>&t=<saniye>&hud=0` eklenebilir; `?capture=1` video modudur.
-- Video: animasyon klasöründe `npm install` sonra `npm run video` (Chrome + ffmpeg + PowerShell 7 ve Windows "Microsoft Tolga" sesi). Çıktı `renders/`.
-- Ücretli dış servis kullanma (yapay zekâ ses/görsel API'leri). Yerel araçları tercih et; dışarıya bir şey gönderilecekse önce sor.
+- `assets/avatars/`: gerçekçi insan karakterleri (Avaturn GLB, 54 kemikli ortak iskelet, ARKit ve viseme yüz şekilleri). Yalnızca animasyon gerçekten bir insan karakteri gerektiriyorsa kullan. `npm run avatars -- list` ile listelenir, `use <id> <slug>` ile animasyonun kendi klasörüne kopyalanır. Modeller meshopt ile sıkıştırılmıştır; yükleyicide meshopt çözücüsü gerekir.
+- `tools/build-site.mjs`: her animasyonu kendi `build` komutuyla derler ve siteyi toplar. `build` alanı boş olan animasyon atlanır.
+
+## Kısıtlar
+
+- Ücretli dış servis kullanma (yapay zekâ ses/görsel API'leri). Yerel ve ücretsiz araçları tercih et; dışarıya bir şey gönderilecekse önce sor. Ücretsiz CDN'lerden kütüphane ya da font yüklemek serbest.
+- Yerel araçlar: Chrome (`C:/Program Files/Google/Chrome/Application/chrome.exe`), ffmpeg (PATH'te), PowerShell 7 ile Windows'un "Microsoft Tolga" Türkçe sesi.
+- Animasyonlar öğrencilere gösterilir: bilimsel olarak doğru, öğretici, akıcı ve okunaklı olmalı.
 
 ## Dil ve adlandırma
 

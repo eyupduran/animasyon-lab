@@ -48,7 +48,7 @@ defWorld('intro', () => {
   bulb.position.set(0, 1.63, 0.5); scene.add(bulb);
   const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.004, 1.4), new THREE.MeshStandardMaterial({ color: 0x111111 })); cord.position.set(0, 2.45, 0.5); scene.add(cord);
 
-  // ---- table, chair, plate, lokums, tea ----
+  // ---- table, chair, plate, sweets, tea ----
   const wood = new THREE.MeshPhysicalMaterial({ color: 0xffffff, map: woodTex().map, roughness: 0.38, clearcoat: 0.6, clearcoatRoughness: 0.25 });
   const top = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 0.03, 64), wood); top.position.set(0, 0.725, 0.52); top.receiveShadow = true; top.castShadow = true; scene.add(top);
   const metal = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.35, metalness: 0.8 });
@@ -63,10 +63,10 @@ defWorld('intro', () => {
   const goldRim = new THREE.Mesh(new THREE.TorusGeometry(0.096, 0.0012, 6, 64), new THREE.MeshStandardMaterial({ color: 0xd8a84a, metalness: 1, roughness: 0.3 }));
   goldRim.rotation.x = Math.PI / 2; goldRim.position.copy(PLATE).add(V3(0, 0.0152, 0)); scene.add(goldRim);
   const LS = 0.023;
-  const lokums = [];
+  const sweets = [];
   const spots = [[0.0, 0.0, 0.3], [0.03, 0.022, 1.1], [-0.028, 0.02, 2.0], [0.024, -0.026, 0.7], [-0.022, -0.028, 2.6]];
-  spots.forEach(([dx, dz, ry], i) => { const l = makeLokum(LS); l.position.copy(PLATE).add(V3(dx, 0.006 + LS * 0.45, dz)); l.rotation.y = ry; l.traverse(o => { if (o.isMesh) o.castShadow = true; }); scene.add(l); lokums.push(l); });
-  const hero = lokums[0]; const heroHome = hero.position.clone();
+  spots.forEach(([dx, dz, ry], i) => { const l = makeSweet(LS); l.position.copy(PLATE).add(V3(dx, 0.006 + LS * 0.45, dz)); l.rotation.y = ry; l.traverse(o => { if (o.isMesh) o.castShadow = true; }); scene.add(l); sweets.push(l); });
+  const hero = sweets[0]; const heroHome = hero.position.clone();
   // tea: tulip glass on a saucer
   const TEA = V3(0.15, 0.741, 0.56);
   const saucer = new THREE.Mesh(latheOf([[0.001, 0], [0.03, 0], [0.05, 0.006], [0.058, 0.01], [0.056, 0.011], [0.03, 0.005], [0.001, 0.005]]), new THREE.MeshPhysicalMaterial({ color: 0xb8142a, roughness: 0.2, clearcoat: 1 }));
@@ -192,9 +192,9 @@ defWorld('intro', () => {
   let route = null, trachea = null;
   const bits = new THREE.Group(); head.add(bits);
   const bitMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, vertexColors: true, roughness: 0.4, clearcoat: 0.8, sheen: 1, sheenColor: new THREE.Color(0xffe0ea), emissive: new THREE.Color(0xc03060), emissiveIntensity: 0.15 });
-  const bitGeo = blobGeo(1, 2, 0.35, 4, lokumColors);
+  const bitGeo = blobGeo(1, 2, 0.35, 4, sweetColors);
   for (let i = 0; i < 9; i++) { const m = new THREE.Mesh(bitGeo, bitMat); const side = i % 2 ? 1 : -1; m.position.copy(molarLocal).multiply(V3(side, 1, 1)).add(V3(-side * 0.004 * (i % 3), 0.002 * (i % 4), 0.006 * Math.floor(i / 2) - 0.008)); m.scale.setScalar(0.0045 + 0.002 * (i % 3)); bits.add(m); }
-  const bolus = new THREE.Mesh(blobGeo(1, 3, 0.2, 5, lokumColors), bitMat); bolus.scale.setScalar(0.009); scene.add(bolus);
+  const bolus = new THREE.Mesh(blobGeo(1, 3, 0.2, 5, sweetColors), bitMat); bolus.scale.setScalar(0.009); scene.add(bolus);
 
   // ---- lights ----
   const key = new THREE.DirectionalLight(0xffe2c4, 2.6); key.position.set(1.1, 2.3, 1.7); key.target.position.set(0, 0.9, 0.3);
@@ -205,7 +205,7 @@ defWorld('intro', () => {
   const lampL = new THREE.PointLight(0xffc488, 1.6, 3, 1.6); lampL.position.set(0, 1.6, 0.5); scene.add(lampL);
   scene.add(new THREE.HemisphereLight(0xffe2c8, 0x1a0c06, 0.45));
 
-  const w = { scene, root, B, rest, face, FACE_KEYS, head, mouthLocal, mouthCenterLocal, molarLocal, FR, FL, tip, curlFingers, thumbPinch, HQ, ik2, aimBone, rotWorld, setWorldQuat, hero, heroHome, lokums, steam, meshes, routeMat, trachMat, bits, bolus, LS,
+  const w = { scene, root, B, rest, face, FACE_KEYS, head, mouthLocal, mouthCenterLocal, molarLocal, FR, FL, tip, curlFingers, thumbPinch, HQ, ik2, aimBone, rotWorld, setWorldQuat, hero, heroHome, sweets, steam, meshes, routeMat, trachMat, bits, bolus, LS,
     lamp: [0, 1], post: { bloom: 0.35, thr: 0.95, barrel: 0.015, ca: 0.0015, vig: 0.85, grain: 0.02 } };
 
   // route tube is built from the chewing pose so it sits inside the neck
@@ -284,18 +284,18 @@ function cafePose(w, t) {
 const CAFE_CAM = [[0, 0.1, 0.84, 0.86], [2.8, 0.55, 1.2, 1.55], [4.2, -0.5, 1.12, 1.25], [6.2, 0.1, 1.2, 0.92], [7.4, 0.34, 1.19, 0.62], [8.8, 0.3, 1.17, 0.56], [10.8, 0.08, 1.15, 0.6], [12.6, 0.8, 1.13, 0.34], [15.2, 0.86, 1.09, 0.24], [17.2, 0.12, 1.16, 0.46], [19.5, 0.0, 1.162, 0.215]];
 const CAFE_LOOK = [[0, -0.1, 0.76, 0.5], [2.8, -0.02, 0.98, 0.35], [4.2, -0.08, 0.93, 0.42], [6.2, -0.04, 1.1, 0.24], [7.4, -0.02, 1.155, 0.2], [8.8, -0.01, 1.15, 0.18], [10.8, 0, 1.14, 0.16], [12.6, 0, 1.12, 0.1], [15.2, 0, 1.06, 0.08], [17.2, 0, 1.15, 0.15], [19.5, 0, 1.16, 0.05]];
 defChapter({
-  order: 0, id: 'intro', n: 0, name: 'İlk Isırık', latin: 'Ingestio · yiyeceğin alınması', blurb: 'Yolculuk, lokumun ağza alınmasıyla başlıyor.',
+  order: 0, id: 'intro', n: 0, name: 'İlk Isırık', latin: 'Ingestio · yiyeceğin alınması', blurb: 'Yolculuk, besinin ağza alınmasıyla başlıyor.',
   world: 'intro', dur: 19.5, route: 'intro', warmTimes: [14], mapOn: ['mouth'], mapWhere: 'Ağız', fadeColor: 0x2a0610, fadeOutDur: 1.6,
   clock: [0, 18], ph: 7, scale: [[0, '~20 cm'], [6.6, '~5 cm']], state: [[0, 'Katı parça'], [8.2, 'Ağızda · ısırıldı'], [9.2, 'Çiğneniyor']], loc: [[0, 'Kafe masası'], [6.6, 'Ağız'], [12.4, 'Ağız · röntgen']],
   cues: [
     [0.3, 'Bir kafede, bir tabak fıstıklı lokum ve bir bardak çay.'],
-    [3.4, 'Lokumu başparmak ve işaret parmağıyla alıyor. Birazdan bu lokumun vücuttaki yolculuğu başlayacak.'],
-    [7.0, 'Ağız açılıyor; öndeki kesici dişler lokumu ısırıp keser.'],
-    [9.6, 'Dudaklar kapanır, çene kasları çalışır; azı dişleri lokumu öğütür.'],
+    [3.4, 'Bir parçayı başparmak ve işaret parmağıyla alıyor. Birazdan bu besinin vücuttaki yolculuğu başlayacak.'],
+    [7.0, 'Ağız açılıyor; öndeki kesici dişler onu ısırıp keser.'],
+    [9.6, 'Dudaklar kapanır, çene kasları çalışır; azı dişleri besini öğütür.'],
     [12.6, 'İçeriden bakalım: dil lokmayı dişlerin arasına iter, tükürük onu yumuşatır. Sonra lokma yutağa, oradan yemek borusuna iner.'],
-    [17.2, 'Şimdi minik bir kamera olup lokumla birlikte ağızdan içeri giriyoruz.'],
+    [17.2, 'Şimdi minik bir kamera olup besinle birlikte ağızdan içeri giriyoruz.'],
   ],
-  facts: [['Bir parça lokum', '~15 g · ~55 kcal'], ['İçindekiler', 'Şeker, nişasta, su, fıstık'], ['Rota', 'Ağız → Mide → Bağırsak → Kan → Beyin']],
+  facts: [['Besin', 'Fıstıklı lokum · ~15 g · ~55 kcal'], ['İçindekiler', 'Şeker, nişasta, su, fıstık'], ['Rota', 'Ağız → Mide → Bağırsak → Kan → Beyin']],
   labels: [
     { t0: 3.6, t1: 6.2, text: 'Fıstıklı lokum', sub: '~15 gram', at: w => w.hero.position, dx: 70, dy: -50, hero: true },
     { t0: 7.6, t1: 9.4, text: 'Kesici dişler', sub: 'ısırıp keser', at: w => w.mouthW, dx: 80, dy: 40 },

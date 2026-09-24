@@ -19,8 +19,10 @@ const items = [];
 for (const slug of all) {
   const dir = path.join(ANIM, slug);
   const cfg = JSON.parse(fs.readFileSync(path.join(dir, 'animation.json'), 'utf8'));
+  if (!cfg.build) { console.log(`${slug}: animation.json → build boş, atlandı`); continue; }
   if (!only || only === slug) {
     const pkg = fs.existsSync(path.join(dir, 'package.json')) ? JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8')) : null;
+    // packages the build needs (e.g. Vite) go in "dependencies"; "devDependencies" are local-only tools (video etc.)
     if (pkg && pkg.dependencies && Object.keys(pkg.dependencies).length && !fs.existsSync(path.join(dir, 'node_modules'))) execSync('npm install --omit=dev', { cwd: dir, stdio: 'inherit' });
     execSync(cfg.build || 'node build.mjs', { cwd: dir, stdio: 'inherit' });
     fs.rmSync(path.join(DIST, slug), { recursive: true, force: true });

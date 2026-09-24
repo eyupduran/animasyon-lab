@@ -1,8 +1,8 @@
-# Bir Lokumun Yolculuğu
+# Sindirim Yolculuğu
 
-![Kafede lokumu ısıran karakter](poster.jpg)
+![Kafede lokum ısıran karakter](poster.jpg)
 
-Bir parça fıstıklı lokumun ağızdan beyne uzanan yolculuğu; yanında giden minik bir "kapsül kamera" gözünden. Kafede oturan gerçekçi bir karakter (Avaturn GLB) lokumu parmaklarıyla alıp ısırır; röntgen görünümünde dişler, dil ve yemek borusu görünür, kamera ağızdan içeri girer ve 13 durak boyunca sindirim, kan dolaşımı ve beyne kadar ilerler.
+Bir besinin ağızdan beyne uzanan yolculuğu; yanında giden minik bir "kapsül kamera" gözünden. Kafede oturan gerçekçi bir karakter (Avaturn GLB) bir parça fıstıklı lokumu parmaklarıyla alıp ısırır; röntgen görünümünde dişler, dil ve yemek borusu görünür, kamera ağızdan içeri girer ve 13 durak boyunca sindirim, kan dolaşımı ve beyne kadar ilerler.
 
 **İzle:** https://eyupduran.github.io/animasyon-lab/digestive-journey/
 
@@ -52,8 +52,8 @@ Video için Chrome, ffmpeg (PATH'te) ve PowerShell 7 ile Windows'un yerel **Micr
 animation.json        başlık, sayfa metinleri, sahne sırası, gömülecek dosyalar, video ayarları
 build.mjs             tek HTML'e derleme (motor + sahneler + gömülü karakter)
 src/engine/           shell.html (arayüz), core.js (dokular, geometri, parçacıklar), engine.js (zaman çizelgesi, alt yazı, ses, video modu)
-src/scenes/           body-map.js (sağ üst harita), lokum.js (lokum modeli), cafe.js … finale.js (duraklar), main.js (başlatma)
-assets/avatar.glb     set-01-m01 karakteri, npm run avatar ile ~14 MB → ~2,8 MB
+src/scenes/           body-map.js (sağ üst harita), sweet.js (lokum modeli), cafe.js … finale.js (duraklar), main.js (başlatma)
+assets/avatar.glb     set-01-m01 karakteri (kök avatar kütüphanesinden), npm run avatar ile yalnızca bu sahnenin kullandığı yüz şekilleri bırakıldı: ~14 MB → ~2,8 MB
 tools/                render-video.mjs, slim-avatar.mjs
 ```
 

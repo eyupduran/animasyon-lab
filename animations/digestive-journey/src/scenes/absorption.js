@@ -101,10 +101,10 @@ defChapter({
   state: [[0, 'Sükroz (sofra şekeri)'], [6.6, 'Glikoz molekülü']], loc: [[0, 'Fırçamsı kenar'], [12.6, 'Bağırsak hücresi'], [19.6, 'Doku arası'], [21.5, 'Kılcal damar']],
   cues: [
     [0.3, 'Villusun yüzeyi mikrovillus denen çok daha küçük tüylerle kaplı. Artık mikrometre ölçeğindeyiz.'],
-    [4.8, 'Lokumdaki sofra şekeri (sükroz), sükraz enzimiyle ikiye ayrılıyor: glikoz ve fruktoz.'],
+    [4.8, 'Besindeki sofra şekeri (sükroz), sükraz enzimiyle ikiye ayrılıyor: glikoz ve fruktoz.'],
     [9.4, 'Kahramanımız artık bu glikoz molekülü. Sodyumla birlikte özel bir kapıdan (SGLT1) hücreye giriyor.'],
     [14.6, 'Hücrenin içinden geçip karşı uçtaki GLUT2 kapısından dışarı çıkıyor.'],
-    [20.2, 'Ve kılcal damara giriyor. Lokumun şekeri artık kanda!'],
+    [20.2, 'Ve kılcal damara giriyor. Besindeki şeker artık kanda!'],
   ],
   banner: [21.8, 25.4, 'Kana karıştı!'],
   facts: [['Sükroz', '= glikoz + fruktoz'], ['Bir mikrovillus', '~1 µm boyunda'], ['Kan şekeri yükselmesi', 'yemekten ~15–30 dk sonra']],

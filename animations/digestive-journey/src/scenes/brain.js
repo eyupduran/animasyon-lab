@@ -151,9 +151,9 @@ defChapter({
     [14.2, 'Bir nöron glikozu içeri alıyor; mitokondriler onu yakıp ATP enerjisi üretiyor.'],
     [18.4, 'Bu enerjiyle elektrik sinyalleri ateşlenir: bir düşünce, bir anı, bir tat…'],
     [23, 'Beyin vücut ağırlığının yalnızca %2’si kadardır ama enerjinin yaklaşık %20’sini kullanır.'],
-    [27, 'Az önce yediğin lokum, şu an bir düşünceye güç veriyor.'],
+    [27, 'Az önce yediğin besin, şu an bir düşünceye güç veriyor.'],
   ],
-  banner: [27.4, 31, 'Lokum, düşünceye dönüştü'],
+  banner: [27.4, 31, 'Besin, düşünceye dönüştü'],
   facts: [['Nöron sayısı', '~86 milyar'], ['Günlük glikoz', '~120 g'], ['Enerji payı', 'vücudun ~%20’si']],
   labels: [
     { t0: 0.8, t1: 5, text: 'Şah damarı', sub: 'karotis arter', at: w => w.F.pt(w._sc + 4, 0.8, w.radius(w._sc + 4) * 0.95, _v1), dx: 70, dy: -40 },

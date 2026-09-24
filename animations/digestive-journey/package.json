@@ -2,7 +2,7 @@
   "name": "digestive-journey",
   "private": true,
   "type": "module",
-  "description": "Bir parça lokumun ağızdan beyne yolculuğu — Three.js animasyonu",
+  "description": "Sindirim yolculuğu: bir besinin ağızdan beyne uzanan yolu — Three.js animasyonu",
   "scripts": {
     "build": "node build.mjs",
     "video": "node tools/render-video.mjs",

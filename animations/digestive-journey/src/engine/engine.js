@@ -179,6 +179,11 @@ function updateHUD(c, t) {
   }
   // hold if narration still speaking near the next cue
   holdTarget = VOICE.on && VOICE.speaking && playing && next - t < 0.8 ? 0.3 : 1;
+  // without narration: slow down a cue that is on screen for less time than it takes to read (~14 chars/s)
+  if (cue != null && !CAPTURE && holdTarget === 1) {
+    const read = 1.2 + c.cues[cue][1].length / 14, span = next - c.cues[cue][0];
+    if (span < read) holdTarget = Math.max(0.4, span / read);
+  }
   // banner
   let bo = 0;
   if (c.banner) { const [a, b, text] = c.banner; bo = win(t, a, b, 0.5); if (bo > 0) setText(hud.bannerText, 'ban', text); }
@@ -226,7 +231,7 @@ function updateLabels(c, t) {
 // ---------------- Body map ----------------
 function mapSVG(id) {
   const M = MAPDATA;
-  let s = `<svg id="${id}" class="bmap" viewBox="0 0 200 432" role="img" aria-label="Vücut haritası: lokumun rotası"><defs><filter id="${id}-g" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2"/></filter></defs>`;
+  let s = `<svg id="${id}" class="bmap" viewBox="0 0 200 432" role="img" aria-label="Vücut haritası: besinin rotası"><defs><filter id="${id}-g" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2"/></filter></defs>`;
   s += `<path class="body" d="${M.body}"/><ellipse class="body" cx="100" cy="40" rx="24" ry="31"/>`;
   for (const [k, v] of Object.entries(M.organs)) s += v.replace(/^<(\w+)/, `<$1 class="org" data-o="${k}"`);
   s += `<path d="M86,30 C90,24 96,28 100,24 C104,28 110,24 114,30 M84,38 C90,34 94,40 100,36 C106,40 110,34 116,38" fill="none" stroke="rgba(244,163,191,.3)" stroke-width=".6"/>`;

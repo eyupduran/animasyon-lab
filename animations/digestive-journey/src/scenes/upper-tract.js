@@ -134,12 +134,12 @@ defWorld('upper', () => {
   const epi = new THREE.Group(); epiBase.add(epi); epi.add(new THREE.Mesh(leafG, epiMat)); scene.add(epiBase);
 
   // hero objects
-  const lokum = makeLokum(1.25); scene.add(lokum);
-  const fragGeo = blobGeo(0.5, 2, 0.35, 2, lokumColors);
+  const sweet = makeSweet(1.25); scene.add(sweet);
+  const fragGeo = blobGeo(0.5, 2, 0.35, 2, sweetColors);
   const frags = new THREE.InstancedMesh(fragGeo, new THREE.MeshPhysicalMaterial({ color: 0xffffff, vertexColors: true, roughness: 0.55, sheen: 1, sheenColor: new THREE.Color(0xffe0ea), clearcoat: 0.3, emissive: new THREE.Color(0xc03060), emissiveIntensity: 0.08 }), 42); frags.frustumCulled = false; scene.add(frags);
   const fr = rngOf(31); const fragData = Array.from({ length: 42 }, () => ({ o: V3((fr() - 0.5) * 1.8, (fr() - 0.5), (fr() - 0.5) * 1.8), s: 0.35 + fr() * 0.5, r: V3(fr() * 6, fr() * 6, fr() * 6), ph: fr() * 6 }));
   const bolusMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, vertexColors: true, roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.08, sheen: 1, sheenColor: new THREE.Color(0xffd0dc), emissive: new THREE.Color(0xc03060), emissiveIntensity: 0.12 });
-  const bolus = new THREE.Mesh(blobGeo(0.9, 5, 0.2, 5, lokumColors), bolusMat); scene.add(bolus);
+  const bolus = new THREE.Mesh(blobGeo(0.9, 5, 0.2, 5, sweetColors), bolusMat); scene.add(bolus);
   const salMat = new THREE.MeshPhysicalMaterial({ color: 0xe8f6ff, roughness: 0.04, clearcoat: 1, transparent: true, opacity: 0.45, emissive: new THREE.Color(0x6aa8c8), emissiveIntensity: 0.25, depthWrite: false });
   const saliva = new THREE.InstancedMesh(new THREE.SphereGeometry(0.1, 12, 10), salMat, 90); saliva.frustumCulled = false; scene.add(saliva);
   const enz = new THREE.InstancedMesh(enzymeGeo(3), enzymeMat(0x4fd2ff), 12); enz.frustumCulled = false; scene.add(enz);
@@ -154,7 +154,7 @@ defWorld('upper', () => {
   const acid = new THREE.PointLight(0xd8e27a, 0, 16, 1.6); acid.position.copy(F.P[F.n]).addScaledVector(F.T[F.n], 1.2); scene.add(acid);
   const acidGlow = halo(0xe8f08a, 5, 0); acidGlow.position.copy(F.P[F.n]).addScaledVector(F.T[F.n], 2.2); scene.add(acidGlow);
 
-  return { scene, F, S, prof, wu, jaw, tongue, tonguePivot, uvPivot, uvula, epi, O, nIn, tIn, lokum, frags, fragData, bolus, saliva, enz, burst, bdir, acid, acidGlow, upperTeeth, lamp: [5.5, 30, 0xfff0e6, 1.2], post: { bloom: 0.45, thr: 0.9 } };
+  return { scene, F, S, prof, wu, jaw, tongue, tonguePivot, uvPivot, uvula, epi, O, nIn, tIn, sweet, frags, fragData, bolus, saliva, enz, burst, bdir, acid, acidGlow, upperTeeth, lamp: [5.5, 30, 0xfff0e6, 1.2], post: { bloom: 0.45, thr: 0.9 } };
 });
 
 // ---- helpers for mouth choreography ----
@@ -176,11 +176,11 @@ function setJaw(w, a, tongueLift = 0, tongueBack = 0) {
 
 defChapter({
   order: 1, id: 'mouth', n: 1, name: 'Ağız', latin: 'Cavum oris', blurb: 'Dişler parçalar, tükürük yumuşatır, dil karıştırır.',
-  leg: ['~20 sn', 'Dişler lokumu parçalar; tükürükteki amilaz nişastayı sindirmeye başlar.'], world: 'upper', dur: 26, route: 'mouth', mapOn: ['mouth'], fadeColor: 0x2a0610,
+  leg: ['~20 sn', 'Dişler besini parçalar; tükürükteki amilaz nişastayı sindirmeye başlar.'], world: 'upper', dur: 26, route: 'mouth', mapOn: ['mouth'], fadeColor: 0x2a0610,
   clock: [0, 20], ph: 6.8, scale: '~5 cm', state: [[0, 'Katı parça'], [6.1, 'Ezilmiş parçalar'], [16, 'Lokma (bolus)']], loc: [[0, 'Ağız'], [5, 'Azı dişleri'], [16, 'Dil üstü'], [21, 'Ağız arkası']],
   cues: [
-    [0.2, 'Kesici dişler lokumu keser; dil onu hemen azı dişlerinin arasına iter.'],
-    [5.6, 'Azı dişleri bir değirmen gibi çalışır: lokum ezilir, küçük parçalara ayrılır.'],
+    [0.2, 'Kesici dişler besini keser; dil onu hemen azı dişlerinin arasına iter.'],
+    [5.6, 'Azı dişleri bir değirmen gibi çalışır: besin ezilir, küçük parçalara ayrılır.'],
     [10.8, 'Tükürük bezleri devreye girer. Tükürükteki amilaz enzimi nişastayı daha ağızdayken parçalamaya başlar.'],
     [16.2, 'Parçalar tükürükle yoğrulup yumuşak bir top olur. Buna lokma (bolus) denir.'],
     [21, 'Dil lokmayı damağa bastırıp geriye, boğaza doğru iter.'],
@@ -198,7 +198,7 @@ defChapter({
   ],
   events: [[2.9, 'squish'], [6.05, 'crunch'], [7.8, 'crunch'], [9.55, 'crunch'], [11.3, 'squish'], [13.05, 'squish'], [11, 'drip'], [11.6, 'drip'], [12.3, 'drip'], [22.5, 'gulp']],
   audio: { amb: [220, 0.18], heart: 0.1 },
-  enter(w) { w.wu.uWaveA.value = 0; w.wu.uBulgeA.value = 0; w.lokum.visible = true; },
+  enter(w) { w.wu.uWaveA.value = 0; w.wu.uBulgeA.value = 0; w.sweet.visible = true; },
   update(t, w) {
     const a = jawAngle(t);
     const lift = sstep(19.5, 22, t) * 0.45, back = sstep(20, 23, t) * 0.4;
@@ -207,7 +207,7 @@ defChapter({
     w.uvPivot.rotation.x = -sstep(23.5, 25.5, t) * 0.9;
     w.epi.rotation.x = -1.0;
     // lokum
-    const L = w.lokum; const H0 = 1.125;
+    const L = w.sweet; const H0 = 1.125;
     let lp;
     if (t < 5.2) lp = spl(t, [[0, 0, 0.15, 7.6], [2.3, 0, 0.12, 4.9], [3.7, 0.9, 0.05, 3.2], [5.2, MOL.x, 0, MOL.z]]);
     else lp = _v1.copy(MOL);
@@ -295,7 +295,7 @@ defChapter({
   ],
   events: [[0.3, 'gulp'], [4.6, 'valve'], [7.2, 'gulp']],
   audio: { amb: [200, 0.2], heart: 0.1 },
-  enter(w) { w.lokum.visible = false; w.frags.visible = true; },
+  enter(w) { w.sweet.visible = false; w.frags.visible = true; },
   update(t, w) {
     const { F, S } = w;
     setJaw(w, 0.06, 0.45 * (1 - sstep(6, 11, t)), 0.4);

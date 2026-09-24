@@ -46,12 +46,12 @@ defWorld('stomach', () => {
   for (let i = 0; i < NB; i++) { const s = lerp(sB - 2, sP - 1, br()); const th = br() * TAU; const p = F.pt(s, th, radius(s) * 0.85 * Math.sqrt(br())); bub.push({ x: p.x, z: p.z, y0: Math.min(p.y, LEVEL - 0.2), sp: 0.4 + br() * 0.9, ph: br(), r: 0.03 + br() * 0.1 }); }
   // hero bolus + chyme
   const bolusMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, vertexColors: true, roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.1, sheen: 1, sheenColor: new THREE.Color(0xffd0dc), emissive: new THREE.Color(0xc03060), emissiveIntensity: 0.12, transparent: true });
-  const bolus = new THREE.Mesh(blobGeo(0.9, 5, 0.2, 5, lokumColors), bolusMat); scene.add(bolus);
+  const bolus = new THREE.Mesh(blobGeo(0.9, 5, 0.2, 5, sweetColors), bolusMat); scene.add(bolus);
   const NC = Math.round(1800 * QUALITY);
   const chyme = motes(NC, v => v.set(0, 0, 0), { color: 0xffb8c8, color2: 0xf6e0b8, size: 0.09, drift: 0, opacity: 0.9, near: 0.1 }); scene.add(chyme);
   const cr = rngOf(52), cdat = []; for (let i = 0; i < NC; i++) cdat.push({ a: cr() * TAU, r: Math.pow(cr(), 0.6), h: cr() * 2 - 1, sp: 0.4 + cr(), e: cr() });
   const clumpMat = new THREE.MeshPhysicalMaterial({ color: 0xa88878, vertexColors: true, roughness: 0.5, clearcoat: 0.6 });
-  const clumps = new THREE.InstancedMesh(blobGeo(0.2, 2, 0.4, 3, lokumColors), clumpMat, 70); clumps.frustumCulled = false; scene.add(clumps);
+  const clumps = new THREE.InstancedMesh(blobGeo(0.2, 2, 0.4, 3, sweetColors), clumpMat, 70); clumps.frustumCulled = false; scene.add(clumps);
   const pepsin = new THREE.InstancedMesh(enzymeGeo(5), enzymeMat(0x6dffa0), 14); pepsin.frustumCulled = false; scene.add(pepsin);
   const pist = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.1, 1), pistachioMat(), 10); pist.frustumCulled = false; scene.add(pist);
   // secretion sparkles on walls
@@ -75,7 +75,7 @@ defChapter({
     [0.3, 'Mideye ulaştık. İçerisi asidik mide özsuyuyla dolu.'],
     [4.6, 'Hidroklorik asit (HCl), midenin pH değerini 1,5–3,5’e indirir; mikropların çoğu burada ölür.'],
     [9.6, 'Tükürükteki amilaz bu asitte etkisini yitirir. Pepsin enzimi ise fıstıktaki proteinleri parçalar.'],
-    [15.2, 'Mide duvarı dalga dalga kasılıp içeriği çalkalar. Lokum artık kimus denen koyu bir bulamaç.'],
+    [15.2, 'Mide duvarı dalga dalga kasılıp içeriği çalkalar. Besin artık kimus denen koyu bir bulamaç.'],
     [20.6, 'Mide kapısı (pilor) aralanır ve kimusu azar azar ince bağırsağa bırakır.'],
   ],
   facts: [['Hacim', '~1–1,5 L (4 L’ye kadar genişler)'], ['Asitlik', 'pH 1,5–3,5'], ['Kalış süresi', 'Şekerliler hızlı; karışık öğün 2–4 sa']],
