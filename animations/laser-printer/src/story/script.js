@@ -71,7 +71,7 @@ export const CHAPTERS = [
   {
     id: 'laser', title: 'Lazer görüntüyü çizer', step: 1,
     cues: [
-      'Lazer ışını, dakikada on binlerce devir yapan çokgen bir aynaya çarpar ve tambur boyunca bir uçtan öbür uca süpürülür.',
+      'Lazer ışını, dakikada on binlerce devir yapan çokgen bir aynaya çarpar | ve tambur boyunca bir uçtan öbür uca süpürülür.',
       'Işın, boyanacak her noktada yanar, boş kalacak yerlerde söner. Işık düşen noktalarda yük kaybolur.',
       'Böylece tamburda gözle görünmeyen, elektrikten bir görüntü oluşur: gizli görüntü.',
       'Tambur kâğıda bir mühür gibi değeceği için bu görüntü ters, yani ayna görüntüsüdür.',
@@ -151,7 +151,7 @@ export const CHAPTERS = [
     cues: [
       'Sayfa, baskılı yüzü aşağı bakacak şekilde çıkış tepsisine iner. Böylece sonraki sayfalar doğru sırayla üst üste dizilir.',
       'Büyüteçle bakalım: yazılar dolu siyah; fotoğraf ise dört renkten, farklı açılarla dizilmiş minik noktalardan oluşuyor.',
-      'Açılı nokta ızgaraları üst üste binince küçük çiçekleri andıran rozet desenleri ortaya çıkar.',
+      'Açılı nokta ızgaraları üst üste binince | küçük çiçekleri andıran rozet desenleri ortaya çıkar.',
     ],
     shots: [[0.06, [6, 33, 44], [-4, 30.5, 0], 38], [0.3, [8, 34, 46], [2, 30.8, 0], 38], [0.44, [44, 30, 70], [40, 24, 16], 40], [1, [44, 26, 60], [40, 24, 16], 40]],
     labels: [['exit', 'Çıkış makaraları', 0.02, 0.3, -40, -50]],

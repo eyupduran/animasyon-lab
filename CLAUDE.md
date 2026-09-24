@@ -16,12 +16,15 @@ Bu depo, kullanıcının tüm eğitim animasyonlarını ve denemelerini bir arad
 ## Ortak kaynaklar (isteğe bağlı)
 
 - `assets/avatars/`: gerçekçi insan karakterleri (Avaturn GLB, 54 kemikli ortak iskelet, ARKit ve viseme yüz şekilleri). Yalnızca animasyon gerçekten bir insan karakteri gerektiriyorsa kullan. `npm run avatars -- list` ile listelenir, `use <id> <slug>` ile animasyonun kendi klasörüne kopyalanır. Modeller meshopt ile sıkıştırılmıştır; yükleyicide meshopt çözücüsü gerekir.
+- `tools/voice.mjs` (`npm run voice -- <slug>`): anlatım gerekiyorsa sesi yerel Piper TTS ile üret (Voxtory'deki Türkçe model ve profiller; Windows "Tolga" sesi yerine bunu tercih et). Animasyon `narration/lines.json` yazar, süreler `narration/manifest.json`'dan okunur ve altyazı süreleri sese göre ayarlanır. Yabancı ad, kısaltma ve sembollerin söylenişini ayrı tut (ekrandaki metin değişmesin); emin olunamayan kelimeleri seslendirip yazıya geri çevirerek kontrol et.
+- Anlatım ve altyazı olan animasyonlarda izleyici ikisini ayrı ayrı açıp kapatabilmeli (altyazı düğmesi ve kısayolu, seçim hatırlanır). Altyazılar en çok iki satır, sesle birlikte ilerleyen parçalar hâlinde gösterilir.
+- `tools/render-video.mjs` (`npm run video -- <slug>`): YouTube için MP4 + SRT + bölüm listesi. Animasyon `?video=1` ile `window.__video` sözleşmesini sunmalı (bkz. kök README).
 - `tools/build-site.mjs`: her animasyonu kendi `build` komutuyla derler ve siteyi toplar. `build` alanı boş olan animasyon atlanır.
 
 ## Kısıtlar
 
 - Ücretli dış servis kullanma (yapay zekâ ses/görsel API'leri). Yerel ve ücretsiz araçları tercih et; dışarıya bir şey gönderilecekse önce sor. Ücretsiz CDN'lerden kütüphane ya da font yüklemek serbest.
-- Yerel araçlar: Chrome (`C:/Program Files/Google/Chrome/Application/chrome.exe`), ffmpeg (PATH'te), PowerShell 7 ile Windows'un "Microsoft Tolga" Türkçe sesi.
+- Yerel araçlar: Chrome (`C:/Program Files/Google/Chrome/Application/chrome.exe`), ffmpeg (PATH'te), Piper TTS (`C:\ProgramData\piper_data`, Türkçe `tr_TR-dfki-medium`), PowerShell 7 ile Windows'un "Microsoft Tolga" Türkçe sesi (yedek).
 - Animasyonlar öğrencilere gösterilir: bilimsel olarak doğru, öğretici, akıcı ve okunaklı olmalı.
 
 ## Dil ve adlandırma

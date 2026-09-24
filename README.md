@@ -32,6 +32,27 @@ npm run avatars -- add set-02-f03                  # ham modeli (~14 MB) küçü
 
 Ham modeller git'te tutulmaz (`catalog.json` → `source`).
 
+## Seslendirme (yerel Piper TTS)
+
+Anlatım sesleri ücretsiz ve tamamen yerel [Piper](https://github.com/rhasspy/piper) ile üretilir (Voxtory projesindeki Türkçe `tr_TR-dfki-medium` modeli ve aynı altı ses profili). Piper ve model dosyaları git'te tutulmaz; `C:\ProgramData\piper_data` altında (ya da `PIPER_DIR` ortam değişkeniyle gösterilen klasörde) bulunmalıdır.
+
+```
+npm run voice -- profiles              # ses profilleri: anlatici, yavas, hizli, fisiltili, enerjik, derin
+npm run voice -- laser-printer         # animations/laser-printer/narration/lines.json → public/voice/*.mp3
+npm run voice -- laser-printer --profile derin --force
+```
+
+Animasyon söylenecek satırları `narration/lines.json` dosyasına yazar (`{ "profile", "out", "manifest", "lines": [{ "id", "say" }] }`). Araç her satırı ayrı MP3 yapar, sürelerini `narration/manifest.json` dosyasına kaydeder ve yalnızca değişen satırları yeniden üretir. Kayıtlar git'e girer, çünkü site derlenirken Piper çalışmaz.
+
+## YouTube videosu
+
+```
+npm run video -- <slug>                # animations/<slug>/renders/<slug>.mp4 + .srt + -chapters.txt
+npm run video -- <slug> --subs burn    # altyazı görüntüye gömülü
+```
+
+Animasyon `?video=1` adresinde `window.__video` nesnesini sunar (`duration`, `renderAt`, `prepareSound`, `soundChunk`, `srt`, `chapters`). Araç kareleri headless Chrome'da tek tek çizer, film sesini sayfada çevrimdışı üretir ve ffmpeg ile birleştirir. `.srt` dosyası YouTube'a ayrıca yüklenir, izleyici altyazıyı açıp kapatabilir.
+
 ## Klasörler
 
 ```
@@ -45,6 +66,8 @@ animasyon-lab/
 ├─ tools/
 │  ├─ new-animation.mjs         boş bir animasyon klasörü açar
 │  ├─ avatars.mjs               avatar kütüphanesi: list, add, use, thumbs
+│  ├─ voice.mjs                 yerel Piper TTS ile seslendirme
+│  ├─ render-video.mjs          YouTube için MP4 + SRT + bölüm listesi
 │  └─ build-site.mjs            her animasyonu kendi komutuyla derler, siteyi dist/ altında toplar
 ├─ .github/workflows/pages.yml  her gönderimde siteyi derleyip GitHub Pages'e yayınlar
 └─ CLAUDE.md                    yapay zekâ oturumları için depo kuralları

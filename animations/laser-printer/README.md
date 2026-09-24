@@ -33,11 +33,16 @@ Renkli, çok işlevli bir lazer yazıcının yan tarafı kesilip açılmış 3D 
   4. Kopyanın kopyası aynı işlemi tekrarlıyor (1, 2, 4 ve 8. kuşak).
 - **Tambur yüzeyi durumsuz bir gölgelendiriciyle çiziliyor** (`src/scene/materials.js`): yüzeydeki her noktanın hangi sayfa satırını taşıdığı ve yüklü, pozlanmış, tonerli ya da temizlenmiş olduğu kâğıdın ilerleyişinden hesaplanıyor. Tamburdaki görüntü bu yüzden doğal olarak ters (ayna görüntüsü) çıkıyor.
 - **Zaman çizelgesi:** her şey hikâye zamanının saf bir fonksiyonu (`src/story/state.js`), bu yüzden istenen ana doğrudan atlanabiliyor. Bölüm süreleri altyazıların okunma süresinden hesaplanıyor.
-- **Ses:** makine sesleri Web Audio ile sentezleniyor. İsteğe bağlı anlatım tarayıcının kendi Türkçe sesiyle (varsa) yapılıyor; cümle bitmeden sahne ilerlemiyor.
+- **Seslendirme:** her altyazı cümlesi yerel Piper TTS ile (Voxtory'deki Türkçe `tr_TR-dfki-medium` sesi, "Anlatıcı" profili) ayrı bir MP3 olarak kaydedilmiş (`public/voice/`). Altyazıların süresi bu kayıtların gerçek uzunluğundan hesaplanıyor, uzun cümleler sesle birlikte ilerleyen iki satırlık parçalara bölünüyor. Oynatıcıda anlatım hikâye zamanına kilitli: atlama, duraklatma ve hız değişikliğinde ses ile görüntü birlikte kalıyor; anlatım sırasında makine sesleri kısılıyor.
+- **Makine sesleri:** Web Audio ile sentezleniyor. Aynı kod video için bütün film sesini çevrimdışı üretiyor.
+
+## Ayarlar
+
+Alt çubuktaki **CC** düğmesi (ya da C tuşu) altyazıyı açıp kapatır. Dişli simgesindeki panelde sesli anlatım, altyazı, altyazı boyutu (küçük, orta, büyük), makine sesleri ve hız ayarlanır. Seçimler tarayıcıda hatırlanır. Başlangıç ekranında da anlatım ve altyazı seçilebilir.
 
 ## Kısayollar
 
-Boşluk: oynat / duraklat · ← →: bölüm · N: anlatım · M: ses · F: tam ekran
+Boşluk: oynat / duraklat · ← →: bölüm · C: altyazı · N: anlatım · M: ses · F: tam ekran
 
 ## Komutlar
 
@@ -47,9 +52,32 @@ npm run dev        # geliştirme sunucusu
 npm run build      # dist/ klasörüne derler
 ```
 
-Test için sayfa parametreleri: `?ch=<bölüm>&t=<saniye>` (ör. `?ch=laser&t=20`), `ui=0` arayüzü gizler, `play=1` hemen oynatır, `cam=x,y,z,hx,hy,hz,fov` kamerayı sabitler.
-Ekran görüntüsü (kökteki `puppeteer-core` ile, önce `npm run build`):
+### Seslendirme (altyazı metni değişince)
+
+`src/story/script.js` içindeki altyazılar hem ekrana hem seslendirmeye gider. Söyleniş farklı olacaksa (kısaltma, parantez, yabancı ad) `src/story/spoken.js` içindeki kurala eklenir. Altyazının bölüneceği yer `|` ile elle işaretlenebilir; işaret ekranda görünmez.
 
 ```
-node tools/shot.mjs <klasör> 1600x900 "ch=transfer&t=19" "ch=compare&t=14"
+node tools/lines.mjs                  # narration/lines.json: söylenecek satırlar
+cd ../.. && npm run voice -- laser-printer   # yalnızca değişen satırları Piper ile yeniden seslendirir
+```
+
+### YouTube videosu
+
+Depo kökünde:
+
+```
+npm run video -- laser-printer                  # renders/laser-printer.mp4 + .srt + -chapters.txt
+npm run video -- laser-printer --subs burn      # altyazısı görüntüye gömülü sürüm
+npm run video -- laser-printer --from 90 --to 120   # yalnızca bir aralık (deneme için)
+```
+
+MP4 altyazısızdır; `.srt` dosyası YouTube Studio'da *Altyazılar → Dosya yükle → Zamanlamalı* ile eklenir, izleyici altyazıyı kendisi açıp kapatır. `-chapters.txt` açıklamaya yapıştırılınca YouTube bölümleri oluşur. 1080p 30 kare/sn; bu makinede yaklaşık 20 dakika sürer.
+
+### Yerel kontroller
+
+Sayfa parametreleri: `?ch=<bölüm>&t=<saniye>` (ör. `?ch=laser&t=20`), `ui=0` arayüzü gizler, `play=1` hemen oynatır, `cam=x,y,z,hx,hy,hz,fov` kamerayı sabitler, `video=1` video modunu açar.
+
+```
+node tools/shot.mjs <klasör> 1600x900 "ch=transfer&t=19" "ch=compare&t=14"   # ekran görüntüsü
+node tools/check-player.mjs <klasör>    # anlatımın zamanla senkronu ve ayarlar paneli
 ```

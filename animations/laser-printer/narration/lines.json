@@ -1,0 +1,207 @@
+{
+ "profile": "anlatici",
+ "out": "public/voice",
+ "manifest": "narration/manifest.json",
+ "lines": [
+  {
+   "id": "intro-0",
+   "say": "Bu, çok işlevli bir lazer yazıcı. Yazdırabilir, tarayabilir ve fotokopi çekebilir."
+  },
+  {
+   "id": "intro-1",
+   "say": "Yan tarafını kesip açtık. Bir sayfanın ekrandan kâğıda, sonra da fotokopiye uzanan yolculuğunu içeriden izleyeceğiz."
+  },
+  {
+   "id": "send-0",
+   "say": "Bilgisayarda bir okul gazetesi açık: başlık, yazılar, renkli bir fotoğraf ve birkaç test deseni."
+  },
+  {
+   "id": "send-1",
+   "say": "Yazdır düğmesine basınca sayfa, sayılardan oluşan bir veri olarak kabloyla yazıcıya gönderilir."
+  },
+  {
+   "id": "raster-0",
+   "say": "Yazıcının işlemcisi sayfayı çok küçük noktalardan oluşan bir ızgaraya çevirir."
+  },
+  {
+   "id": "raster-1",
+   "say": "İnç başına 600 nokta çözünürlükte bir A dört sayfa, yaklaşık 35 milyon noktadan oluşur."
+  },
+  {
+   "id": "raster-2",
+   "say": "Yazıcı bir noktayı ya boyar ya da boş bırakır. Ara tonlar, boyutu değişen noktalarla taklit edilir. Buna yarım ton ya da raster denir."
+  },
+  {
+   "id": "raster-3",
+   "say": "Renkli fotoğraf dört renge ayrılır: cam göbeği, macenta, sarı ve siyah. Kısaca bu dört renge ce me ye ka denir."
+  },
+  {
+   "id": "feed-0",
+   "say": "Kâğıt alma makarası, destenin en üstteki yaprağını sürtünmeyle kavrayıp ileri iter."
+  },
+  {
+   "id": "feed-1",
+   "say": "Ayırma pedi alttaki yaprakları geri tutar; böylece iki yaprak birden çekilmez."
+  },
+  {
+   "id": "feed-2",
+   "say": "Yaprak kıvrık yoldan yukarı çıkar. Hizalama makaraları onu düzeltir ve görüntü hazır olana dek bekletir."
+  },
+  {
+   "id": "charge-0",
+   "say": "Yazıcının kalbi ışığa duyarlı tamburdur. Karanlıkta elektrik yükünü tutar, ışık gördüğü yerde yükünü kaybeder."
+  },
+  {
+   "id": "charge-1",
+   "say": "Önce şarj silindiri, dönen tamburun yüzeyini eşit biçimde eksi yükle kaplar: yaklaşık eksi 600 volt."
+  },
+  {
+   "id": "laser-0",
+   "say": "Lazer ışını, dakikada on binlerce devir yapan çok kenarlı bir aynaya çarpar ve tambur boyunca bir uçtan öbür uca süpürülür."
+  },
+  {
+   "id": "laser-1",
+   "say": "Işın, boyanacak her noktada yanar, boş kalacak yerlerde söner. Işık düşen noktalarda yük kaybolur."
+  },
+  {
+   "id": "laser-2",
+   "say": "Böylece tamburda gözle görünmeyen, elektrikten bir görüntü oluşur: gizli görüntü."
+  },
+  {
+   "id": "laser-3",
+   "say": "Tambur kâğıda bir mühür gibi değeceği için bu görüntü ters, yani ayna görüntüsüdür."
+  },
+  {
+   "id": "laser-4",
+   "say": "Çoğu yazıcıda bu ışın gözle görülmeyen kızılötesi ışıktır; burada kırmızıyla gösteriyoruz."
+  },
+  {
+   "id": "develop-0",
+   "say": "Toner, plastik ve boyadan yapılmış çok ince bir tozdur. Taneleri yaklaşık 5 ile 10 mikrometredir; bir saç telinden on kat incedir."
+  },
+  {
+   "id": "develop-1",
+   "say": "Geliştirme silindiri toner tanelerini eksi yükle yükler ve tambura yaklaştırır."
+  },
+  {
+   "id": "develop-2",
+   "say": "Taneler hâlâ eksi yüklü bölgelerden itilir, yükü silinmiş noktalara çekilip yapışır."
+  },
+  {
+   "id": "develop-3",
+   "say": "Görünmeyen elektrik görüntüsü artık görünür bir toz görüntüye dönüştü."
+  },
+  {
+   "id": "transfer-0",
+   "say": "Kâğıdın altındaki aktarım silindiri artı yüklüdür. Eksi yüklü toner, tamburdan kâğıda çekilir."
+  },
+  {
+   "id": "transfer-1",
+   "say": "Kâğıt buraya gelmeden önce üç tamburun daha altından geçti: sarı, macenta ve cam göbeği. Her biri kendi rengini bıraktı."
+  },
+  {
+   "id": "transfer-2",
+   "say": "Siyah dördüncü ve son katman. Renkli baskının sırrı, bu dört katmanın üst üste binmesidir."
+  },
+  {
+   "id": "transfer-3",
+   "say": "Şu an toner kâğıdın üstünde yalnızca duruyor; parmağınızı sürseniz dağılır."
+  },
+  {
+   "id": "clean-0",
+   "say": "Tamburda kalan birkaç tane, temizleme bıçağıyla kazınır ve atık toner bölmesine düşer."
+  },
+  {
+   "id": "clean-1",
+   "say": "Temizlenen yüzey yeniden yüklenir. Tambur küçük olduğu için bir sayfa boyunca bu döngü üç kereden fazla tekrarlanır."
+  },
+  {
+   "id": "fuse-0",
+   "say": "Son durak fırın ünitesi. Yaklaşık 180 ile 200 derecedeki ısıtma silindiri tozu eritir, baskı silindiri de kâğıdın liflerine bastırır."
+  },
+  {
+   "id": "fuse-1",
+   "say": "Eriyen plastik soğuyunca kâğıda kalıcı olarak yapışır. Yazıcıdan çıkan kâğıdın sıcak olmasının nedeni budur."
+  },
+  {
+   "id": "output-0",
+   "say": "Sayfa, baskılı yüzü aşağı bakacak şekilde çıkış tepsisine iner. Böylece sonraki sayfalar doğru sırayla üst üste dizilir."
+  },
+  {
+   "id": "output-1",
+   "say": "Büyüteçle bakalım: yazılar dolu siyah; fotoğraf ise dört renkten, farklı açılarla dizilmiş minik noktalardan oluşuyor."
+  },
+  {
+   "id": "output-2",
+   "say": "Açılı nokta ızgaraları üst üste binince küçük çiçekleri andıran rozet desenleri ortaya çıkar."
+  },
+  {
+   "id": "scan-0",
+   "say": "Şimdi bu sayfanın fotokopisini çekelim. Kapağı açıp sayfayı baskılı yüzü aşağı gelecek şekilde camın köşesine yerleştiriyoruz."
+  },
+  {
+   "id": "scan-1",
+   "say": "Camın altındaki ışık çubuğu sayfa boyunca ilerler. Beyaz yerler ışığı geri yansıtır, koyu yerler yutar."
+  },
+  {
+   "id": "scan-2",
+   "say": "Yansıyan ışık aynalar ve bir mercekten geçip ışık sensörüne ulaşır. İkinci ayna grubu yarı hızla ilerler; böylece ışığın yolu hep aynı uzunlukta kalır."
+  },
+  {
+   "id": "scan-3",
+   "say": "Sensör her satırı sayılara çevirir: 0 siyah, 255 beyaz. Sayfa, yazıcı için yeniden bir sayı ızgarası olur."
+  },
+  {
+   "id": "copy-0",
+   "say": "Taranan görüntü, bilgisayardan gelen bir belge gibi aynı lazer sürecinden geçer."
+  },
+  {
+   "id": "copy-1",
+   "say": "Siyah-beyaz kopyada yalnızca siyah tambur çalışır; renkli tamburlar boşta bekler."
+  },
+  {
+   "id": "compare-0",
+   "say": "İşte orijinal ve kopyası. İlk bakışta benziyorlar ama yakından bakınca farklar ortaya çıkıyor."
+  },
+  {
+   "id": "compare-1",
+   "say": "Renkler grinin tonlarına dönüştü. Kırmızı fener ile mavi deniz birbirine çok yakın grilere düştü."
+  },
+  {
+   "id": "compare-2",
+   "say": "Fotoğraftaki noktalar ikinci kez taranıp yeniden noktalandı. İki nokta ızgarası çakışınca hare denen dalgalı desenler çıkar."
+  },
+  {
+   "id": "compare-3",
+   "say": "En açık tonlar soldu ya da kayboldu, koyu tonlar birbirine karıştı. İnce çizgiler ve minik yazılar bulanıklaştı."
+  },
+  {
+   "id": "compare-4",
+   "say": "Camdaki toz lekeleri, kenardaki gölge ve hafif bir eğiklik de kopyaya geçti."
+  },
+  {
+   "id": "generations-0",
+   "say": "Kopyanın kopyası çekildikçe bu kayıplar birikir. Her kuşakta görüntü biraz daha bozulur."
+  },
+  {
+   "id": "generations-1",
+   "say": "Sekizinci kopyada fotoğraf tanınmaz hâle geldi; küçük yazılar okunmuyor."
+  },
+  {
+   "id": "generations-2",
+   "say": "Dijital bir dosya ise kaç kez kopyalanırsa kopyalansın bit bit aynı kalır."
+  },
+  {
+   "id": "summary-0",
+   "say": "Özetle lazer yazıcı altı adımda çalışır: yükle, ışıkla çiz, tozla, aktar, erit, temizle."
+  },
+  {
+   "id": "summary-1",
+   "say": "Bu yöntemin adı kserografi, yani kuru yazı. Çester Karlson ilk kopyasını 22 Ekim 1938'de çekti."
+  },
+  {
+   "id": "summary-2",
+   "say": "Şimdi sıra sizde: sahneyi döndürün, sayfaların üzerinde gezinip büyüteçle farkları kendiniz inceleyin."
+  }
+ ]
+}

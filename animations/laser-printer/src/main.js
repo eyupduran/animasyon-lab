@@ -6,28 +6,30 @@ import { PagePipeline } from './page/pipeline.js';
 import { setupStudio, Laptop, TonerParticles, Steam } from './scene/studio.js';
 import { Printer } from './scene/printer.js';
 import { Sheet } from './scene/sheet.js';
-import { PAGE_L, PAGE_W, LEAD_FINAL, S_WAIT, S_EXIT } from './scene/layout.js';
-import { buildTimeline, smoother, lerp, clamp01 } from './story/timeline.js';
+import { PAGE_L, PAGE_W, LEAD_FINAL } from './scene/layout.js';
+import { buildTimeline, smoother, lerp, clamp01, twoLines } from './story/timeline.js';
 import { makeState } from './story/state.js';
 import { STEPS } from './story/script.js';
 import { Insets } from './ui/insets.js';
 import { LoupeRenderer } from './ui/loupe.js';
-import { Sound } from './audio/sound.js';
+import { Sound, renderSoundtrack, wavBytes } from './audio/sound.js';
 import { Narration } from './audio/narration.js';
 
 const params = new URLSearchParams(location.search);
 const $ = id => document.getElementById(id);
+const VIDEO = params.get('video') === '1';
 if (params.get('ui') === '0') document.body.classList.add('noui');
+if (VIDEO) document.body.classList.add('video');
 
 // ---------------------------------------------------------------- renderer
 const canvas = $('gl');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: params.has('capture') });
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: params.has('capture') || VIDEO });
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.02;
 const maxDpr = Math.min(window.devicePixelRatio || 1, 2);
-let dpr = Math.min(maxDpr, 1.5);
+let dpr = VIDEO ? 1 : Math.min(maxDpr, 1.5);
 renderer.setPixelRatio(dpr);
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(38, 1, 0.3, 1600);
@@ -116,21 +118,25 @@ const stepEls = [...$('steps').children];
 const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 $('startMeta').textContent = `Yaklaşık ${Math.round(tl.total / 60)} dakika · 16 bölüm · ses için hoparlörü açın`;
 
+// ---------------------------------------------------------------- viewer preferences (remembered)
+const PREF_KEY = 'yazicinin-ici:prefs';
+const prefs = { voice: true, subs: true, subSize: 'm', sfx: true, speed: 1 };
+try { Object.assign(prefs, JSON.parse(localStorage.getItem(PREF_KEY) || '{}')); } catch { /* private mode */ }
+const savePrefs = () => { try { localStorage.setItem(PREF_KEY, JSON.stringify(prefs)); } catch { /* ignore */ } };
+
 // ---------------------------------------------------------------- playback state
-let T = 0, playing = false, speed = 1, explore = false;
-const speeds = [0.75, 1, 1.25, 1.5];
+let T = 0, playing = false, speed = prefs.speed, explore = false;
 if (params.has('ch')) T = tl.byId[params.get('ch')].start + Number(params.get('t') || 0);
 if (params.has('T')) T = Number(params.get('T'));
-let lastCue = null, lastChapter = null, prevSt = null;
+let lastSeg = null, lastChapter = null, prevSt = null, muted = false;
 
 function setPlaying(p) {
   playing = p;
   $('iPlay').innerHTML = p ? '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>' : '<path d="M7 4v16l13-8z"/>';
-  if (!p) narr.pause(); else narr.resume();
 }
 function seek(t) {
   T = Math.max(0, Math.min(tl.total - 0.01, t));
-  narr.stop(); lastCue = null;
+  lastSeg = null;
   if (explore) leaveExplore();
 }
 function chapterJump(dir) {
@@ -141,19 +147,37 @@ function chapterJump(dir) {
 $('bPlay').onclick = () => { if (explore) { leaveExplore(); seek(0); } setPlaying(!playing); };
 $('bPrev').onclick = () => chapterJump(-1);
 $('bNext').onclick = () => chapterJump(1);
-$('bSpeed').onclick = () => { speed = speeds[(speeds.indexOf(speed) + 1) % speeds.length]; $('bSpeed').textContent = `${String(speed).replace('.', ',')}×`; };
-$('bVoice').onclick = () => toggleVoice(!narr.enabled);
-$('bSound').onclick = () => toggleSound();
+$('bSubs').onclick = () => applyPrefs({ subs: !prefs.subs });
+$('bSound').onclick = () => { muted = !muted; sound.setMuted(muted || !prefs.sfx); narr.el.muted = muted; $('iSound').style.opacity = muted ? 0.35 : 1; };
 $('bFull').onclick = () => (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.());
 $('bReplay').onclick = () => { leaveExplore(); seek(0); setPlaying(true); };
-function toggleVoice(on) {
-  if (on && !narr.available) { $('bVoice').title = 'Bu tarayıcıda Türkçe ses bulunamadı'; $('bVoice').textContent = 'Türkçe ses yok'; return; }
-  narr.enabled = on; $('bVoice').classList.toggle('on', on);
-  if (!on) narr.stop(); else lastCue = null;
-}
-function toggleSound() {
-  sound.setMuted(!sound.muted);
-  $('iSound').style.opacity = sound.muted ? 0.35 : 1;
+// settings panel
+const panel = $('settings');
+$('bSettings').onclick = (e) => { e.stopPropagation(); panel.hidden = !panel.hidden; $('bSettings').classList.toggle('on', !panel.hidden); };
+document.addEventListener('pointerdown', e => {
+  if (!panel.hidden && !panel.contains(e.target) && !$('bSettings').contains(e.target)) { panel.hidden = true; $('bSettings').classList.remove('on'); }
+});
+panel.querySelectorAll('[data-pref]').forEach(el => el.addEventListener('click', () => {
+  const k = el.dataset.pref, v = el.dataset.val;
+  applyPrefs({ [k]: v === undefined ? !prefs[k] : k === 'speed' ? Number(v) : v });
+}));
+function applyPrefs(change = {}) {
+  Object.assign(prefs, change);
+  savePrefs();
+  speed = prefs.speed;
+  narr.enabled = prefs.voice;
+  if (!prefs.voice) narr.stop();
+  sound.setMuted(muted || !prefs.sfx);
+  document.body.classList.toggle('nosubs', !prefs.subs);
+  document.body.classList.remove('sub-s', 'sub-m', 'sub-l');
+  document.body.classList.add(`sub-${prefs.subSize}`);
+  $('bSubs').classList.toggle('on', prefs.subs);
+  $('bSubs').setAttribute('aria-pressed', String(prefs.subs));
+  panel.querySelectorAll('[data-pref]').forEach(el => {
+    const k = el.dataset.pref, v = el.dataset.val;
+    el.classList.toggle('on', v === undefined ? !!prefs[k] : String(prefs[k]) === v);
+    if (v === undefined) el.setAttribute('aria-checked', String(!!prefs[k]));
+  });
 }
 const track = $('track');
 track.addEventListener('pointermove', e => {
@@ -172,8 +196,9 @@ window.addEventListener('keydown', e => {
   else if (e.code === 'ArrowRight') chapterJump(1);
   else if (e.code === 'ArrowLeft') chapterJump(-1);
   else if (e.key === 'f' || e.key === 'F') $('bFull').click();
-  else if (e.key === 'n' || e.key === 'N') toggleVoice(!narr.enabled);
-  else if (e.key === 'm' || e.key === 'M') toggleSound();
+  else if (e.key === 'n' || e.key === 'N') applyPrefs({ voice: !prefs.voice });
+  else if (e.key === 'c' || e.key === 'C') applyPrefs({ subs: !prefs.subs });
+  else if (e.key === 'm' || e.key === 'M') $('bSound').click();
 });
 let idleTimer = 0;
 window.addEventListener('pointermove', () => { idleTimer = 0; document.body.classList.remove('idle'); });
@@ -337,13 +362,13 @@ function texts(st) {
     el.classList.toggle('on', c.id === 'summary' ? i === Math.floor((T - c.start) / 1.3) % 6 : i === c.step);
     el.classList.toggle('done', c.step >= 0 && order.indexOf(i) < order.indexOf(c.step) && i !== 5);
   });
-  // subtitle
-  const cue = explore ? null : tl.cueAt(T);
+  // subtitle, one two-line segment at a time
+  const sg = explore ? null : tl.segAt(T);
   const sub = $('subText');
-  if (cue !== lastCue) {
-    if (cue) { sub.textContent = cue.text; sub.classList.add('show'); if (playing) narr.say(cue.text, speed); }
+  if (sg !== lastSeg) {
+    if (sg) { sub.innerHTML = twoLines(sg.text).map(l => `<span>${esc(l)}</span>`).join('<br>'); sub.classList.add('show'); }
     else sub.classList.remove('show');
-    lastCue = cue;
+    lastSeg = sg;
   }
   // inset
   const ch = c.inset && !explore ? c.inset : null;
@@ -365,28 +390,16 @@ function texts(st) {
   $('clock').textContent = `${fmt(T)} / ${fmt(tl.total)}`;
 }
 
-// ---------------------------------------------------------------- sound events
-let blipAcc = 0;
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+
+// ---------------------------------------------------------------- sound: narration clips + machine
+const cueList = tl.chapters.flatMap(c => c.cues);
 function audio(st, prev, dt) {
-  if (!prev || dt <= 0) return;
-  const jump = Math.abs(st.T - prev.T) > 0.5 || st.T < prev.T;
-  const drumSpeed = jump ? 0 : (st.drumTravel - prev.drumTravel) / dt;
-  const scanSpeed = jump ? 0 : (st.scanX - prev.scanX) / dt;
-  const on = st.T > tl.byId.send.start + 5 && !explore;
-  sound.update({ on, drumSpeed, laser: st.laserVis > 0 && playing, fuser: st.fuserHeat > 0.5 && on, scanSpeed });
-  if (jump || !playing) return;
-  if (prev.pickupAngle < 0.05 && st.pickupAngle >= 0.05) { sound.click(); sound.swish(0.7); }
-  const lead = st.job === 2 ? st.sheet2.lead : st.sheet1.lead, plead = prev.job === 2 ? prev.sheet2.lead : prev.sheet1.lead;
-  if (plead !== undefined && lead !== undefined) {
-    if (plead < S_WAIT + 0.2 && lead >= S_WAIT + 0.2) sound.click(0.18);
-    if (plead < S_EXIT && lead >= S_EXIT) sound.swish(0.9, 0.1);
-    if (plead < LEAD_FINAL - 0.5 && lead >= LEAD_FINAL - 0.5) sound.swish(0.35, 0.08);
-  }
-  if (prev.lidAngle > 0.03 && st.lidAngle <= 0.03) sound.lid();
-  if (prev.lidAngle <= 0.001 && st.lidAngle > 0.001) sound.click(0.12);
-  if (!prev.lampOn && st.lampOn) sound.click(0.15);
-  if (!prev.pressed && st.pressed) sound.beep();
-  if (st.packets > 0 && st.packets < 1) { blipAcc += dt; if (blipAcc > 0.07) { blipAcc = 0; sound.blip(); } }
+  const cue = explore ? null : tl.cueAt(T);
+  narr.sync(T, playing, speed, cue);
+  if (cue && playing) { const i = cueList.indexOf(cue); narr.prefetch(cueList.slice(i + 1, i + 3)); }
+  sound.setDuck(narr.speaking);
+  sound.step(st, prev, dt, tl, { playing, explore });
 }
 
 // ---------------------------------------------------------------- loop
@@ -394,13 +407,29 @@ let last = performance.now(), frameAvg = 16, dprTimer = 0;
 function frame(now) {
   const dt = Math.min(0.1, (now - last) / 1000);
   last = now;
-  // advance story time; hold at a subtitle's end while the narrator is still speaking
   if (playing && !explore) {
-    const cue = tl.cueAt(T);
-    const hold = narr.enabled && narr.speaking && cue && T >= cue.end - 0.05;
-    if (!hold) T += dt * speed;
+    T += dt * speed;
     if (T >= tl.total) { T = tl.total - 0.001; enterExplore(); }
   }
+  const st = renderAt(T);
+  audio(st, prevSt, dt);
+  prevSt = st;
+  // idle UI + adaptive resolution
+  idleTimer += dt;
+  if (playing && idleTimer > 3.5 && panel.hidden) document.body.classList.add('idle');
+  frameAvg = frameAvg * 0.95 + dt * 1000 * 0.05;
+  dprTimer += dt;
+  if (dprTimer > 2 && !params.has('capture')) {
+    dprTimer = 0;
+    if (frameAvg > 26 && dpr > 0.8) { dpr = Math.max(0.8, dpr - 0.15); renderer.setPixelRatio(dpr); resize(); }
+    else if (frameAvg < 15 && dpr < maxDpr) { dpr = Math.min(maxDpr, dpr + 0.1); renderer.setPixelRatio(dpr); resize(); }
+  }
+  requestAnimationFrame(frame);
+}
+
+// draw the story at time t (also called frame by frame when rendering a video)
+function renderAt(t) {
+  T = t;
   const st = S(T);
   apply(st);
   if (explore) controls.update();
@@ -423,36 +452,60 @@ function frame(now) {
   renderer.autoClear = true;
   renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
   texts(st);
-  audio(st, prevSt, dt);
-  prevSt = st;
-  // idle UI + adaptive resolution
-  idleTimer += dt;
-  if (playing && idleTimer > 3.5) document.body.classList.add('idle');
-  frameAvg = frameAvg * 0.95 + dt * 1000 * 0.05;
-  dprTimer += dt;
-  if (dprTimer > 2 && !params.has('capture')) {
-    dprTimer = 0;
-    if (frameAvg > 26 && dpr > 0.8) { dpr = Math.max(0.8, dpr - 0.15); renderer.setPixelRatio(dpr); resize(); }
-    else if (frameAvg < 15 && dpr < maxDpr) { dpr = Math.min(maxDpr, dpr + 0.1); renderer.setPixelRatio(dpr); resize(); }
-  }
-  requestAnimationFrame(frame);
+  return st;
 }
-requestAnimationFrame(frame);
+if (!VIDEO) requestAnimationFrame(frame);
 
 // ---------------------------------------------------------------- start
 const skipStart = params.has('ch') || params.has('T');
-narr.ready.then(v => { $('cVoice').checked = !!v; if (!v) { $('cVoice').disabled = true; $('cVoice').parentElement.title = 'Bu tarayıcıda Türkçe ses yok'; } });
+$('cVoice').checked = prefs.voice;
+$('cSubs').checked = prefs.subs;
+applyPrefs();
 $('bStart').disabled = false;
 $('bStart').textContent = 'Başla';
 $('bStart').onclick = () => {
   $('start').classList.add('gone');
   sound.start();
-  toggleVoice($('cVoice').checked);
+  applyPrefs({ voice: $('cVoice').checked, subs: $('cSubs').checked });
   setPlaying(true);
 };
-if (skipStart) { $('start').classList.add('gone'); if (params.get('play') === '1') setPlaying(true); }
+if (skipStart || VIDEO) { $('start').classList.add('gone'); if (params.get('play') === '1') { sound.start(); setPlaying(true); } }
+
+// ---------------------------------------------------------------- video rendering hooks (tools/render-video.mjs at the root)
+// subtitles are burned in only with ?subs=1; the .srt file is always made for YouTube captions
+if (VIDEO) {
+  applyPrefs({ subs: params.get('subs') === '1', subSize: 'm' });
+  let wav = null;
+  window.__video = {
+    duration: tl.total,
+    renderAt: (t) => { renderAt(Math.min(t, tl.total - 0.001)); },
+    async prepareSound(from = 0, to = tl.total) {
+      const buf = await renderSoundtrack(tl, S, { from, to });
+      wav = wavBytes(buf);
+      return Math.ceil(wav.length / 2e6);
+    },
+    soundChunk(i) {
+      const part = wav.subarray(i * 2e6, (i + 1) * 2e6);
+      let s = '';
+      for (let k = 0; k < part.length; k += 0x8000) s += String.fromCharCode.apply(null, part.subarray(k, k + 0x8000));
+      return btoa(s);
+    },
+    srt(from = 0, to = tl.total) {
+      const ts = (x) => {
+        x = Math.max(0, x - from);
+        const ms = Math.round(x * 1000), h = Math.floor(ms / 3600000), m = Math.floor(ms / 60000) % 60, sec = Math.floor(ms / 1000) % 60;
+        return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')},${String(ms % 1000).padStart(3, '0')}`;
+      };
+      return tl.segments.filter(g => g.end > from && g.start < to)
+        .map((g, i) => `${i + 1}\n${ts(g.start)} --> ${ts(Math.min(g.end, to))}\n${twoLines(g.text).join('\n')}\n`).join('\n');
+    },
+    chapters(from = 0) { return tl.chapters.filter(c => c.end > from).map(c => ({ t: Math.max(0, c.start - from), title: c.title })); },
+  };
+}
 
 // hooks for automated screenshots
 window.__tl = tl;
+window.__narr = narr;
+window.__T = () => T;
 window.__seek = (t) => { T = t; };
 window.__ready = true;

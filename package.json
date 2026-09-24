@@ -6,7 +6,9 @@
   "scripts": {
     "new": "node tools/new-animation.mjs",
     "build": "node tools/build-site.mjs",
-    "avatars": "node tools/avatars.mjs"
+    "avatars": "node tools/avatars.mjs",
+    "voice": "node tools/voice.mjs",
+    "video": "node tools/render-video.mjs"
   },
   "engines": {
     "node": ">=20"

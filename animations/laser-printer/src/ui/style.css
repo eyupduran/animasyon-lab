@@ -45,10 +45,38 @@ button { font: inherit; color: inherit; cursor: pointer; }
 #insetCanvas { width: 100%; aspect-ratio: 4 / 3; display: block; border-radius: 10px; background: #fff; }
 #insetCaption { margin: 10px 4px 2px; font-size: 16.5px; line-height: 1.35; font-weight: 500; min-height: 2.7em; }
 
-/* ---------- subtitles */
-#subtitle { position: absolute; left: 50%; bottom: 86px; transform: translateX(-50%); width: min(1080px, calc(100vw - 32px)); display: flex; justify-content: center; }
-#subText { margin: 0; background: rgba(21, 23, 28, .9); color: #fff; font-weight: 500; font-size: clamp(18px, 2.15vw, 29px); line-height: 1.38; padding: 13px 24px 14px; border-radius: 14px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,.25); opacity: 0; transform: translateY(6px); transition: opacity .28s, transform .28s; text-wrap: balance; }
+/* ---------- subtitles: one or two lines, each on its own dark band */
+#subtitle { position: absolute; left: 50%; bottom: 88px; transform: translateX(-50%); width: min(1180px, calc(100vw - 32px)); display: flex; justify-content: center; }
+#subText { margin: 0; text-align: center; font-weight: 500; line-height: 1.62; font-size: var(--subSize); opacity: 0; transform: translateY(6px); transition: opacity .22s, transform .22s; }
 #subText.show { opacity: 1; transform: none; }
+#subText span { background: rgba(14, 15, 19, .86); color: #fff; padding: .1em .5em .14em; border-radius: .28em; -webkit-box-decoration-break: clone; box-decoration-break: clone; letter-spacing: .005em; }
+body { --subSize: clamp(19px, 2.15vw, 30px); }
+body.sub-s { --subSize: clamp(16px, 1.65vw, 23px); }
+body.sub-l { --subSize: clamp(22px, 2.75vw, 38px); }
+body.nosubs #subtitle { display: none; }
+
+/* ---------- settings */
+#settings { position: absolute; right: max(14px, calc(50vw - 540px)); bottom: 80px; width: min(360px, calc(100vw - 28px)); background: var(--paper); border: 1.5px solid var(--ink); border-radius: 16px; padding: 10px 14px 12px; box-shadow: 0 18px 50px rgba(20,16,10,.28); pointer-events: auto; z-index: 3; }
+#settings[hidden] { display: none; }
+#settings .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 15px; font-weight: 500; }
+#settings .row:last-of-type { border-bottom: 0; }
+#settings button { font: inherit; }
+.sw { width: 44px; height: 26px; border-radius: 999px; border: 0; background: rgba(21,23,28,.2); position: relative; transition: background .2s; flex: none; }
+.sw::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: transform .2s; }
+.sw.on { background: var(--ink); }
+.sw.on::after { transform: translateX(18px); }
+.seg { display: flex; gap: 2px; background: rgba(21,23,28,.08); border-radius: 10px; padding: 2px; }
+.seg button { border: 0; background: transparent; padding: 5px 8px; border-radius: 8px; font-size: 13px !important; font-weight: 600; color: var(--ink2); }
+.seg button.on { background: var(--ink); color: #fff; }
+#settings .hint { margin: 8px 0 0; font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+#bar .cc { flex: none; height: 30px; min-width: 40px; border: 1.8px solid var(--ink); background: transparent; border-radius: 7px; font-family: var(--mono); font-weight: 500; font-size: 13px; letter-spacing: .04em; }
+#bar .cc.on { background: var(--ink); color: #fff; }
+#bar .icon.on { background: rgba(21,23,28,.12); }
+
+/* ---------- video rendering: no controls, no animated CSS */
+body.video #bar, body.video #start, body.video #explore, body.video #settings { display: none !important; }
+body.video *, body.video *::before, body.video *::after { transition: none !important; }
+body.video #subtitle { bottom: 56px; }
 
 /* ---------- labels, leaders, loupes */
 #leaders { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
@@ -82,7 +110,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
 #explore .pill { background: #fff; color: var(--ink); border: 0; border-radius: 999px; font-weight: 600; padding: 7px 14px; }
 
 body.noui #ui { display: none; }
-body.idle #bar { opacity: .0; }
+body.idle #bar { opacity: 0; }
+body.idle #subtitle { bottom: 30px; }
+#subtitle { transition: bottom .4s; }
 body.idle #bar:hover { opacity: 1; }
 
 /* ---------- start screen */
@@ -118,8 +148,9 @@ body.idle #bar:hover { opacity: 1; }
   .insetHead { grid-column: 1 / -1; margin: 0 2px; }
   #insetCanvas { aspect-ratio: 4 / 3; }
   #insetCaption { font-size: 14px; margin: 0; min-height: 0; }
-  #subtitle { bottom: 74px; width: calc(100vw - 20px); }
-  #subText { font-size: 17px; padding: 10px 14px; }
+  #subtitle { bottom: 70px; width: calc(100vw - 20px); }
+  body { --subSize: 17px; } body.sub-s { --subSize: 15px; } body.sub-l { --subSize: 20px; }
+  #settings { right: 8px; bottom: 66px; }
   #bar { height: 50px; gap: 2px; padding: 0 6px; width: calc(100vw - 16px); bottom: max(8px, env(safe-area-inset-bottom)); }
   #bar .icon { width: 34px; height: 34px; }
   #bPrev, #bNext, #bFull, #clock { display: none !important; }

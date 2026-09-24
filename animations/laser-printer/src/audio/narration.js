@@ -1,45 +1,46 @@
-// Optional spoken narration with the browser's own Turkish voice (no online service).
+// Narration: plays the pre-recorded Piper clip of the subtitle on screen, locked to story time
+// (seeking, pausing and speed changes keep voice and picture together).
 export class Narration {
   constructor() {
-    this.enabled = false;
-    this.voice = null;
-    this.speaking = false;
-    this.current = null;
-    this.ready = new Promise(res => {
-      const pick = () => {
-        const vs = speechSynthesis.getVoices();
-        const tr = vs.filter(v => /^tr/i.test(v.lang));
-        this.voice = tr.find(v => /tolga|emel|yelda|google/i.test(v.name)) || tr[0] || null;
-        if (vs.length) res(this.voice);
-      };
-      if (!('speechSynthesis' in window)) { res(null); return; }
-      pick();
-      speechSynthesis.onvoiceschanged = pick;
-      setTimeout(() => res(this.voice), 1500);
+    this.enabled = true;
+    this.el = new Audio();
+    this.el.preload = 'auto';
+    this.el.preservesPitch = true;
+    this.cue = null;
+    this.pending = null;
+    this.warm = new Map();
+    this.el.addEventListener('loadedmetadata', () => {
+      if (this.pending !== null) { this.el.currentTime = this.pending; this.pending = null; }
     });
   }
-  get available() { return !!this.voice; }
 
-  // text as it should be spoken (no brackets, letters read the Turkish way)
-  static spoken(text) {
-    return text
-      .replace(/\s*\([^)]*\)/g, '')
-      .replace(/CMYK/g, 'ce, me, ye, ka')
-      .replace(/A4/g, 'A dört')
-      .replace(/“|”/g, '');
+  get speaking() { return !this.el.paused && !!this.cue; }
+
+  // prefetch the next clips so they start without a gap
+  prefetch(cues) {
+    for (const q of cues) {
+      if (!q?.voice || this.warm.has(q.voice.url)) continue;
+      const a = new Audio(); a.preload = 'auto'; a.src = q.voice.url;
+      this.warm.set(q.voice.url, a);
+      if (this.warm.size > 6) this.warm.delete(this.warm.keys().next().value);
+    }
   }
 
-  say(text, rate = 1) {
-    if (!this.enabled || !this.voice) return;
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(Narration.spoken(text));
-    u.voice = this.voice; u.lang = this.voice.lang; u.rate = Math.min(1.6, 0.98 * rate); u.pitch = 1;
-    this.speaking = true;
-    u.onend = u.onerror = () => { if (this.current === u) this.speaking = false; };
-    this.current = u;
-    speechSynthesis.speak(u);
+  sync(T, playing, speed, cue, volume = 1) {
+    const off = cue?.voice ? T - cue.start : -1;
+    const active = this.enabled && playing && cue?.voice && off >= 0 && off < cue.voice.dur;
+    if (!active) { if (!this.el.paused) this.el.pause(); if (!cue || !this.enabled) this.cue = null; return; }
+    if (this.cue !== cue) {
+      this.cue = cue;
+      this.el.src = cue.voice.url;
+      this.pending = off;
+    } else if (this.pending === null && Math.abs(this.el.currentTime - off) > 0.25 * Math.max(1, speed)) {
+      this.el.currentTime = off;
+    }
+    this.el.playbackRate = speed;
+    this.el.volume = volume;
+    if (this.el.paused) this.el.play().catch(() => {});
   }
-  stop() { if ('speechSynthesis' in window) speechSynthesis.cancel(); this.speaking = false; this.current = null; }
-  pause() { if ('speechSynthesis' in window) speechSynthesis.pause(); }
-  resume() { if ('speechSynthesis' in window) speechSynthesis.resume(); }
+
+  stop() { this.el.pause(); this.cue = null; }
 }
