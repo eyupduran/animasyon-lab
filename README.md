@@ -9,6 +9,7 @@ Tarayıcıda çalışan eğitim animasyonlarının ve denemelerinin koleksiyonu.
 | Animasyon | Teknik | Açıklama |
 |---|---|---|
 | [Sindirim Yolculuğu](animations/digestive-journey) · [izle](https://eyupduran.github.io/animasyon-lab/digestive-journey/) | Three.js · Avaturn GLB | Bir besinin ağızdan mideye, bağırsaklara, kana ve beyne uzanan yolculuğu |
+| [Yazıcının İçinde](animations/laser-printer) · [izle](https://eyupduran.github.io/animasyon-lab/laser-printer/) | Three.js · Vite · GPU simülasyonu | Renkli lazer yazıcı ve fotokopinin kesit hâlinde anlatımı; kopyadan kopyaya biriken kayıplar |
 
 ## Yeni animasyon
 
