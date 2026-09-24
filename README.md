@@ -1,10 +1,12 @@
 # Animasyon Lab
 
+**Canlı site:** https://eyupduran.github.io/animasyon-lab/
+
 Tarayıcıda çalışan 3D eğitim animasyonları. Her animasyon kodla çizilir (Three.js · WebGL · Web Audio), tek bir HTML dosyasına derlenir, istenirse kare kare MP4 videoya dönüştürülür. `main` dalına yapılan her gönderim, tüm animasyonları GitHub Pages'te otomatik yayınlar.
 
 | Animasyon | Açıklama |
 |---|---|
-| [Bir Lokumun Yolculuğu](animations/lokumun-yolculugu) | Bir parça lokumun ağızdan mideye, bağırsaklara, kana ve beyne uzanan yolculuğu |
+| [Bir Lokumun Yolculuğu](animations/lokumun-yolculugu) · [izle](https://eyupduran.github.io/animasyon-lab/lokumun-yolculugu/) | Bir parça lokumun ağızdan mideye, bağırsaklara, kana ve beyne uzanan yolculuğu |
 
 ## Hızlı başlangıç
 
