@@ -1,0 +1,36 @@
+{
+ "omni-erkek-derin": {
+  "code": "O9",
+  "label": "Erkek, orta yaş, derin",
+  "engine": "omnivoice",
+  "ref": "omnivoice/erkek-derin.wav",
+  "ref_text": "Yazıcının kalbi, ışığa duyarlı bir tamburdur. Karanlıkta elektrik yükünü tutar, ışık gördüğü yerde ise bu yükü kaybeder. Peki, bu minicik toz taneleri kâğıda nasıl yapışıyor? Hadi, birlikte yakından bakalım."
+ },
+ "omni-erkek-yasli": {
+  "code": "O10",
+  "label": "Erkek, yaşlı",
+  "engine": "omnivoice",
+  "ref": "omnivoice/erkek-yasli.wav",
+  "ref_text": "Yazıcının kalbi, ışığa duyarlı bir tamburdur. Karanlıkta elektrik yükünü tutar, ışık gördüğü yerde ise bu yükü kaybeder. Peki, bu minicik toz taneleri kâğıda nasıl yapışıyor? Hadi, birlikte yakından bakalım."
+ },
+ "omni-kadin-genc": {
+  "code": "O1",
+  "label": "Kadın, genç",
+  "engine": "omnivoice",
+  "ref": "omnivoice/kadin-genc.wav",
+  "ref_text": "Yazıcının kalbi, ışığa duyarlı bir tamburdur. Karanlıkta elektrik yükünü tutar, ışık gördüğü yerde ise bu yükü kaybeder. Peki, bu minicik toz taneleri kâğıda nasıl yapışıyor? Hadi, birlikte yakından bakalım."
+ },
+ "omni-kadin-yasli": {
+  "code": "O5",
+  "label": "Kadın, yaşlı",
+  "engine": "omnivoice",
+  "ref": "omnivoice/kadin-yasli.wav",
+  "ref_text": "Yazıcının kalbi, ışığa duyarlı bir tamburdur. Karanlıkta elektrik yükünü tutar, ışık gördüğü yerde ise bu yükü kaybeder. Peki, bu minicik toz taneleri kâğıda nasıl yapışıyor? Hadi, birlikte yakından bakalım."
+ },
+ "piper-dfki": {
+  "code": "P1",
+  "label": "Piper, erkek (eski, robotik)",
+  "engine": "piper",
+  "profile": "anlatici"
+ }
+}

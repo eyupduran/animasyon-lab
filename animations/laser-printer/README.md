@@ -33,7 +33,7 @@ Renkli, çok işlevli bir lazer yazıcının yan tarafı kesilip açılmış 3D 
   4. Kopyanın kopyası aynı işlemi tekrarlıyor (1, 2, 4 ve 8. kuşak).
 - **Tambur yüzeyi durumsuz bir gölgelendiriciyle çiziliyor** (`src/scene/materials.js`): yüzeydeki her noktanın hangi sayfa satırını taşıdığı ve yüklü, pozlanmış, tonerli ya da temizlenmiş olduğu kâğıdın ilerleyişinden hesaplanıyor. Tamburdaki görüntü bu yüzden doğal olarak ters (ayna görüntüsü) çıkıyor.
 - **Zaman çizelgesi:** her şey hikâye zamanının saf bir fonksiyonu (`src/story/state.js`), bu yüzden istenen ana doğrudan atlanabiliyor. Bölüm süreleri altyazıların okunma süresinden hesaplanıyor.
-- **Seslendirme:** her altyazı cümlesi yerel Piper TTS ile (Voxtory'deki Türkçe `tr_TR-dfki-medium` sesi, "Anlatıcı" profili) ayrı bir MP3 olarak kaydedilmiş (`public/voice/`). Altyazıların süresi bu kayıtların gerçek uzunluğundan hesaplanıyor, uzun cümleler sesle birlikte ilerleyen iki satırlık parçalara bölünüyor. Oynatıcıda anlatım hikâye zamanına kilitli: atlama, duraklatma ve hız değişikliğinde ses ile görüntü birlikte kalıyor; anlatım sırasında makine sesleri kısılıyor.
+- **Seslendirme:** her altyazı cümlesi yerel OmniVoice ile, O9 sesiyle (derin erkek anlatıcı) ayrı bir MP3 olarak kaydedilmiş (`public/voice/`); her cümle Whisper ile denetlenmiş. Altyazıların süresi bu kayıtların gerçek uzunluğundan hesaplanıyor, uzun cümleler sesle birlikte ilerleyen iki satırlık parçalara bölünüyor. Oynatıcıda anlatım hikâye zamanına kilitli: atlama, duraklatma ve hız değişikliğinde ses ile görüntü birlikte kalıyor; anlatım sırasında makine sesleri kısılıyor.
 - **Makine sesleri:** Web Audio ile sentezleniyor. Aynı kod video için bütün film sesini çevrimdışı üretiyor.
 
 ## Ayarlar
@@ -58,7 +58,8 @@ npm run build      # dist/ klasörüne derler
 
 ```
 node tools/lines.mjs                  # narration/lines.json: söylenecek satırlar
-cd ../.. && npm run voice -- laser-printer   # yalnızca değişen satırları Piper ile yeniden seslendirir
+cd ../.. && npm run voice -- laser-printer   # yalnızca değişen satırları yeniden seslendirir
+npm run voice -- laser-printer --voice omni-kadin-genc   # başka bir sesle
 ```
 
 ### YouTube videosu

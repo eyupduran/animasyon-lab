@@ -32,17 +32,19 @@ npm run avatars -- add set-02-f03                  # ham modeli (~14 MB) küçü
 
 Ham modeller git'te tutulmaz (`catalog.json` → `source`).
 
-## Seslendirme (yerel Piper TTS)
+## Seslendirme (yerel, ücretsiz)
 
-Anlatım sesleri ücretsiz ve tamamen yerel [Piper](https://github.com/rhasspy/piper) ile üretilir (Voxtory projesindeki Türkçe `tr_TR-dfki-medium` modeli ve aynı altı ses profili). Piper ve model dosyaları git'te tutulmaz; `C:\ProgramData\piper_data` altında (ya da `PIPER_DIR` ortam değişkeniyle gösterilen klasörde) bulunmalıdır.
+Anlatım sesleri bu bilgisayarda üretilir; dışarıya hiçbir şey gönderilmez. Varsayılan motor **OmniVoice** (Apache 2.0, ticari kullanım serbest, ekran kartıyla çalışır). Sesler tarifle tasarlanmış sentetik seslerdir, gerçek bir kişiden kopyalanmamıştır. Liste ve açıklama [assets/voices/README.md](assets/voices/README.md) dosyasında.
 
 ```
-npm run voice -- profiles              # ses profilleri: anlatici, yavas, hizli, fisiltili, enerjik, derin
-npm run voice -- laser-printer         # animations/laser-printer/narration/lines.json → public/voice/*.mp3
-npm run voice -- laser-printer --profile derin --force
+npm run voice -- voices                                  # sesler: omni-erkek-derin (O9), omni-erkek-yasli (O10), omni-kadin-genc (O1), omni-kadin-yasli (O5), piper-dfki
+npm run voice -- laser-printer                           # animations/laser-printer/narration/lines.json → public/voice/*.mp3
+npm run voice -- laser-printer --voice omni-kadin-genc   # sesi değiştirir (seçim lines.json'a yazılır)
 ```
 
-Animasyon söylenecek satırları `narration/lines.json` dosyasına yazar (`{ "profile", "out", "manifest", "lines": [{ "id", "say" }] }`). Araç her satırı ayrı MP3 yapar, sürelerini `narration/manifest.json` dosyasına kaydeder ve yalnızca değişen satırları yeniden üretir. Kayıtlar git'e girer, çünkü site derlenirken Piper çalışmaz.
+Animasyon söylenecek satırları `narration/lines.json` dosyasına yazar (`{ "voice", "out", "manifest", "lines": [{ "id", "say" }] }`). Araç her satırı ayrı bir MP3 yapar ve sürelerini `narration/manifest.json` dosyasına kaydeder; yalnızca değişen satırları yeniden üretir. Her cümle Whisper ile dinlenip denetlenir, bozuk çıkan birkaç kez yeniden denenir, hâlâ şüpheli olanlar sonda listelenir. Kayıtlar git'e girer, çünkü site derlenirken model çalışmaz.
+
+Kurulum (bir kez): `C:\ProgramData	ts_lab\omni` Python ortamı (PyTorch CUDA, `omnivoice`, `faster-whisper`), modeller `C:\ProgramData	ts_lab\hf` altında.
 
 ## YouTube videosu
 
@@ -63,10 +65,12 @@ animasyon-lab/
 │     ├─ README.md              bu animasyonun anlatımı ve komutları (zorunlu)
 │     └─ poster.jpg             sitedeki kart görseli, 16:9 (isteğe bağlı)
 ├─ assets/avatars/             isteğe bağlı avatar kütüphanesi: catalog.json, models/*.glb, thumbs/*.jpg
+├─ assets/voices/              anlatıcı sesleri: catalog.json + her sesin kimlik kaydı
 ├─ tools/
 │  ├─ new-animation.mjs         boş bir animasyon klasörü açar
 │  ├─ avatars.mjs               avatar kütüphanesi: list, add, use, thumbs
-│  ├─ voice.mjs                 yerel Piper TTS ile seslendirme
+│  ├─ voice.mjs                 yerel seslendirme (OmniVoice, Piper) + Whisper denetimi
+│  ├─ tts/omnivoice_worker.py   OmniVoice + Whisper çalışanı
 │  ├─ render-video.mjs          YouTube için MP4 + SRT + bölüm listesi
 │  └─ build-site.mjs            her animasyonu kendi komutuyla derler, siteyi dist/ altında toplar
 ├─ .github/workflows/pages.yml  her gönderimde siteyi derleyip GitHub Pages'e yayınlar

@@ -1,5 +1,6 @@
 {
- "profile": "anlatici",
+ "voice": "omni-erkek-derin",
+ "speed": 0.88,
  "out": "public/voice",
  "manifest": "narration/manifest.json",
  "lines": [
@@ -25,7 +26,7 @@
   },
   {
    "id": "raster-1",
-   "say": "İnç başına 600 nokta çözünürlükte bir A dört sayfa, yaklaşık 35 milyon noktadan oluşur."
+   "say": "İnç başına altı yüz nokta çözünürlükte bir A dört sayfa, yaklaşık otuz beş milyon noktadan oluşur."
   },
   {
    "id": "raster-2",
@@ -53,7 +54,7 @@
   },
   {
    "id": "charge-1",
-   "say": "Önce şarj silindiri, dönen tamburun yüzeyini eşit biçimde eksi yükle kaplar: yaklaşık eksi 600 volt."
+   "say": "Önce şarj silindiri, dönen tamburun yüzeyini eşit biçimde eksi yükle kaplar: yaklaşık eksi altı yüz volt."
   },
   {
    "id": "laser-0",
@@ -77,7 +78,7 @@
   },
   {
    "id": "develop-0",
-   "say": "Toner, plastik ve boyadan yapılmış çok ince bir tozdur. Taneleri yaklaşık 5 ile 10 mikrometredir; bir saç telinden on kat incedir."
+   "say": "Toner, plastik ve boyadan yapılmış çok ince bir tozdur. Taneleri yaklaşık beş ile on mikrometredir; bir saç telinden on kat incedir."
   },
   {
    "id": "develop-1",
@@ -117,7 +118,7 @@
   },
   {
    "id": "fuse-0",
-   "say": "Son durak fırın ünitesi. Yaklaşık 180 ile 200 derecedeki ısıtma silindiri tozu eritir, baskı silindiri de kâğıdın liflerine bastırır."
+   "say": "Son durak fırın ünitesi. Yaklaşık yüz seksen ile iki yüz derecedeki ısıtma silindiri tozu eritir, baskı silindiri de kâğıdın liflerine bastırır."
   },
   {
    "id": "fuse-1",
@@ -149,7 +150,7 @@
   },
   {
    "id": "scan-3",
-   "say": "Sensör her satırı sayılara çevirir: 0 siyah, 255 beyaz. Sayfa, yazıcı için yeniden bir sayı ızgarası olur."
+   "say": "Sensör her satırı sayılara çevirir: sıfır siyah, iki yüz elli beş beyaz. Sayfa, yazıcı için yeniden bir sayı ızgarası olur."
   },
   {
    "id": "copy-0",
@@ -197,7 +198,7 @@
   },
   {
    "id": "summary-1",
-   "say": "Bu yöntemin adı kserografi, yani kuru yazı. Çester Karlson ilk kopyasını 22 Ekim 1938'de çekti."
+   "say": "Bu yöntemin adı kserografi, yani kuru yazı. Çester Karlson ilk kopyasını yirmi iki Ekim bin dokuz yüz otuz sekizde çekti."
   },
   {
    "id": "summary-2",
