@@ -1,0 +1,24 @@
+{
+  "slug": "_template",
+  "title": "Yeni Animasyon",
+  "description": "Bu animasyonun bir cümlelik açıklaması (ana sayfadaki kartta görünür).",
+  "lang": "tr",
+  "page": {
+    "stopWord": "sahne",
+    "hud": { "camera": "Kamera", "temp": "", "subject": "Durum" },
+    "start": {
+      "eyebrow": "Konu · Alt konu",
+      "titleHtml": "Yeni Animasyon",
+      "lede": "İzleyiciye ne göreceğini anlatan iki cümlelik giriş.",
+      "button": "Başla"
+    },
+    "end": {
+      "eyebrow": "Bitti",
+      "titleHtml": "Özet başlığı",
+      "creditHtml": "Tüm sahneler tarayıcıda, kodla üretildi: Three.js · WebGL · Web Audio."
+    }
+  },
+  "scenes": ["example.js", "main.js"],
+  "embed": {},
+  "video": { "endHold": 6, "narration": true }
+}

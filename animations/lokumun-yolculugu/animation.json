@@ -1,0 +1,43 @@
+{
+  "slug": "lokumun-yolculugu",
+  "title": "Bir Lokumun Yolculuğu",
+  "description": "Bir parça lokumun ağızdan mideye, bağırsaklara, kana ve beyne uzanan yolculuğunu anlatan etkileşimli 3D animasyon.",
+  "lang": "tr",
+  "page": {
+    "stopWord": "durak",
+    "hud": { "camera": "Kapsül kamera", "temp": "37,0 °C", "subject": "Lokum" },
+    "start": {
+      "eyebrow": "Sindirim · Dolaşım · Beyin",
+      "titleHtml": "Bir <em>Lokumun</em> Yolculuğu",
+      "lede": "Ağızdaki ilk ısırıktan beyindeki ilk kıvılcıma kadar: bir parça fıstıklı lokumu, yanında yolculuk eden minik bir kameradan izleyin. Her durakta ne olduğunu, hangi organda olduğunuzu ve ne kadar sürdüğünü göreceksiniz.",
+      "button": "Yolculuğa başla"
+    },
+    "end": {
+      "eyebrow": "Yolculuk tamamlandı",
+      "titleHtml": "Bir lokum, <em>on üç durak</em>",
+      "creditHtml": "Tüm sahneler tarayıcıda, kodla üretildi: Three.js · WebGL · Web Audio.<br>Claude Opus 5.5 ile tasarlandı ve kodlandı.<br>Eğitim amaçlıdır; ölçekler ve süreler yaklaşıktır."
+    }
+  },
+  "scenes": [
+    "body-map.js",
+    "lokum.js",
+    "cafe.js",
+    "upper-tract.js",
+    "stomach.js",
+    "intestine.js",
+    "absorption.js",
+    "blood.js",
+    "heart.js",
+    "brain.js",
+    "colon.js",
+    "finale.js",
+    "main.js"
+  ],
+  "embed": {
+    "AVATAR_GLB_B64": "assets/avatar.glb"
+  },
+  "video": {
+    "endHold": 12,
+    "narration": true
+  }
+}
