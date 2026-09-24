@@ -8,14 +8,14 @@ Tarayıcıda çalışan eğitim animasyonlarının deposu. Her animasyon `animat
 
 | Animasyon | Teknik | Açıklama |
 |---|---|---|
-| [Bir Lokumun Yolculuğu](animations/lokumun-yolculugu) · [izle](https://eyupduran.github.io/animasyon-lab/lokumun-yolculugu/) | Three.js · Avaturn GLB | Bir parça lokumun ağızdan mideye, bağırsaklara, kana ve beyne uzanan yolculuğu |
+| [Bir Lokumun Yolculuğu](animations/digestive-journey) · [izle](https://eyupduran.github.io/animasyon-lab/digestive-journey/) | Three.js · Avaturn GLB | Bir parça lokumun ağızdan mideye, bağırsaklara, kana ve beyne uzanan yolculuğu |
 
 ## Yeni animasyon
 
 ```
-npm run new -- kalbin-bir-atimi "Kalbin Bir Atımı"                            # Three.js şablonundan
-npm run new -- kalbin-bir-atimi "Kalbin Bir Atımı" --from lokumun-yolculugu   # var olan bir animasyondan
-cd animations/kalbin-bir-atimi
+npm run new -- heartbeat "Kalbin Bir Atımı"                            # Three.js şablonundan
+npm run new -- heartbeat "Kalbin Bir Atımı" --from digestive-journey   # var olan bir animasyondan
+cd animations/heartbeat
 node build.mjs                                                                # → dist/index.html
 ```
 
@@ -29,7 +29,7 @@ Başka bir teknikle yazılan bir animasyon da aynı kurallara uyduğu sürece si
 animasyon-lab/
 ├─ animations/
 │  ├─ _template-threejs/        Three.js şablonu (npm run new varsayılanı; "_" ile başlayanlar yayınlanmaz)
-│  └─ lokumun-yolculugu/        her animasyon bağımsız bir proje
+│  └─ digestive-journey/        her animasyon bağımsız bir proje
 │     ├─ animation.json         kimlik kartı: başlık, açıklama, teknik, derleme komutu, çıktı klasörü
 │     ├─ README.md              bu animasyonun anlatımı ve komutları
 │     ├─ package.json           bu animasyonun komutları ve (varsa) bağımlılıkları
@@ -49,11 +49,11 @@ animasyon-lab/
 
 ## Bir animasyon klasörünün kuralları
 
-1. Klasör adı küçük harf, rakam ve tire: `kalbin-bir-atimi`.
+1. Klasör adı İngilizce; küçük harf, rakam ve tire: `heartbeat`, `digestive-journey`. Türkçe başlık ve metinler `animation.json` içinde durur.
 2. `animation.json` şu alanları taşır:
    ```json
    {
-     "slug": "kalbin-bir-atimi",
+     "slug": "heartbeat",
      "title": "Kalbin Bir Atımı",
      "description": "Sitedeki kartta görünen tek cümle.",
      "tech": "Three.js r170 · WebGL",
@@ -70,5 +70,5 @@ animasyon-lab/
 
 ```
 npm run build                        # tüm animasyonlar → dist/index.html
-npm run build -- lokumun-yolculugu   # yalnızca biri (ana sayfa yine üretilir)
+npm run build -- digestive-journey   # yalnızca biri (ana sayfa yine üretilir)
 ```

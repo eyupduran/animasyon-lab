@@ -1,5 +1,5 @@
 {
-  "slug": "lokumun-yolculugu",
+  "slug": "digestive-journey",
   "title": "Bir Lokumun Yolculuğu",
   "description": "Bir parça lokumun ağızdan mideye, bağırsaklara, kana ve beyne uzanan yolculuğunu anlatan etkileşimli 3D animasyon.",
   "tech": "Three.js r170 · WebGL · Web Audio · Avaturn GLB karakter",

@@ -1,7 +1,7 @@
 // Starts a new animation by copying a template or an existing animation.
 //   node tools/new-animation.mjs <slug> "<Başlık>"                          (from _template-threejs)
-//   node tools/new-animation.mjs <slug> "<Başlık>" --from lokumun-yolculugu  (from any animation)
-// slug: lowercase letters, digits and dashes (e.g. kalbin-bir-atimi)
+//   node tools/new-animation.mjs <slug> "<Başlık>" --from digestive-journey  (from any animation)
+// slug: lowercase letters, digits and dashes (e.g. heartbeat)
 // Build output, installed packages and rendered videos are not copied.
 import fs from 'fs';
 import path from 'path';

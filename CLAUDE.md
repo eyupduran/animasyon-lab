@@ -4,7 +4,7 @@ Bu depo birden çok bağımsız eğitim animasyonu barındırır. Kullanıcı he
 
 ## Yeni animasyon isteğinde
 
-1. `npm run new -- <slug> "<Başlık>"` ile başla. İstenen şeye en yakın animasyon varsa `--from <o-animasyon>` kullan (ör. karakterli bir açılış gerekiyorsa `--from lokumun-yolculugu`).
+1. `npm run new -- <slug> "<Başlık>"` ile başla. İstenen şeye en yakın animasyon varsa `--from <o-animasyon>` kullan (ör. karakterli bir açılış gerekiyorsa `--from digestive-journey`).
 2. Yalnızca `animations/<slug>/` içinde çalış. Başka bir animasyonun dosyalarını değiştirme; ortak bir şey gerekiyorsa kopyala.
 3. `animation.json` içindeki `slug`, `title`, `description`, `tech`, `build`, `output` alanlarını doldur. Sitenin kartı bunlardan üretilir.
 4. Animasyonun `README.md` dosyasını yaz: ne anlattığı, bölümler, komutlar.
@@ -23,4 +23,4 @@ Bu depo birden çok bağımsız eğitim animasyonu barındırır. Kullanıcı he
 ## Dil ve adlandırma
 
 - Arayüz metinleri, README'ler ve commit mesajları Türkçe; kod tanımlayıcıları İngilizce.
-- Klasör/slug adları Türkçe karakter içermez: `lokumun-yolculugu`, `kalbin-bir-atimi`.
+- Klasör, dosya ve slug adları İngilizce: `digestive-journey`, `heartbeat`. Türkçe yalnızca ekranda görünen metinlerde (başlık, alt yazı, README) kullanılır ve düzgün Türkçe olmalıdır.

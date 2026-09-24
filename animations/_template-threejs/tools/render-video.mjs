@@ -110,14 +110,14 @@ const run = args => execFileSync('ffmpeg', ['-y', '-loglevel', 'error', ...args]
 const pic = path.join(WORK, 'picture-share.mp4');
 run(['-i', silent, '-vf', 'hqdn3d=1.2:1.2:4:4', '-c:v', 'libx264', '-preset', 'slow', '-crf', '22', '-pix_fmt', 'yuv420p', '-an', pic]);
 const lim = 'alimiter=limit=0.84:level=false';
-run(['-i', pic, '-i', path.join(WORK, 'sfx.wav'), '-filter_complex', `[1:a]volume=2.3,${lim}[a]`, '-map', '0:v', '-map', '[a]', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', path.join(OUT, 'lokumun-yolculugu.mp4')]);
+run(['-i', pic, '-i', path.join(WORK, 'sfx.wav'), '-filter_complex', `[1:a]volume=2.3,${lim}[a]`, '-map', '0:v', '-map', '[a]', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', path.join(OUT, `${CFG.slug}.mp4`)]);
 if (narration) {
-  const narrated = path.join(OUT, 'lokumun-yolculugu-anlatimli.mp4');
+  const narrated = path.join(OUT, `${CFG.slug}-narrated.mp4`);
   run(['-i', pic, '-i', path.join(WORK, 'sfx.wav'), '-i', path.join(WORK, 'narration.wav'), '-filter_complex',
     `[2:a]volume=1.9,pan=stereo|c0=c0|c1=c0,asplit=2[n1][n2];[1:a]volume=0.8[s];[s][n1]sidechaincompress=threshold=0.03:ratio=5:attack=15:release=350[sd];[sd][n2]amix=inputs=2:normalize=0:duration=first,${lim}[a]`,
     '-map', '0:v', '-map', '[a]', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', narrated]);
   // small copy for messaging apps
-  run(['-i', narrated, '-vf', 'scale=1280:720:flags=lanczos,fps=30', '-c:v', 'libx264', '-preset', 'medium', '-crf', '24', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', path.join(OUT, 'lokumun-yolculugu-anlatimli-720p.mp4')]);
+  run(['-i', narrated, '-vf', 'scale=1280:720:flags=lanczos,fps=30', '-c:v', 'libx264', '-preset', 'medium', '-crf', '24', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', path.join(OUT, `${CFG.slug}-narrated-720p.mp4`)]);
 }
 fs.rmSync(WORK, { recursive: true, force: true });
 log('done →', OUT);

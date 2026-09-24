@@ -4,7 +4,7 @@
 
 Bir parça fıstıklı lokumun ağızdan beyne uzanan yolculuğu; yanında giden minik bir "kapsül kamera" gözünden. Kafede oturan gerçekçi bir karakter (Avaturn GLB) lokumu parmaklarıyla alıp ısırır; röntgen görünümünde dişler, dil ve yemek borusu görünür, kamera ağızdan içeri girer ve 13 durak boyunca sindirim, kan dolaşımı ve beyne kadar ilerler.
 
-**İzle:** https://eyupduran.github.io/animasyon-lab/lokumun-yolculugu/
+**İzle:** https://eyupduran.github.io/animasyon-lab/digestive-journey/
 
 | | |
 |---|---|
