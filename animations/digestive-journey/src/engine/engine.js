@@ -169,7 +169,7 @@ function updateHUD(c, t) {
     if (CAPTURE) hud.sub.textContent = txt;
     else { hud.sub.classList.add('out'); clearTimeout(hud._st); hud._st = setTimeout(() => { hud.sub.textContent = txt; hud.sub.classList.remove('out'); }, cache.first ? 260 : 0); }
     cache.first = true;
-    if (playing && txt && !CAPTURE) VOICE.say(txt);
+    if (playing && txt && !CAPTURE) { VOICE.say(c.id + '-' + cue, t - c.cues[cue][0]); VOICE.prefetch([c.id + '-' + (cue + 1), c.id + '-' + (cue + 2)]); }
   }
   if (CAPTURE) {
     const cs = cue != null ? c.cues[cue][0] : 0;
@@ -178,7 +178,14 @@ function updateHUD(c, t) {
     hud.card.style.transform = `translateY(${((1 - sstep(0.1, 1.0, t)) * 14).toFixed(1)}px)`;
   }
   // hold if narration still speaking near the next cue
-  holdTarget = VOICE.on && VOICE.speaking && playing && next - t < 0.8 ? 0.3 : 1;
+  // pace: a sentence longer than its slot plays the whole slot a little slower (steady, not a sudden brake)
+  holdTarget = 1;
+  if (cue != null && VOICE.on && VOICE.ok && playing && !CAPTURE) {
+    const v = VOICE.info(c.id + '-' + cue), slot = next - c.cues[cue][0];
+    if (v && v.dur + 0.35 > slot) holdTarget = Math.max(0.35, slot / (v.dur + 0.35));
+    // safety net: still talking right before the next subtitle
+    if (VOICE.speaking && next - t < 0.35 && VOICE.left() > 0.2) holdTarget = Math.min(holdTarget, 0.3);
+  }
   // without narration: slow down a cue that is on screen for less time than it takes to read (~14 chars/s)
   if (cue != null && !CAPTURE && holdTarget === 1) {
     const read = 1.2 + c.cues[cue][1].length / 14, span = next - c.cues[cue][0];
@@ -351,27 +358,56 @@ const AU = {
   },
 };
 
-// ---------------- Voice (optional TTS) ----------------
+// ---------------- Voice (recorded narration) ----------------
+// Each subtitle has a clip (narration/voice/<chapter>-<n>.mp3, made with `npm run voice` at the
+// repository root). The clip plays from the moment its subtitle appears; if it is longer than the
+// subtitle's slot, story time slows gently ahead of time instead of cutting the sentence.
 const VOICE = {
-  on: false, ok: false, voice: null, speaking: false,
-  init() {
-    if (!('speechSynthesis' in window)) return this.btn();
-    const pick = () => { const vs = speechSynthesis.getVoices(); const tr = vs.filter(v => /^tr([-_]|$)/i.test(v.lang)); this.voice = tr.find(v => /natural|online|neural/i.test(v.name)) || tr[0] || null; this.ok = !!this.voice; this.btn(); };
-    pick(); speechSynthesis.onvoiceschanged = pick;
+  on: true, ok: false, el: null, key: null, pool: new Map(),
+  init() { this.ok = !!(NARRATION && NARRATION.lines); try { const v = localStorage.getItem('sindirim:voice'); if (v !== null) this.on = v === '1'; } catch (e) {} this.btn(); },
+  btn() { const b = $('b-voice'); b.style.display = this.ok ? '' : 'none'; b.setAttribute('aria-pressed', String(this.on)); },
+  toggle() { this.on = !this.on; try { localStorage.setItem('sindirim:voice', this.on ? '1' : '0'); } catch (e) {} this.btn(); if (!this.on) this.stop(); else cache.cue = null; },
+  get speaking() { return !!this.el && !this.el.paused && !this.el.ended; },
+  info(key) { return this.ok ? NARRATION.lines[key] : null; },
+  audio(key) {
+    let a = this.pool.get(key);
+    if (!a) { const l = this.info(key); if (!l) return null; a = new Audio(); a.preload = 'auto'; a.preservesPitch = true; a.src = './' + l.file; this.pool.set(key, a); }
+    return a;
   },
-  btn() { const b = $('b-voice'); b.disabled = !this.ok; b.style.display = this.ok ? '' : 'none'; b.setAttribute('aria-pressed', String(this.on)); },
-  say(text) {
+  prefetch(keys) { for (const k of keys) this.audio(k); if (this.pool.size > 10) for (const [k, a] of this.pool) { if (a !== this.el && !keys.includes(k)) { a.removeAttribute('src'); a.load(); this.pool.delete(k); } if (this.pool.size <= 8) break; } },
+  say(key, offset = 0) {
     if (!this.on || !this.ok) return;
-    try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.voice = this.voice; u.lang = this.voice.lang; u.rate = 1.12; u.onend = u.onerror = () => { this.speaking = false; }; this.speaking = true; speechSynthesis.speak(u); } catch (e) { this.speaking = false; }
+    const a = this.audio(key); if (!a) return;
+    if (this.el && this.el !== a) { if (this.speaking && this.left() > 0.15) window.__dig?.cuts.push([this.key, +this.left().toFixed(2)]); this.el.pause(); }
+    this.el = a; this.key = key;
+    const dur = this.info(key).dur;
+    if (offset >= dur - 0.05) return;
+    const set = () => { try { a.currentTime = Math.max(0, offset); } catch (e) {} };
+    if (offset > 0.05 || a.currentTime > 0.05) { if (a.readyState >= 1) set(); else a.addEventListener('loadedmetadata', set, { once: true }); }
+    a.playbackRate = speed; a.muted = !AU.on;
+    a.play().catch(() => {});
   },
-  stop() { try { speechSynthesis.cancel(); } catch (e) {} this.speaking = false; },
+  // seconds of speech left, in story time
+  left() { if (!this.speaking) return 0; return (this.info(this.key).dur - this.el.currentTime); },
+  resume() { if (this.on && this.el && this.el.paused && !this.el.ended && this.el.currentTime > 0) { this.el.playbackRate = speed; this.el.play().catch(() => {}); } },
+  pause() { if (this.el && !this.el.paused) this.el.pause(); },
+  stop() { this.pause(); this.el = null; this.key = null; },
 };
+
+// ---------------- Subtitles on/off ----------------
+let SUBS = true;
+try { SUBS = localStorage.getItem('sindirim:subs') !== '0'; } catch (e) {}
+function setSubs(v) {
+  SUBS = v; try { localStorage.setItem('sindirim:subs', v ? '1' : '0'); } catch (e) {}
+  $('subtitle').style.display = v ? '' : 'none';
+  $('b-sub').setAttribute('aria-pressed', String(v));
+}
 
 // ---------------- Controls ----------------
 const PLAY_D = 'M4 2.5v11l9-5.5z', PAUSE_D = 'M4 2.5h3v11H4zM9 2.5h3v11H9z';
 function setPlaying(v) {
   playing = v; $('i-play').setAttribute('d', v ? PAUSE_D : PLAY_D); $('b-play').setAttribute('aria-label', v ? 'Duraklat' : 'Oynat');
-  if (!v) VOICE.stop(); else AU.init();
+  if (!v) VOICE.pause(); else { AU.init(); VOICE.resume(); }
 }
 function seek(t) { T = clamp(t, 0, TOTAL - 0.001); lastEvT = T; VOICE.stop(); cache.cue = null; }
 function jump(d) { const i = clamp(chapterAt(T) + d, 0, CH.length - 1); seek(CH[i].start + (d < 0 && T - CH[chapterAt(T)].start > 2 && d === -1 ? 0 : 0)); }
@@ -383,9 +419,10 @@ function initControls() {
   $('b-prev').onclick = () => { const i = chapterAt(T); seek(CH[T - CH[i].start > 2.5 ? i : Math.max(0, i - 1)].start); };
   $('b-next').onclick = () => { const i = chapterAt(T); seek(CH[Math.min(CH.length - 1, i + 1)].start); };
   const speeds = [0.5, 1, 1.5, 2];
-  $('b-speed').onclick = () => { speed = speeds[(speeds.indexOf(speed) + 1) % speeds.length]; $('b-speed').textContent = trNum(speed, speed % 1 ? 1 : 0) + '×'; };
-  $('b-sound').onclick = () => { AU.init(); AU.mute(AU.on); $('b-sound').setAttribute('aria-pressed', String(AU.on)); $('i-wave').style.opacity = AU.on ? 1 : 0.15; };
-  $('b-voice').onclick = () => { VOICE.on = !VOICE.on; VOICE.btn(); if (!VOICE.on) VOICE.stop(); else { cache.cue = null; } };
+  $('b-speed').onclick = () => { speed = speeds[(speeds.indexOf(speed) + 1) % speeds.length]; $('b-speed').textContent = trNum(speed, speed % 1 ? 1 : 0) + '×'; if (VOICE.el) VOICE.el.playbackRate = speed; };
+  $('b-sound').onclick = () => { AU.init(); AU.mute(AU.on); if (VOICE.el) VOICE.el.muted = !AU.on; $('b-sound').setAttribute('aria-pressed', String(AU.on)); $('i-wave').style.opacity = AU.on ? 1 : 0.15; };
+  $('b-voice').onclick = () => VOICE.toggle();
+  $('b-sub').onclick = () => setSubs(!SUBS);
   $('b-full').onclick = () => { const d = document; if (d.fullscreenElement) d.exitFullscreen?.(); else APP.requestFullscreen?.().catch(() => {}); };
   const tl = $('timeline'), tip = $('tl-tip');
   const posToT = e => { const r = tl.getBoundingClientRect(); return clamp((e.clientX - r.left) / r.width) * TOTAL; };
@@ -400,6 +437,8 @@ function initControls() {
     else if (e.key === 'ArrowLeft') $('b-prev').click();
     else if (e.key === 'f' || e.key === 'F') $('b-full').click();
     else if (e.key === 'm' || e.key === 'M') $('b-sound').click();
+    else if (e.key === 'c' || e.key === 'C') setSubs(!SUBS);
+    else if (e.key === 'n' || e.key === 'N') VOICE.toggle();
   });
   $('b-start').onclick = start;
   $('b-again').onclick = () => { endHidden = false; APP.classList.remove('free'); seek(0); setPlaying(true); };
@@ -426,13 +465,12 @@ function frame(now) {
   const dt = Math.min(0.05, (now - lastNow) / 1000); lastNow = now; REAL += dt;
   holdK += (holdTarget - holdK) * Math.min(1, dt * 3);
   if (playing) T += dt * speed * holdK;
-  if (started && dt > 0 && !TEST.has('noadapt')) {
+  if (started && dt > 0 && !TEST.has('noadapt') && REAL - (PERF.t0 ??= REAL) < 12) {
     PERF.acc += dt; PERF.n++;
     if (PERF.acc > 1.5) {
       const fps = PERF.n / PERF.acc; PERF.acc = 0; PERF.n = 0;
       let s = PERF.scale;
       if (fps < 48 && s > 0.5) s = Math.max(0.5, s - (fps < 32 ? 0.2 : 0.1)), PERF.calm = 0;
-      else if (fps > 58 && s < 1 && ++PERF.calm > 3) s = Math.min(1, s + 0.08), PERF.calm = 0;
       if (s !== PERF.scale) { PERF.scale = s; resize(); }
     }
   }
@@ -552,7 +590,8 @@ async function preloadWorlds() {
 }
 function boot() {
   layoutChapters();
-  MAP.init(); initControls(); VOICE.init();
+  MAP.init(); initControls(); VOICE.init(); setSubs(SUBS);
+  window.__dig = { VOICE, T: () => T, total: () => TOTAL, cuts: [] };
   resize();
   if (TEST.has('ch')) {
     started = true; APP.classList.remove('pre'); $('start').classList.add('gone');

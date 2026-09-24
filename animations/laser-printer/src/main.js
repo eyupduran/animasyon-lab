@@ -29,7 +29,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.02;
 const maxDpr = Math.min(window.devicePixelRatio || 1, 2);
-let dpr = VIDEO ? 1 : Math.min(maxDpr, 1.5);
+let dpr = VIDEO ? 1 : Math.min(maxDpr, 1.25);
 renderer.setPixelRatio(dpr);
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(38, 1, 0.3, 1600);
@@ -138,6 +138,7 @@ function seek(t) {
   T = Math.max(0, Math.min(tl.total - 0.01, t));
   lastSeg = null;
   if (explore) leaveExplore();
+  narr.reset();
 }
 function chapterJump(dir) {
   const c = tl.chapterAt(T);
@@ -148,7 +149,7 @@ $('bPlay').onclick = () => { if (explore) { leaveExplore(); seek(0); } setPlayin
 $('bPrev').onclick = () => chapterJump(-1);
 $('bNext').onclick = () => chapterJump(1);
 $('bSubs').onclick = () => applyPrefs({ subs: !prefs.subs });
-$('bSound').onclick = () => { muted = !muted; sound.setMuted(muted || !prefs.sfx); narr.el.muted = muted; $('iSound').style.opacity = muted ? 0.35 : 1; };
+$('bSound').onclick = () => { muted = !muted; sound.setMuted(muted || !prefs.sfx); narr.muted = muted; $('iSound').style.opacity = muted ? 0.35 : 1; };
 $('bFull').onclick = () => (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.());
 $('bReplay').onclick = () => { leaveExplore(); seek(0); setPlaying(true); };
 // settings panel
@@ -397,32 +398,46 @@ const cueList = tl.chapters.flatMap(c => c.cues);
 function audio(st, prev, dt) {
   const cue = explore ? null : tl.cueAt(T);
   narr.sync(T, playing, speed, cue);
-  if (cue && playing) { const i = cueList.indexOf(cue); narr.prefetch(cueList.slice(i + 1, i + 3)); }
+  if (playing) { const i = cue ? cueList.indexOf(cue) : cueList.findIndex(q => q.start > T); narr.prefetch(cueList.slice(Math.max(0, i), i + 4)); }
   sound.setDuck(narr.speaking);
   sound.step(st, prev, dt, tl, { playing, explore });
 }
 
 // ---------------------------------------------------------------- loop
 let last = performance.now(), frameAvg = 16, dprTimer = 0;
+let dprLocked = VIDEO || params.has('capture'), dprSamples = [], playClock = 0;
 function frame(now) {
-  const dt = Math.min(0.1, (now - last) / 1000);
+  const raw = now - last;
+  const dt = Math.min(0.1, raw / 1000);
   last = now;
   if (playing && !explore) {
     T += dt * speed;
+    // while a narration clip plays, the clip is the clock (the voice never skips)
+    const at = narr.clock();
+    if (at !== null) {
+      const d = at - T;
+      if (Math.abs(d) < 1.5) T += d * 0.25;
+    }
     if (T >= tl.total) { T = tl.total - 0.001; enterExplore(); }
   }
   const st = renderAt(T);
   audio(st, prevSt, dt);
   prevSt = st;
-  // idle UI + adaptive resolution
   idleTimer += dt;
   if (playing && idleTimer > 3.5 && panel.hidden) document.body.classList.add('idle');
-  frameAvg = frameAvg * 0.95 + dt * 1000 * 0.05;
-  dprTimer += dt;
-  if (dprTimer > 2 && !params.has('capture')) {
-    dprTimer = 0;
-    if (frameAvg > 26 && dpr > 0.8) { dpr = Math.max(0.8, dpr - 0.15); renderer.setPixelRatio(dpr); resize(); }
-    else if (frameAvg < 15 && dpr < maxDpr) { dpr = Math.min(maxDpr, dpr + 0.1); renderer.setPixelRatio(dpr); resize(); }
+  // resolution: measured once in the first seconds of playback, lowered if needed, then fixed
+  if (!dprLocked && playing) {
+    playClock += dt;
+    if (playClock > 1.5) dprSamples.push(raw);
+    if (dprSamples.length >= 90) {
+      dprSamples.sort((x, y) => x - y);
+      const typical = dprSamples[Math.floor(dprSamples.length * 0.6)];
+      if (typical > 24 && dpr > 0.75) {
+        dpr = Math.max(0.75, dpr * Math.sqrt(16.7 / typical));
+        renderer.setPixelRatio(dpr); resize();
+      }
+      dprLocked = true;
+    }
   }
   requestAnimationFrame(frame);
 }
@@ -479,8 +494,8 @@ if (VIDEO) {
   window.__video = {
     duration: tl.total,
     renderAt: (t) => { renderAt(Math.min(t, tl.total - 0.001)); },
-    async prepareSound(from = 0, to = tl.total) {
-      const buf = await renderSoundtrack(tl, S, { from, to });
+    async prepareSound(from = 0, to = tl.total, opts = {}) {
+      const buf = await renderSoundtrack(tl, S, { from, to, ...opts });
       wav = wavBytes(buf);
       return Math.ceil(wav.length / 2e6);
     },
@@ -508,4 +523,13 @@ window.__tl = tl;
 window.__narr = narr;
 window.__T = () => T;
 window.__seek = (t) => { T = t; };
+// warm-up: render the moments that first use a shader (laser beams, particles, loupes) behind the start screen
+if (!VIDEO) {
+  const keep = T;
+  for (const id of ['laser', 'develop', 'output', 'scan', 'compare', 'generations']) {
+    const c = tl.byId[id];
+    renderAt(c.start + c.dur * 0.6);
+  }
+  renderAt(keep); T = keep;
+}
 window.__ready = true;

@@ -24,7 +24,20 @@ npm run video:test        # her bölümden bir kare, düzeni kontrol etmek için
 npm run avatar -- "C:/Users/Eyüp/Desktop/cafe-avatars-glb/set-01-m01.glb" assets/avatar.glb
 ```
 
-Video için Chrome, ffmpeg (PATH'te) ve PowerShell 7 ile Windows'un yerel **Microsoft Tolga** sesi gerekir; dış servis kullanılmaz. Bir cümle alt yazı süresine sığmazsa görüntü o kısımda hafifçe yavaşlar.
+### Anlatım ve altyazı
+
+Sayfadaki anlatım, her alt yazı için yerelde üretilmiş bir kayıttır (OmniVoice, O1 sesi: genç kadın; `narration/voice/`). Kayıt, alt yazısı ekrana geldiğinde başlar; cümle bir sonraki alt yazıya taşacaksa sahne önceden, fark edilmeyecek kadar yavaşlar. Alt çubukta **CC** (ya da C tuşu) alt yazıyı, **Anlatım** (ya da N tuşu) sesi açıp kapatır; seçimler tarayıcıda hatırlanır.
+
+Alt yazı metni değişince:
+
+```
+node tools/lines.mjs                                   # narration/lines.json: söylenecek satırlar (sayılar sözcükle, parantezler "yani" ile)
+cd ../.. && npm run voice -- digestive-journey         # yalnızca değişen satırlar yeniden seslendirilir
+npm run voice -- digestive-journey --voice omni-erkek-derin   # başka bir sesle
+node build.mjs
+```
+
+Eski video aracı (`npm run video`) hâlâ Windows'un Tolga sesini kullanıyor; yeni seslerle video daha sonra güncellenecek.
 
 ## Duraklar
 

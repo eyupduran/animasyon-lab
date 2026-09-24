@@ -13,7 +13,7 @@ export const smoother = t => { t = clamp01(t); return t * t * t * (t * (t * 6 - 
 export const seg = (u, a, b) => clamp01((u - a) / (b - a));
 
 const MAX_SEG = 92;     // characters per subtitle segment (two lines of ~46)
-const GAP = 0.55;       // breath after each sentence
+const GAP = 0.33;       // breath after each sentence
 
 // split a subtitle into readable pieces at sentence, then clause boundaries
 export function splitSubtitle(text) {
@@ -54,7 +54,7 @@ export function buildTimeline() {
       const text = raw.replace(/\s*\|\s*/g, ' ');
       const v = manifest.lines[`${c.id}-${n}`];
       const voice = v ? { url: `./${v.file}`, dur: v.dur } : null;
-      const read = 1.0 + text.length / 16;
+      const read = 0.8 + text.length / 18;
       const d = Math.max(read, voice ? voice.dur + GAP : 1.3 + text.length / 14.5);
       const cue = { text, say: spoken(raw), start: start + t, end: start + t + d, voice };
       // segments share the spoken part in proportion to their length
@@ -68,7 +68,7 @@ export function buildTimeline() {
         const e = k === parts.length - 1 ? cue.end : cue.start + speak * acc / total;
         return { text: p, start: s, end: e };
       });
-      t += d + 0.25;
+      t += d + 0.12;
       return cue;
     });
     const dur = t + 0.5;

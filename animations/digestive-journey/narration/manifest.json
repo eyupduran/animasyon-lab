@@ -1,0 +1,384 @@
+{
+ "voice": "omni-kadin-genc",
+ "engine": "omnivoice",
+ "lines": {
+  "intro-0": {
+   "file": "voice/intro-0.mp3",
+   "dur": 3.245,
+   "hash": "36b78946461c",
+   "cer": 0
+  },
+  "intro-1": {
+   "file": "voice/intro-1.mp3",
+   "dur": 6.322,
+   "hash": "ebda286de448",
+   "cer": 0.011
+  },
+  "intro-2": {
+   "file": "voice/intro-2.mp3",
+   "dur": 3.415,
+   "hash": "3158dddd3aa0",
+   "cer": 0
+  },
+  "intro-3": {
+   "file": "voice/intro-3.mp3",
+   "dur": 4.109,
+   "hash": "a9173fb494c9",
+   "cer": 0.036
+  },
+  "intro-4": {
+   "file": "voice/intro-4.mp3",
+   "dur": 7.795,
+   "hash": "8be780f6943b",
+   "cer": 0.049
+  },
+  "intro-5": {
+   "file": "voice/intro-5.mp3",
+   "dur": 3.858,
+   "hash": "a965c75e0b4e",
+   "cer": 0.034
+  },
+  "mouth-0": {
+   "file": "voice/mouth-0.mp3",
+   "dur": 4.406,
+   "hash": "ebdd177fff10",
+   "cer": 0
+  },
+  "mouth-1": {
+   "file": "voice/mouth-1.mp3",
+   "dur": 4.897,
+   "hash": "ab1dac483db6",
+   "cer": 0
+  },
+  "mouth-2": {
+   "file": "voice/mouth-2.mp3",
+   "dur": 6.92,
+   "hash": "f7e85b57d6f5",
+   "cer": 0.011
+  },
+  "mouth-3": {
+   "file": "voice/mouth-3.mp3",
+   "dur": 5.217,
+   "hash": "a2cb5c5ae81c",
+   "cer": 0
+  },
+  "mouth-4": {
+   "file": "voice/mouth-4.mp3",
+   "dur": 2.893,
+   "hash": "1fdda0a7e00e",
+   "cer": 0.044
+  },
+  "pharynx-0": {
+   "file": "voice/pharynx-0.mp3",
+   "dur": 4.214,
+   "hash": "61022bdffc99",
+   "cer": 0
+  },
+  "pharynx-1": {
+   "file": "voice/pharynx-1.mp3",
+   "dur": 2.629,
+   "hash": "a6ef9357684b",
+   "cer": 0
+  },
+  "pharynx-2": {
+   "file": "voice/pharynx-2.mp3",
+   "dur": 5.475,
+   "hash": "27627c5adbe1",
+   "cer": 0.014
+  },
+  "pharynx-3": {
+   "file": "voice/pharynx-3.mp3",
+   "dur": 4.075,
+   "hash": "e9a3033cc559",
+   "cer": 0
+  },
+  "eso-0": {
+   "file": "voice/eso-0.mp3",
+   "dur": 3.607,
+   "hash": "c3fc39cc5407",
+   "cer": 0.176
+  },
+  "eso-1": {
+   "file": "voice/eso-1.mp3",
+   "dur": 4.734,
+   "hash": "e4970cf1e6df",
+   "cer": 0
+  },
+  "eso-2": {
+   "file": "voice/eso-2.mp3",
+   "dur": 4.168,
+   "hash": "d5c2e76b7e85",
+   "cer": 0
+  },
+  "eso-3": {
+   "file": "voice/eso-3.mp3",
+   "dur": 4.394,
+   "hash": "c99367dd7580",
+   "cer": 0.034
+  },
+  "stomach-0": {
+   "file": "voice/stomach-0.mp3",
+   "dur": 3.119,
+   "hash": "9b419a21a88f",
+   "cer": 0.093
+  },
+  "stomach-1": {
+   "file": "voice/stomach-1.mp3",
+   "dur": 6.571,
+   "hash": "d33f3de03103",
+   "cer": 0.153
+  },
+  "stomach-2": {
+   "file": "voice/stomach-2.mp3",
+   "dur": 6.175,
+   "hash": "ba70dd481f96",
+   "cer": 0.06
+  },
+  "stomach-3": {
+   "file": "voice/stomach-3.mp3",
+   "dur": 5.634,
+   "hash": "6b31a8e78e60",
+   "cer": 0
+  },
+  "stomach-4": {
+   "file": "voice/stomach-4.mp3",
+   "dur": 4.975,
+   "hash": "a17c7e5fe344",
+   "cer": 0.048
+  },
+  "duo-0": {
+   "file": "voice/duo-0.mp3",
+   "dur": 7.382,
+   "hash": "81641532bc3e",
+   "cer": 0.043
+  },
+  "duo-1": {
+   "file": "voice/duo-1.mp3",
+   "dur": 3.515,
+   "hash": "4f9042587339",
+   "cer": 0.019
+  },
+  "duo-2": {
+   "file": "voice/duo-2.mp3",
+   "dur": 5.649,
+   "hash": "6605add2eaf1",
+   "cer": 0.053
+  },
+  "duo-3": {
+   "file": "voice/duo-3.mp3",
+   "dur": 5.487,
+   "hash": "30a9a04dbd43",
+   "cer": 0.042
+  },
+  "jejunum-0": {
+   "file": "voice/jejunum-0.mp3",
+   "dur": 5.627,
+   "hash": "1f69ed4cecc9",
+   "cer": 0
+  },
+  "jejunum-1": {
+   "file": "voice/jejunum-1.mp3",
+   "dur": 5.494,
+   "hash": "2440e264ab27",
+   "cer": 0.057
+  },
+  "jejunum-2": {
+   "file": "voice/jejunum-2.mp3",
+   "dur": 7.7,
+   "hash": "4318869e3e35",
+   "cer": 0.01
+  },
+  "jejunum-3": {
+   "file": "voice/jejunum-3.mp3",
+   "dur": 3.66,
+   "hash": "4861a8042906",
+   "cer": 0.019
+  },
+  "absorb-0": {
+   "file": "voice/absorb-0.mp3",
+   "dur": 5.807,
+   "hash": "e04592f63c68",
+   "cer": 0.024
+  },
+  "absorb-1": {
+   "file": "voice/absorb-1.mp3",
+   "dur": 5.633,
+   "hash": "956f47f58300",
+   "cer": 0.027
+  },
+  "absorb-2": {
+   "file": "voice/absorb-2.mp3",
+   "dur": 5.171,
+   "hash": "825cfd789b86",
+   "cer": 0.013
+  },
+  "absorb-3": {
+   "file": "voice/absorb-3.mp3",
+   "dur": 4.605,
+   "hash": "1b5056f4a35a",
+   "cer": 0.016
+  },
+  "absorb-4": {
+   "file": "voice/absorb-4.mp3",
+   "dur": 3.367,
+   "hash": "07f495c5909b",
+   "cer": 0
+  },
+  "liver-0": {
+   "file": "voice/liver-0.mp3",
+   "dur": 4.325,
+   "hash": "cb7a822d0d31",
+   "cer": 0.034
+  },
+  "liver-1": {
+   "file": "voice/liver-1.mp3",
+   "dur": 4.371,
+   "hash": "4940b38edfb1",
+   "cer": 0
+  },
+  "liver-2": {
+   "file": "voice/liver-2.mp3",
+   "dur": 4.94,
+   "hash": "c1f7090cbaf0",
+   "cer": 0.051
+  },
+  "liver-3": {
+   "file": "voice/liver-3.mp3",
+   "dur": 5.363,
+   "hash": "07264aa4c57d",
+   "cer": 0.046
+  },
+  "lungs-0": {
+   "file": "voice/lungs-0.mp3",
+   "dur": 4.026,
+   "hash": "621d595f82c8",
+   "cer": 0.049
+  },
+  "lungs-1": {
+   "file": "voice/lungs-1.mp3",
+   "dur": 6.253,
+   "hash": "613e1e9799cd",
+   "cer": 0.048
+  },
+  "lungs-2": {
+   "file": "voice/lungs-2.mp3",
+   "dur": 5.543,
+   "hash": "b6106a66b3e1",
+   "cer": 0.014
+  },
+  "heartR-0": {
+   "file": "voice/heartR-0.mp3",
+   "dur": 3.356,
+   "hash": "9bb6c12309bd",
+   "cer": 0.038
+  },
+  "heartR-1": {
+   "file": "voice/heartR-1.mp3",
+   "dur": 5.574,
+   "hash": "ba167ec4b2e3",
+   "cer": 0.013
+  },
+  "heartR-2": {
+   "file": "voice/heartR-2.mp3",
+   "dur": 4.484,
+   "hash": "95a816ce781f",
+   "cer": 0.05
+  },
+  "heartR-3": {
+   "file": "voice/heartR-3.mp3",
+   "dur": 3.84,
+   "hash": "e713ffcf5a5b",
+   "cer": 0
+  },
+  "heartL-0": {
+   "file": "voice/heartL-0.mp3",
+   "dur": 3.968,
+   "hash": "05c8a1bc28e7",
+   "cer": 0.053
+  },
+  "heartL-1": {
+   "file": "voice/heartL-1.mp3",
+   "dur": 3.611,
+   "hash": "8d0793cca10c",
+   "cer": 0.042
+  },
+  "heartL-2": {
+   "file": "voice/heartL-2.mp3",
+   "dur": 4.19,
+   "hash": "ee7938034d88",
+   "cer": 0.018
+  },
+  "heartL-3": {
+   "file": "voice/heartL-3.mp3",
+   "dur": 3.324,
+   "hash": "66159f90d5bc",
+   "cer": 0.041
+  },
+  "brain-0": {
+   "file": "voice/brain-0.mp3",
+   "dur": 3.047,
+   "hash": "75bde541a8ff",
+   "cer": 0.026
+  },
+  "brain-1": {
+   "file": "voice/brain-1.mp3",
+   "dur": 7.017,
+   "hash": "d3d2d688ff7c",
+   "cer": 0.011
+  },
+  "brain-2": {
+   "file": "voice/brain-2.mp3",
+   "dur": 3.126,
+   "hash": "a58433e830ec",
+   "cer": 0.02
+  },
+  "brain-3": {
+   "file": "voice/brain-3.mp3",
+   "dur": 5.069,
+   "hash": "1fb4f13141db",
+   "cer": 0.015
+  },
+  "brain-4": {
+   "file": "voice/brain-4.mp3",
+   "dur": 4.698,
+   "hash": "28b570278803",
+   "cer": 0
+  },
+  "brain-5": {
+   "file": "voice/brain-5.mp3",
+   "dur": 6.407,
+   "hash": "baac3c3e139a",
+   "cer": 0.112
+  },
+  "brain-6": {
+   "file": "voice/brain-6.mp3",
+   "dur": 3.116,
+   "hash": "4f156cbb9137",
+   "cer": 0
+  },
+  "colon-0": {
+   "file": "voice/colon-0.mp3",
+   "dur": 5.968,
+   "hash": "7354dc4b969d",
+   "cer": 0.012
+  },
+  "colon-1": {
+   "file": "voice/colon-1.mp3",
+   "dur": 7.157,
+   "hash": "423042c3a7b6",
+   "cer": 0
+  },
+  "colon-2": {
+   "file": "voice/colon-2.mp3",
+   "dur": 4.989,
+   "hash": "3f856976ea83",
+   "cer": 0.042
+  },
+  "colon-3": {
+   "file": "voice/colon-3.mp3",
+   "dur": 5.052,
+   "hash": "05b53ee9ee10",
+   "cer": 0
+  }
+ }
+}

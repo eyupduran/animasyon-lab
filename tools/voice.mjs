@@ -54,7 +54,8 @@ const outDir = path.join(dir, spec.out || 'public/voice');
 const manifestFile = path.join(dir, spec.manifest || 'narration/manifest.json');
 fs.mkdirSync(outDir, { recursive: true });
 const old = fs.existsSync(manifestFile) ? JSON.parse(fs.readFileSync(manifestFile, 'utf8')) : { lines: {} };
-const publicBase = path.relative(path.join(dir, 'public'), outDir).split(path.sep).join('/');
+// URL of the clips as the page sees them ("url" in lines.json, or relative to public/)
+const publicBase = spec.url || path.relative(path.join(dir, 'public'), outDir).split(path.sep).join('/');
 const refFile = voice.ref ? path.join(ROOT, 'assets', 'voices', voice.ref) : null;
 const speed = Number(flag('speed') || spec.speed || 1);
 if (flag('speed')) { spec.speed = speed; fs.writeFileSync(linesFile, JSON.stringify(spec, null, 1) + '\n'); }

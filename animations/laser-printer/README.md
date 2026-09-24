@@ -80,5 +80,6 @@ Sayfa parametreleri: `?ch=<bölüm>&t=<saniye>` (ör. `?ch=laser&t=20`), `ui=0` 
 
 ```
 node tools/shot.mjs <klasör> 1600x900 "ch=transfer&t=19" "ch=compare&t=14"   # ekran görüntüsü
-node tools/check-player.mjs <klasör>    # anlatımın zamanla senkronu ve ayarlar paneli
+node tools/check-player.mjs --from 80 --secs 60   # canlı oynatma: yapay takılmalarla anlatımın atlamadığını ölçer
+node tools/perf-run.mjs                            # her karenin maliyeti; ilk kullanımda sıçrayan kareleri listeler
 ```

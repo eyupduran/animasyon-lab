@@ -39,6 +39,7 @@ export function build() {
   const js = [
     HEADER,
     `const PAGE = ${JSON.stringify(cfg.page || {})};`,
+    `const NARRATION = ${fs.existsSync(path.join(DIR, 'narration', 'manifest.json')) ? read('narration', 'manifest.json').trim() : 'null'};`,
     ...embeds,
     ...['core.js', 'engine.js'].map(f => `// ---- src/engine/${f}\n` + read('src', 'engine', f)),
     ...cfg.scenes.map(f => `// ---- src/scenes/${f}\n` + read('src', 'scenes', f)),
@@ -63,6 +64,12 @@ ${body.slice(cut).trim()}
 </body>
 </html>
 `);
+  // recorded narration (npm run voice -- digestive-journey at the repository root)
+  const vsrc = path.join(DIR, 'narration', 'voice');
+  if (fs.existsSync(vsrc)) {
+    fs.mkdirSync(path.join(out, 'voice'), { recursive: true });
+    for (const f of fs.readdirSync(vsrc)) if (f.endsWith('.mp3')) fs.copyFileSync(path.join(vsrc, f), path.join(out, 'voice', f));
+  }
   if (fs.existsSync(path.join(DIR, 'poster.jpg'))) fs.copyFileSync(path.join(DIR, 'poster.jpg'), path.join(out, 'poster.jpg'));
   console.log(`built ${cfg.slug} → dist/index.html (${(fs.statSync(path.join(out, 'index.html')).size / 1024).toFixed(0)} KB)`);
 }

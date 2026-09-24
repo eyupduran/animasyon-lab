@@ -1,5 +1,6 @@
-// Local check of the live player: narration stays in sync and the settings panel works.
-//   node tools/check-player.mjs <outDir>
+// Live-player check: plays part of the story in real time, adds artificial hitches, and verifies
+// that the narration never skips (seeks) mid-sentence and stays locked to the picture.
+//   node tools/check-player.mjs [<outDir for screenshots>] [--from 80] [--secs 60]
 import http from 'http';
 import fs from 'fs';
 import path from 'path';
@@ -7,7 +8,10 @@ import { fileURLToPath } from 'url';
 import puppeteer from 'puppeteer-core';
 
 const DIST = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'dist');
-const out = process.argv[2];
+const args = process.argv.slice(2);
+const opt = (n, d) => { const i = args.indexOf(`--${n}`); return i >= 0 ? Number(args[i + 1]) : d; };
+const out = args[0] && !args[0].startsWith('--') ? args[0] : null;
+const from = opt('from', 80), secs = opt('secs', 60);
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.mp3': 'audio/mpeg', '.jpg': 'image/jpeg' };
 const server = http.createServer((req, res) => {
   const p = path.join(DIST, decodeURIComponent(req.url.split('?')[0]).replace(/\/$/, '/index.html'));
@@ -19,23 +23,43 @@ const browser = await puppeteer.launch({ executablePath: 'C:/Program Files/Googl
 const page = await browser.newPage();
 await page.setViewport({ width: 1600, height: 900 });
 page.on('pageerror', e => console.log('[pageerror]', e.message));
-await page.goto(`http://localhost:${server.address().port}/index.html?ch=charge&t=0.3&play=1`, { waitUntil: 'load' });
+// count every programmatic seek on media elements
+await page.evaluateOnNewDocument(() => {
+  window.__seeks = [];
+  const d = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'currentTime');
+  Object.defineProperty(HTMLMediaElement.prototype, 'currentTime', {
+    get() { return d.get.call(this); },
+    set(v) { window.__seeks.push([this.src.split('/').pop(), Math.round(d.get.call(this) * 100) / 100, Math.round(v * 100) / 100]); d.set.call(this, v); },
+  });
+});
+await page.goto(`http://localhost:${server.address().port}/index.html?T=${from}&play=1`, { waitUntil: 'load' });
 await page.waitForFunction('window.__ready === true', { timeout: 60000 });
-for (let i = 0; i < 6; i++) {
-  await new Promise(r => setTimeout(r, 1500));
-  const s = await page.evaluate(() => { const n = window.__narr, T = window.__T(), q = window.__tl.cueAt(T); return { T: T.toFixed(2), cue: q ? `${q.say.slice(0, 28)}… @${q.start.toFixed(2)}` : null, src: n.el.src.split('/').pop(), audio: n.el.currentTime.toFixed(2), expect: q ? (T - q.start).toFixed(2) : '-', paused: n.el.paused }; });
-  console.log(JSON.stringify(s));
+const samples = [];
+const t0 = Date.now();
+let hitches = 0;
+while (Date.now() - t0 < secs * 1000) {
+  await new Promise(r => setTimeout(r, 200));
+  if (Math.random() < 0.08) { hitches++; await page.evaluate(() => { const e = performance.now() + 300; while (performance.now() < e); }); }
+  samples.push(await page.evaluate(() => {
+    const n = window.__narr, T = window.__T(), q = window.__tl.cueAt(T);
+    return { T, clip: n.el ? n.el.src.split('/').pop() : '', at: n.el ? n.el.currentTime : 0, playing: n.speaking, lag: q && n.speaking ? T - q.start - n.el.currentTime : 0 };
+  }));
 }
-await page.click('#bSettings');
-await new Promise(r => setTimeout(r, 400));
-fs.mkdirSync(out, { recursive: true });
-await page.screenshot({ path: path.join(out, 'settings.png') });
-await page.click('[data-pref="subSize"][data-val="l"]');
-await page.keyboard.press('Escape');
-await page.mouse.click(400, 300);
-await new Promise(r => setTimeout(r, 600));
-await page.screenshot({ path: path.join(out, 'large-subs.png') });
-await page.keyboard.press('c');
-await new Promise(r => setTimeout(r, 300));
-console.log('subs visible after C:', await page.evaluate(() => getComputedStyle(document.getElementById('subtitle')).display));
+const seeks = await page.evaluate(() => window.__seeks);
+// mid-sentence seeks: jumps of more than 0.3 s away from where the clip was
+const bad = seeks.filter(([, was, to]) => was > 0.05 && Math.abs(to - was) > 0.3);
+let backwards = 0;
+for (let i = 1; i < samples.length; i++) if (samples[i].clip === samples[i - 1].clip && samples[i].at + 0.01 < samples[i - 1].at && samples[i].playing) backwards++;
+const lags = samples.filter(s => s.playing).map(s => Math.abs(s.lag));
+const clips = new Set(samples.filter(s => s.playing).map(s => s.clip));
+console.log(`${secs} sn oynatıldı (T ${from} → ${samples.at(-1).T.toFixed(1)}), ${hitches} yapay takılma, ${clips.size} cümle`);
+console.log(`ses atlatma: toplam ${seeks.length}, cümle ortasında ${bad.length}; geriye sarma ${backwards}`);
+console.log(`görüntü-ses farkı: ortalama ${(lags.reduce((a, b) => a + b, 0) / Math.max(1, lags.length) * 1000).toFixed(0)} ms, en çok ${(Math.max(0, ...lags) * 1000).toFixed(0)} ms`);
+if (bad.length) console.log('cümle ortası atlatmalar:', bad.slice(0, 10));
+if (out) {
+  fs.mkdirSync(out, { recursive: true });
+  await page.click('#bSettings');
+  await new Promise(r => setTimeout(r, 400));
+  await page.screenshot({ path: path.join(out, 'settings.png') });
+}
 await browser.close(); server.close();
