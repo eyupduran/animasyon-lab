@@ -1,25 +1,13 @@
 {
   "name": "animasyon-lab",
-  "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Tarayıcıda çalışan 3D eğitim animasyonları: sahneler, MP4 video üretimi ve GitHub Pages yayını.",
+  "description": "Eğitim animasyonları deposu: her animasyon animations/ altında kendi başına bir proje.",
   "scripts": {
-    "build": "node tools/build.mjs",
-    "build:all": "node tools/build.mjs --all",
     "new": "node tools/new-animation.mjs",
-    "video": "node tools/render-video.mjs",
-    "avatar": "node tools/slim-avatar.mjs"
+    "build": "node tools/build-site.mjs"
   },
   "engines": {
     "node": ">=20"
-  },
-  "devDependencies": {
-    "@gltf-transform/core": "^4.5.0",
-    "@gltf-transform/extensions": "^4.5.0",
-    "@gltf-transform/functions": "^4.5.0",
-    "meshoptimizer": "^1.2.0",
-    "puppeteer-core": "^23.11.1",
-    "sharp": "^0.35.4"
   }
 }

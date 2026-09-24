@@ -1,7 +1,7 @@
 // Shrinks an Avaturn GLB for the web: keeps only the face shapes the eating scene uses,
 // drops the idle animation, compresses geometry (meshopt) and textures (WebP).
-// usage: npm run avatar -- <in.glb> animations/<slug>/assets/avatar.glb
-// needs: npm install (dev dependencies in the root package.json)
+// usage: npm run avatar -- <in.glb> assets/avatar.glb
+// needs: npm install (dev dependencies in this folder's package.json)
 import { NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { prune, dedup, quantize, meshopt, textureCompress } from '@gltf-transform/functions';

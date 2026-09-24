@@ -2,10 +2,17 @@
   "slug": "lokumun-yolculugu",
   "title": "Bir Lokumun Yolculuğu",
   "description": "Bir parça lokumun ağızdan mideye, bağırsaklara, kana ve beyne uzanan yolculuğunu anlatan etkileşimli 3D animasyon.",
+  "tech": "Three.js r170 · WebGL · Web Audio · Avaturn GLB karakter",
+  "build": "node build.mjs",
+  "output": "dist",
   "lang": "tr",
   "page": {
     "stopWord": "durak",
-    "hud": { "camera": "Kapsül kamera", "temp": "37,0 °C", "subject": "Lokum" },
+    "hud": {
+      "camera": "Kapsül kamera",
+      "temp": "37,0 °C",
+      "subject": "Lokum"
+    },
     "start": {
       "eyebrow": "Sindirim · Dolaşım · Beyin",
       "titleHtml": "Bir <em>Lokumun</em> Yolculuğu",

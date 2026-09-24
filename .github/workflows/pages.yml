@@ -1,4 +1,4 @@
-# Builds every animation and publishes dist/ to GitHub Pages on each push to main.
+# Builds every animation (each with its own build command) and publishes dist/ to GitHub Pages on each push to main.
 name: GitHub Pages
 
 on:
@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: 22
       - name: Build all animations
-        run: node tools/build.mjs --all
+        run: node tools/build-site.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

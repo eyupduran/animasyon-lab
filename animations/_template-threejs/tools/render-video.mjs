@@ -1,6 +1,6 @@
-// Renders an animation to MP4, frame by frame (smooth on any computer).
-//   node tools/render-video.mjs <slug>          → renders/<slug>/*.mp4
-//   node tools/render-video.mjs <slug> test     → a few PNG frames in renders/<slug>/work to check the layout
+// Renders this animation to MP4, frame by frame (smooth on any computer).
+//   node tools/render-video.mjs          → renders/*.mp4
+//   node tools/render-video.mjs test     → one PNG per chapter in renders/work to check the layout
 // env: FPS (default 60)
 // needs: Chrome, ffmpeg in PATH, PowerShell 7 (pwsh) + the Windows "Microsoft Tolga" voice for narration.
 import puppeteer from 'puppeteer-core';
@@ -8,25 +8,23 @@ import { spawn, execFileSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
-import { build } from './build.mjs';
+import { build } from '../build.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const SLUG = process.argv[2];
-if (!SLUG || !fs.existsSync(path.join(ROOT, 'animations', SLUG, 'animation.json'))) { console.log('usage: node tools/render-video.mjs <slug> [test]'); process.exit(1); }
-const CFG = JSON.parse(fs.readFileSync(path.join(ROOT, 'animations', SLUG, 'animation.json'), 'utf8'));
-const OUT = path.join(ROOT, 'renders', SLUG), WORK = path.join(OUT, 'work');
+const CFG = JSON.parse(fs.readFileSync(path.join(ROOT, 'animation.json'), 'utf8'));
+const OUT = path.join(ROOT, 'renders'), WORK = path.join(OUT, 'work');
 fs.mkdirSync(WORK, { recursive: true });
 const FPS = +(process.env.FPS || 60), W = 1920, H = 1080, ENDHOLD = CFG.video?.endHold ?? 10;
-const TEST = process.argv[3] === 'test';
+const TEST = process.argv[2] === 'test';
 const CHROME = process.env.CHROME || 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 const log = (...a) => console.log(new Date().toLocaleTimeString('tr-TR'), ...a);
-build(SLUG); // always render the current sources
+build(); // always render the current sources
 
 const browser = await puppeteer.launch({ executablePath: CHROME, headless: 'new', args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', `--window-size=${W},${H}`, '--disable-background-timer-throttling', '--disable-renderer-backgrounding'] });
 const page = await browser.newPage();
 await page.setViewport({ width: W, height: H, deviceScaleFactor: 1 });
 page.on('pageerror', e => log('PAGE ERROR', e.message));
-await page.goto(pathToFileURL(path.join(ROOT, 'dist', SLUG, 'index.html')).href + '?capture=1', { waitUntil: 'load', timeout: 180000 });
+await page.goto(pathToFileURL(path.join(ROOT, 'dist', 'index.html')).href + '?capture=1', { waitUntil: 'load', timeout: 180000 });
 await page.waitForFunction('window.__ready === true && window.__preloaded === true', { timeout: 300000 });
 await page.evaluate(() => document.fonts.ready);
 const CH = await page.evaluate(() => window.__dbg.CH.map(c => ({ id: c.id, start: c.start, dur: c.dur, cues: c.cues || [] })));

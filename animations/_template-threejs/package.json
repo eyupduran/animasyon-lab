@@ -1,0 +1,14 @@
+{
+  "name": "_template-threejs",
+  "private": true,
+  "type": "module",
+  "description": "Three.js animasyon şablonu",
+  "scripts": {
+    "build": "node build.mjs",
+    "video": "node tools/render-video.mjs",
+    "video:test": "node tools/render-video.mjs test"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^23.11.1"
+  }
+}
