@@ -49,7 +49,7 @@ Bu depo bir koleksiyondur; içindeki animasyonların ortak bir motoru ya da stil
 - Yine de bir şekilde önceki bir animasyonu görürsen (kök README'deki tablo, site kartları, bir hata ayıklama sırasında): **onun stilini, mantığını ya da paketlerini uygulamak zorunda değilsin, uygulamamalısın da.** Depoda bir animasyonun Three.js, koyu tema ya da belli bir oynatıcı kullanması, yenisinin de öyle olması gerektiği anlamına gelmez. Bunlar o konu için verilmiş kararlardı; senin konun kendi kararlarını ister. Gördüğün şeyi "bu zaten yapıldı, ben başka türlü yapayım" diye oku, "depoda böyle yapılıyor" diye değil.
 - Tutarlılık yalnızca teknikte aranır (bölüm başına tek kayıt, kelime kelime altyazı, zamanın fonksiyonu olan sahne durumu); görünümde, yapıda ve teknoloji seçiminde aranmaz. İki animasyonun yan yana konduğunda farklı ellerden çıkmış gibi görünmesi istenen sonuçtur.
 - Kullanılabilecek ortak şeyler yalnızca kökteki araçlar ve varlıklardır: `tools/voice.mjs`, `tools/render-video.mjs`, `assets/voices/`, `assets/avatars/`. Bunlar görünüm dayatmaz.
-- **Kodlamadan önce bir tasarım kartı yaz** (`animations/<slug>/DESIGN.md`):
+- **Kodlamadan önce bir tasarım kartı yaz** (`animations/<kategori>/<slug>/DESIGN.md`):
   1. Konunun özü tek cümlede: izleyici sonunda neyi anlamış olmalı?
   2. Birbirinden **gerçekten farklı üç görsel/anlatısal yaklaşım** düşün. Her birinin tekniği, görsel dili ve anlatım yapısı farklı olsun. Her biri için bir paragraf yaz.
   3. Konuya ve hedef kitleye en uygun olanı seç ve gerekçesini yaz. "Alışkın olduğum için" gerekçe değildir.
@@ -73,7 +73,7 @@ Tek satır kod yazmadan önce konuyu internetten araştır.
 - Hedef kitlenin müfredatta ne öğrendiğine bak; o seviyeye göre derinliği ayarla.
 - Yaygın yanlış bilinenleri bul ve animasyonda doğrusunu göster ("Çoğumuz … sanırız, aslında …"). Bu bölümler akılda en çok kalanlardır.
 - Konuyu somutlaştıran, şaşırtıcı ama doğru ayrıntılar topla: ölçek, hız, sayı, gündelik hayattan karşılaştırma.
-- Notlarını ve kaynaklarını `animations/<slug>/RESEARCH.md` dosyasına yaz (kaynak adı, adresi ve hangi bilgiyi verdiği). Emin olamadığın bir bilgiyi kullanma ya da yuvarlak ve temkinli ifade et ("yaklaşık", "yaygın görüşe göre").
+- Notlarını ve kaynaklarını `animations/<kategori>/<slug>/RESEARCH.md` dosyasına yaz (kaynak adı, adresi ve hangi bilgiyi verdiği). Emin olamadığın bir bilgiyi kullanma ya da yuvarlak ve temkinli ifade et ("yaklaşık", "yaygın görüşe göre").
 - Tarih ve coğrafyada tarihleri, sınırları ve yer adlarını dönemine uygun kullan. Tartışmalı konularda tek tarafın görüşünü gerçek gibi sunma.
 
 ## 3. Anlatım: bir insanın anlattığı gibi
@@ -178,8 +178,8 @@ window.__video = {
 
 `CLAUDE.md` içindeki adımlar geçerlidir. Özetle:
 
-1. `npm run new -- <slug> "<Türkçe Başlık>"` komutunu çalıştır. Slug İngilizce olmalı (küçük harf ve tire); Türkçe yalnızca ekrandaki metinde kullanılır ve düzgün olmalı (ç, ğ, ı, İ, ö, ş, ü).
-2. Yalnızca `animations/<slug>/` içinde çalış. `animation.json` dosyasını doldur (`slug`, `title`, `description`, `tech`, `build`, `output`). Kendi `package.json` dosyası olabilir: derleme paketleri `dependencies`, yerel araçlar `devDependencies` altına.
+1. Konuya uygun kategoriyi seç (biology, history, geography, physics, chemistry, math, space, technology, software; gerekirse yeni bir İngilizce ad) ve `npm run new -- <kategori>/<slug> "<Türkçe Başlık>"` komutunu çalıştır. Slug İngilizce olmalı (küçük harf ve tire); Türkçe yalnızca ekrandaki metinde kullanılır ve düzgün olmalı (ç, ğ, ı, İ, ö, ş, ü).
+2. Yalnızca `animations/<kategori>/<slug>/` içinde çalış. `animation.json` dosyasını doldur (`slug`, `title`, `description`, `tech`, `build`, `output`). Kendi `package.json` dosyası olabilir: derleme paketleri `dependencies`, yerel araçlar `devDependencies` altına.
 3. `DESIGN.md`, `RESEARCH.md` ve `README.md` (ne anlattığı, bölümleri, komutları) dosyalarını yaz. Kök `README.md` içindeki animasyon tablosuna bir satır ekle. İstersen 16:9 bir `poster.jpg` üret.
 4. `npm run voice -- <slug>` ile sesi üret ve şüpheli satırları düzelt.
 5. Kökte `npm run build -- <slug>` çalıştır.

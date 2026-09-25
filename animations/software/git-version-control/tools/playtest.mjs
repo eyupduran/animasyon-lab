@@ -1,6 +1,6 @@
 // Real-time playback check with artificial stalls: node tools/playtest.mjs [seconds]
 // Reports: seeks of a playing clip (must be 0), story time going back (must be 0), voice–picture offset.
-import puppeteer from '../../../node_modules/puppeteer-core/lib/esm/puppeteer/puppeteer-core.js';
+import puppeteer from 'puppeteer-core';
 import { serve } from './serve.mjs';
 const secs = Number(process.argv[2]) || 60;
 const srv = await serve();

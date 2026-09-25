@@ -1,5 +1,5 @@
 // Screenshots at given story times: node tools/shots.mjs <outDir> <w>x<h> t1 t2 …  (times in s, or chapter.cue)
-import puppeteer from '../../../node_modules/puppeteer-core/lib/esm/puppeteer/puppeteer-core.js';
+import puppeteer from 'puppeteer-core';
 import fs from 'fs';
 import { serve } from './serve.mjs';
 const [out, size, ...times] = process.argv.slice(2);

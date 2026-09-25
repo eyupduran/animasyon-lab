@@ -12,6 +12,7 @@ import fs from 'fs';
 import path from 'path';
 import http from 'http';
 import { fileURLToPath } from 'url';
+import { findAnimation } from './lib/animations.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const LIB = path.join(ROOT, 'assets', 'avatars');
@@ -180,7 +181,7 @@ if (cmd === 'list') {
 } else if (cmd === 'use') {
   const [id, slug, name] = args;
   if (!id || !slug) die('usage: npm run avatars -- use <id> <slug> [file.glb]');
-  const src = modelPath(id), dir = path.join(ROOT, 'animations', slug);
+  const src = modelPath(id), dir = findAnimation(slug).dir;
   if (!fs.existsSync(src)) die(`${id} kütüphanede yok; önce: npm run avatars -- add ${id}`);
   if (!fs.existsSync(dir)) die(`animasyon yok: animations/${slug}`);
   const dst = path.join(dir, 'assets', name || `avatar-${id}.glb`);

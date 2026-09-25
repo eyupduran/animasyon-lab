@@ -8,7 +8,8 @@
     "build": "node tools/build-site.mjs",
     "avatars": "node tools/avatars.mjs",
     "voice": "node tools/voice.mjs",
-    "video": "node tools/render-video.mjs"
+    "video": "node tools/render-video.mjs",
+    "thumbnail": "node tools/thumbnail.mjs"
   },
   "engines": {
     "node": ">=20"

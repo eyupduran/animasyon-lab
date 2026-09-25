@@ -7,8 +7,9 @@ Bu depo, kullanıcının tüm eğitim animasyonlarını ve denemelerini bir arad
 Ayrıntılı istek şablonu ve kalite ölçütleri: `prompts/new-animation.md` (araştırma, anlatım, ses ve altyazı tekniği, özgün tasarım). Kullanıcı bu dosyaya atıf yaparsa baştan sona uygula.
 
 1. **Sıfırdan tasarla.** Başka animasyonların kodunu, motorunu, arayüzünü, renklerini ya da yazı tiplerini örnek alma; onları açıp okuma. Konunun ve hedef kitlenin ne gerektirdiğini düşün: teknik (Three.js, Babylon.js, WebGPU, Canvas 2D, SVG, CSS, Vite, React…), görsel dil, anlatım yapısı, arayüz ve ses tümüyle bu animasyon için seçilir. Kullanıcı açıkça "şu animasyon gibi" ya da "şundan başla" demedikçe önceki bir animasyonu temel alma.
-2. `npm run new -- <slug> "<Başlık>"` yalnızca boş bir klasör ile `animation.json` ve `README.md` açar. Paketler, derleme düzeni ve klasör yapısı animasyonun kendi ihtiyacına göre kurulur (kendi `package.json`'ı olabilir; derlemede gereken paketler `dependencies`, yalnızca yerel araçlar `devDependencies` altına).
-3. Yalnızca `animations/<slug>/` içinde çalış. Başka bir animasyonun dosyalarını değiştirme.
+2. Animasyonlar kategori klasörlerinde durur: `animations/<kategori>/<slug>/`. Kategori adları İngilizcedir (biology, history, geography, physics, chemistry, math, space, technology, software); liste ve Türkçe karşılıkları `tools/lib/animations.mjs` içinde. Slug bütün kategorilerde tektir, site adresi değişmez (`…/animasyon-lab/<slug>/`). Araçlar animasyonu yalnızca slug ile bulur.
+   `npm run new -- <kategori>/<slug> "<Başlık>"` yalnızca boş bir klasör ile `animation.json` ve `README.md` açar. Paketler, derleme düzeni ve klasör yapısı animasyonun kendi ihtiyacına göre kurulur (kendi `package.json`'ı olabilir; derlemede gereken paketler `dependencies`, yalnızca yerel araçlar `devDependencies` altına).
+3. Yalnızca `animations/<kategori>/<slug>/` içinde çalış. Başka bir animasyonun dosyalarını değiştirme.
 4. `animation.json` içindeki `slug`, `title`, `description`, `tech`, `build`, `output` alanlarını doldur. Sitenin kartı bunlardan üretilir. `build` komutu animasyon klasöründe çalışır ve `output` klasörüne kendi başına açılan bir `index.html` üretmelidir.
 5. Animasyonun `README.md` dosyasını yaz: ne anlattığı, bölümleri ve komutları.
 6. Kök `README.md` içindeki "Animasyonlar" tablosuna bir satır ekle.
@@ -22,6 +23,7 @@ Ayrıntılı istek şablonu ve kalite ölçütleri: `prompts/new-animation.md` (
 - Anlatım bölüm başına tek kayıt olarak üretilir (cümle cümle değil); oynatırken hikâye zamanı kaydı izler, hiç geri gitmez, kayıt yüklenirken bekler. Altyazı ve sahne zamanları kayıttaki Whisper kelime zamanlarından çıkarılır.
 - Anlatım ve altyazı olan animasyonlarda izleyici ikisini ayrı ayrı açıp kapatabilmeli (altyazı düğmesi ve kısayolu, seçim hatırlanır). Altyazılar en çok iki satır, sesle birlikte ilerleyen parçalar hâlinde gösterilir ve kelimeler anlatıcı söyledikçe açılır (Whisper kelime zamanları `manifest.json` → `words`; `npm run voice -- <slug> --words-only` mevcut kayıtlara ekler). Stil: kutu yok, altta yumuşak karartma, gölgeli beyaz yazı, masaüstünde ~17–23 px.
 - `tools/render-video.mjs` (`npm run video -- <slug>`): YouTube için MP4 + SRT + bölüm listesi. Animasyon `?video=1` ile `window.__video` sözleşmesini sunmalı (bkz. kök README).
+- `assets/thumbnail-kit/` ve `tools/thumbnail.mjs` (`npm run thumbnail -- <slug>`): YouTube kapakları. **Tek istisna:** animasyonlar arasında ortak stil yoktur, ama kapaklar kanalın ortak kimliğini taşır. Logo ve konu etiketi, başlık düzeni, sarı vurgu, süre etiketi ve renk işleme kitten gelir. Ana görsel her animasyonda kendi konusundan kodla çizilir. Her video için 5 kapak konsepti üretilir.
 - `tools/build-site.mjs`: her animasyonu kendi `build` komutuyla derler ve siteyi toplar. `build` alanı boş olan animasyon atlanır.
 
 ## Kısıtlar

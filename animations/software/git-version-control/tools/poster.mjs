@@ -1,5 +1,5 @@
 // 16:9 poster for the site card: node tools/poster.mjs [chapter.cue]
-import puppeteer from '../../../node_modules/puppeteer-core/lib/esm/puppeteer/puppeteer-core.js';
+import puppeteer from 'puppeteer-core';
 import { serve } from './serve.mjs';
 const at = process.argv[2] || 'resolve.done';
 const srv = await serve();

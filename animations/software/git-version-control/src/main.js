@@ -2,7 +2,7 @@
 // waits while a clip loads, and the playing clip is never re-seeked because of a slow frame.
 import { buildTimeline, toSrt, toChapters } from './timeline.js';
 import { createScene } from './scene.js';
-import { createSfx } from './sfx.js';
+import { createSfx, synth } from './sfx.js';
 
 const qs = new URLSearchParams(location.search);
 const VIDEO = qs.has('video');
@@ -222,6 +222,24 @@ const ui = (() => {
   };
 })();
 
+// 16-bit stereo WAV for the video tool
+const CHUNK = 3 * 1024 * 1024;
+function encodeWav(buf) {
+  const n = buf.length, chs = 2, bytes = 44 + n * chs * 2;
+  const out = new Uint8Array(bytes), v = new DataView(out.buffer);
+  const str = (o, s) => { for (let i = 0; i < s.length; i++) out[o + i] = s.charCodeAt(i); };
+  str(0, 'RIFF'); v.setUint32(4, bytes - 8, true); str(8, 'WAVE'); str(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, chs, true); v.setUint32(24, buf.sampleRate, true);
+  v.setUint32(28, buf.sampleRate * chs * 2, true); v.setUint16(32, chs * 2, true); v.setUint16(34, 16, true);
+  str(36, 'data'); v.setUint32(40, n * chs * 2, true);
+  const L = buf.getChannelData(0), R = buf.numberOfChannels > 1 ? buf.getChannelData(1) : L;
+  let o = 44;
+  for (let i = 0; i < n; i++) {
+    v.setInt16(o, Math.max(-1, Math.min(1, L[i])) * 32767, true); v.setInt16(o + 2, Math.max(-1, Math.min(1, R[i])) * 32767, true); o += 4;
+  }
+  return out;
+}
+
 // ---------------------------------------------------------------- render loop
 function render() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -246,12 +264,42 @@ for (const f of [0.1, 0.3, 0.5, 0.7, 0.9]) { ctx.setTransform(dpr, 0, 0, dpr, 0,
 
 if (VIDEO) {
   document.body.classList.add('video');
+  let wav = null;
   window.__video = {
     duration: tl.duration,
     renderAt(t) { T = t; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); scene.draw(ctx, W, H, t); },
-    srt: () => toSrt(tl),
-    chapters: () => toChapters(tl),
+    // film soundtrack: every narration clip at its place + the same synthesized effects, mixed offline
+    async prepareSound(from = 0, to = tl.duration) {
+      const rate = 48000, len = Math.max(1, Math.ceil((to - from) * rate));
+      const oac = new OfflineAudioContext(2, len, rate);
+      const voice = oac.createGain(); voice.gain.value = 1; voice.connect(oac.destination);
+      const fxBus = oac.createGain(); fxBus.gain.value = 0.5; fxBus.connect(oac.destination);
+      for (const ch of tl.chapters) {
+        if (!ch.file || ch.clipStart + ch.clip < from || ch.clipStart > to) continue;
+        const buf = await oac.decodeAudioData(await (await fetch(ch.file)).arrayBuffer());
+        const src = oac.createBufferSource(); src.buffer = buf; src.connect(voice);
+        const at = ch.clipStart - from;
+        if (at >= 0) src.start(at); else src.start(0, -at);
+      }
+      for (const [et, type] of scene.sfx) {
+        if (et < from || et > to) continue;
+        const c = tl.at(et), speaking = et > c.clipStart && et < c.clipStart + c.clip;
+        synth(oac, fxBus, type, et - from, speaking ? 0.4 : 1);
+      }
+      const out = await oac.startRendering();
+      wav = encodeWav(out);
+      return Math.ceil(wav.length / CHUNK);
+    },
+    soundChunk(i) {
+      const part = wav.subarray(i * CHUNK, (i + 1) * CHUNK);
+      let bin = '';
+      for (let k = 0; k < part.length; k += 0x8000) bin += String.fromCharCode.apply(null, part.subarray(k, k + 0x8000));
+      return btoa(bin);
+    },
+    srt: (from = 0, to = tl.duration) => toSrt(tl, from, to),
+    chapters: (from = 0) => tl.chapters.filter(c => c.end > from).map(c => ({ t: Math.max(0, c.start - from), title: c.title })),
   };
+  window.__ready = true;
 } else {
   const go = $('go');
   go.disabled = false;

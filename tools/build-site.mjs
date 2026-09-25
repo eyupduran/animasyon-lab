@@ -1,23 +1,23 @@
 // Builds the whole site: runs every animation's own build and collects the results.
 //   node tools/build-site.mjs            → dist/index.html + dist/<slug>/...
 //   node tools/build-site.mjs <slug>     → only that animation (plus the index)
-// Each animation declares in its animation.json how it is built ("build") and where the output lands ("output").
-// Folders starting with "_" (templates) are skipped.
+// Animations live in animations/<category>/<slug>/; the site keeps flat addresses (dist/<slug>/) and groups
+// the cards by category on the front page. Each animation declares in its animation.json how it is built
+// ("build") and where the output lands ("output"). Folders starting with "_" (templates) are skipped.
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import { listAnimations, CATEGORIES } from './lib/animations.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const ANIM = path.join(ROOT, 'animations'), DIST = path.join(ROOT, 'dist');
+const DIST = path.join(ROOT, 'dist');
 const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const copyDir = (a, b) => { fs.mkdirSync(b, { recursive: true }); for (const e of fs.readdirSync(a, { withFileTypes: true })) { const s = path.join(a, e.name), d = path.join(b, e.name); if (e.isDirectory()) copyDir(s, d); else fs.copyFileSync(s, d); } };
 
 const only = process.argv[2];
-const all = fs.readdirSync(ANIM).filter(d => !d.startsWith('_') && fs.existsSync(path.join(ANIM, d, 'animation.json'))).sort();
 const items = [];
-for (const slug of all) {
-  const dir = path.join(ANIM, slug);
+for (const { slug, category, dir } of listAnimations()) {
   const cfg = JSON.parse(fs.readFileSync(path.join(dir, 'animation.json'), 'utf8'));
   if (!cfg.build) { console.log(`${slug}: animation.json → build boş, atlandı`); continue; }
   if (!only || only === slug) {
@@ -28,10 +28,17 @@ for (const slug of all) {
     fs.rmSync(path.join(DIST, slug), { recursive: true, force: true });
     copyDir(path.join(dir, cfg.output || 'dist'), path.join(DIST, slug));
   }
-  items.push({ slug, ...cfg, poster: fs.existsSync(path.join(dir, 'poster.jpg')) });
+  items.push({ ...cfg, slug, category, poster: fs.existsSync(path.join(dir, 'poster.jpg')) });
 }
 
-const cards = items.map(a => `<a class="card" href="./${a.slug}/">${a.poster ? `<img src="./${a.slug}/poster.jpg" alt="" loading="lazy">` : '<div class="ph"></div>'}<div class="txt"><b>${esc(a.title)}</b><span>${esc(a.description)}</span>${a.tech ? `<i>${esc(a.tech)}</i>` : ''}</div></a>`).join('\n');
+const card = a =>`<a class="card" href="./${a.slug}/">${a.poster ? `<img src="./${a.slug}/poster.jpg" alt="" loading="lazy">` : '<div class="ph"></div>'}<div class="txt"><b>${esc(a.title)}</b><span>${esc(a.description)}</span>${a.tech ? `<i>${esc(a.tech)}</i>` : ''}</div></a>`;
+// one section per category, in the order of CATEGORIES (new categories last)
+const cats = [...new Set([...Object.keys(CATEGORIES), ...items.map(a => a.category)])].filter(c => items.some(a => a.category === c));
+const label = c => (CATEGORIES[c] && CATEGORIES[c].tr) || c;
+const chips = cats.length > 1 ? `<nav class="chips"><button class="on" data-c="">Tümü</button>${cats.map(c => `<button data-c="${c}">${esc(label(c))}</button>`).join('')}</nav>` : '';
+const sections = cats.map(c => `<section data-c="${c}"><h2>${esc(label(c))}</h2><div class="grid">
+${items.filter(a => a.category === c).map(card).join('\n')}
+</div></section>`).join('\n');
 fs.mkdirSync(DIST, { recursive: true });
 fs.writeFileSync(path.join(DIST, 'index.html'), `<!doctype html>
 <html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -51,15 +58,19 @@ p{color:var(--muted);max-width:60ch;line-height:1.55;margin:0 0 2.2em}
 .card:hover{border-color:var(--gold);transform:translateY(-2px)}
 .card img,.card .ph{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#1d0f14}
 .txt{padding:14px 16px 16px;display:grid;gap:6px}.txt b{font-size:17px}.txt span{font-size:13.5px;color:var(--muted);line-height:1.45}
+section{margin:0 0 38px}h2{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:26px;margin:0 0 14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 30px}.chips button{font:600 14px 'IBM Plex Sans',sans-serif;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:30px;padding:7px 14px;cursor:pointer}
+.chips button.on,.chips button:hover{color:var(--ink);background:var(--gold);border-color:var(--gold)}
 .txt i{font-style:normal;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim)}
 </style></head>
 <body><main>
 <div class="eyebrow">Tarayıcıda eğitim animasyonları</div>
 <h1>Animasyon <em>Lab</em></h1>
 <p>Her animasyon tarayıcıda, kodla çiziliyor. Bir karta tıklayıp izlemeye başlayın; ses için hoparlörü açın.</p>
-<div class="grid">
-${cards}
-</div>
-</main></body></html>
+${chips}
+${sections}
+</main>
+<script>document.querySelectorAll('.chips button').forEach(b => b.onclick = () => { document.querySelectorAll('.chips button').forEach(x => x.classList.toggle('on', x === b)); document.querySelectorAll('section[data-c]').forEach(s => { s.hidden = !!b.dataset.c && s.dataset.c !== b.dataset.c; }); });</script>
+</body></html>
 `);
 console.log(`site → dist/index.html (${items.length} animasyon)`);

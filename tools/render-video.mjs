@@ -15,13 +15,14 @@ import http from 'http';
 import { spawn, execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import puppeteer from 'puppeteer-core';
+import { findAnimation } from './lib/animations.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const slug = args.find(a => !a.startsWith('--') && !/^\d/.test(a));
 const opt = (n, d) => { const i = args.indexOf(`--${n}`); return i >= 0 ? args[i + 1] : d; };
 if (!slug) { console.log('kullanım: npm run video -- <slug> [--subs burn] [--fps 30] [--size 1920x1080] [--from s] [--to s]'); process.exit(1); }
-const dir = path.join(ROOT, 'animations', slug);
+const dir = findAnimation(slug).dir;
 const cfg = JSON.parse(fs.readFileSync(path.join(dir, 'animation.json'), 'utf8'));
 const fps = Number(opt('fps', 30));
 const [W, H] = opt('size', '1920x1080').split('x').map(Number);

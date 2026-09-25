@@ -96,11 +96,12 @@ export function buildTimeline(manifest) {
 
 const pad2 = n => String(n).padStart(2, '0');
 const srtTime = s => { const ms = Math.round(s * 1000); return `${pad2(Math.floor(ms / 3600000))}:${pad2(Math.floor(ms / 60000) % 60)}:${pad2(Math.floor(ms / 1000) % 60)},${String(ms % 1000).padStart(3, '0')}`; };
-export function toSrt(tl) {
+export function toSrt(tl, from = 0, to = tl.duration) {
   let n = 0, s = '';
   for (const ch of tl.chapters) for (const k of ch.chunks) {
+    if (k.t1 < from || k.t0 > to) continue;
     const txt = ch.words.slice(k.a, k.br).map(w => w.w).join(' ') + (k.br < k.b ? '\n' + ch.words.slice(k.br, k.b).map(w => w.w).join(' ') : '');
-    s += `${++n}\n${srtTime(k.t0 - 0.1)} --> ${srtTime(k.t1 - 0.05)}\n${txt}\n\n`;
+    s += `${++n}\n${srtTime(Math.max(0, k.t0 - 0.1 - from))} --> ${srtTime(Math.min(to, k.t1 - 0.05) - from)}\n${txt}\n\n`;
   }
   return s;
 }

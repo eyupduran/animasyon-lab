@@ -17,6 +17,7 @@ import crypto from 'crypto';
 import readline from 'readline';
 import { spawn, spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import { findAnimation } from './lib/animations.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const VOICES = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets', 'voices', 'catalog.json'), 'utf8'));
@@ -50,7 +51,7 @@ if (!slug || slug === 'voices') {
   process.exit(slug ? 0 : 1);
 }
 
-const dir = path.join(ROOT, 'animations', slug);
+const dir = findAnimation(slug).dir;
 const linesFile = path.join(dir, 'narration', 'lines.json');
 if (!fs.existsSync(linesFile)) { console.log(`${path.relative(ROOT, linesFile)} yok. Animasyon önce seslendirilecek satırları bu dosyaya yazmalı.`); process.exit(1); }
 const spec = JSON.parse(fs.readFileSync(linesFile, 'utf8'));

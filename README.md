@@ -8,15 +8,15 @@ Tarayıcıda çalışan eğitim animasyonlarının ve denemelerinin koleksiyonu.
 
 | Animasyon | Teknik | Açıklama |
 |---|---|---|
-| [Sindirim Yolculuğu](animations/digestive-journey) · [izle](https://eyupduran.github.io/animasyon-lab/digestive-journey/) | Three.js · Avaturn GLB | Bir besinin ağızdan mideye, bağırsaklara, kana ve beyne uzanan yolculuğu |
-| [Yazıcının İçinde](animations/laser-printer) · [izle](https://eyupduran.github.io/animasyon-lab/laser-printer/) | Three.js · Vite · GPU simülasyonu | Renkli lazer yazıcı ve fotokopinin kesit hâlinde anlatımı; kopyadan kopyaya biriken kayıplar |
-| [İstanbul'un Fethi](animations/fall-of-constantinople) · [izle](https://eyupduran.github.io/animasyon-lab/fall-of-constantinople/) | Canvas 2D · prosedürel minyatür harita | 1453 kuşatması canlanan bir harita üzerinde: Boğazkesen, dev top, Haliç'teki zincir, karadan yürüyen gemiler ve son saldırı |
-| [Git Hattı: Sürüm Kontrolü](animations/git-version-control) · [izle](https://eyupduran.github.io/animasyon-lab/git-version-control/) | Canvas 2D · Web Audio | Git bir metro haritası üzerinde: commit, dal, birleştirme, çakışma, push ve pull |
+| [Sindirim Yolculuğu](animations/biology/digestive-journey) · [izle](https://eyupduran.github.io/animasyon-lab/digestive-journey/) | Three.js · Avaturn GLB | Bir besinin ağızdan mideye, bağırsaklara, kana ve beyne uzanan yolculuğu |
+| [Yazıcının İçinde](animations/technology/laser-printer) · [izle](https://eyupduran.github.io/animasyon-lab/laser-printer/) | Three.js · Vite · GPU simülasyonu | Renkli lazer yazıcı ve fotokopinin kesit hâlinde anlatımı; kopyadan kopyaya biriken kayıplar |
+| [İstanbul'un Fethi](animations/history/fall-of-constantinople) · [izle](https://eyupduran.github.io/animasyon-lab/fall-of-constantinople/) | Canvas 2D · prosedürel minyatür harita | 1453 kuşatması canlanan bir harita üzerinde: Boğazkesen, dev top, Haliç'teki zincir, karadan yürüyen gemiler ve son saldırı |
+| [Git Hattı: Sürüm Kontrolü](animations/software/git-version-control) · [izle](https://eyupduran.github.io/animasyon-lab/git-version-control/) | Canvas 2D · Web Audio | Git bir metro haritası üzerinde: commit, dal, birleştirme, çakışma, push ve pull |
 
 ## Yeni animasyon
 
 ```
-npm run new -- heartbeat "Kalbin Bir Atımı"     # → animations/heartbeat/ (yalnızca animation.json ve README.md)
+npm run new -- biology/heartbeat "Kalbin Bir Atımı"     # → animations/biology/heartbeat/ (yalnızca animation.json ve README.md)
 ```
 
 Klasör boş açılır. Teknik, paketler ve derleme düzeni animasyonun kendi ihtiyacına göre kurulur; önceki animasyonlar şablon olarak kullanılmaz. Sonra `animation.json`'daki alanlar doldurulur, tabloya bir satır eklenir ve gönderilir; site birkaç dakika içinde yeni kartla güncellenir.
@@ -36,7 +36,15 @@ Ham modeller git'te tutulmaz (`catalog.json` → `source`).
 
 ## Yeni animasyon istemek
 
-[prompts/new-animation.md](prompts/new-animation.md) dosyasındaki "İSTEK" bölümünü doldurup yeni bir oturumda şunu yazın: *"prompts/new-animation.md dosyasını oku ve uygula."* Şablon; konunun önce araştırılmasını, anlatımın bir insan konuşması gibi yazılmasını, ortak ses ve altyazı tekniğini ve her animasyonun diğerlerinden bağımsız, özgün bir tasarımla yapılmasını tarif eder.
+En kısa yol, Claude Code'da hazır komutu kullanmak:
+
+```
+/animation telefonun içi nasıl çalışır, ortaokul için
+```
+
+Komut ([.claude/skills/animation/SKILL.md](.claude/skills/animation/SKILL.md)) aşağıdaki şablonu uygular. Yanında sadece gerektiğinde okunan üç dosya vardır: teknik alet çantası (`craft.md`), önceki oturumlarda bulunan tuzaklar (`pitfalls.md`, her oturum sonunda büyür) ve sanat yönetmeni turu (`critique.md`). Bunlar stil önermez, yalnızca teknik ve kalite kontrolüdür. İşin başlangıç ve bitiş saatini not eder, `COST.md` dosyasını yazar, bitince commit edip `main`'e gönderir.
+
+Ya da [prompts/new-animation.md](prompts/new-animation.md) dosyasındaki "İSTEK" bölümünü doldurup yeni bir oturumda şunu yazın: *"prompts/new-animation.md dosyasını oku ve uygula."* Şablon; konunun önce araştırılmasını, anlatımın bir insan konuşması gibi yazılmasını, ortak ses ve altyazı tekniğini ve her animasyonun diğerlerinden bağımsız, özgün bir tasarımla yapılmasını tarif eder.
 
 ## Seslendirme (yerel, ücretsiz)
 
@@ -44,7 +52,7 @@ Anlatım sesleri bu bilgisayarda üretilir; dışarıya hiçbir şey gönderilme
 
 ```
 npm run voice -- voices                                  # 20 ses: OmniVoice (O…), Supertonic (S…), Chatterbox (C…), EMA-TTS (E1)
-npm run voice -- laser-printer                           # animations/laser-printer/narration/lines.json → public/voice/*.mp3
+npm run voice -- laser-printer                           # animations/technology/laser-printer/narration/lines.json → public/voice/*.mp3
 npm run voice -- laser-printer --voice omni-kadin-genc   # sesi değiştirir (seçim lines.json'a yazılır)
 ```
 
@@ -55,9 +63,19 @@ Kurulum (bir kez): `C:\ProgramData	ts_lab\omni` Python ortamı (PyTorch CUDA, `o
 ## YouTube videosu
 
 ```
-npm run video -- <slug>                # animations/<slug>/renders/<slug>.mp4 + .srt + -chapters.txt
+npm run video -- <slug>                # animations/<kategori>/<slug>/renders/<slug>.mp4 + .srt + -chapters.txt
 npm run video -- <slug> --subs burn    # altyazı görüntüye gömülü
 ```
+
+Claude Code'da `/video git hattı` komutu bütün işi yapar: videoyu, altyazıyı, bölüm listesini, kapak görsellerini ve YouTube açıklamasını `Masaüstü\YouTube\<slug>\` klasörüne çıkarır ([.claude/skills/video/SKILL.md](.claude/skills/video/SKILL.md)).
+
+Kapak görselleri de kodla çizilir:
+
+```
+npm run thumbnail -- <slug>            # animations/<kategori>/<slug>/renders/thumbnail-<n>-<ad>.jpg (5 kapak, 1920×1080)
+```
+
+Animasyon `thumbnail.html` sayfasını sunar (`?v=<n>` bir konsept çizer; sözleşme `tools/thumbnail.mjs` içinde). Kapaklar kanalın ortak kimliğini [assets/thumbnail-kit/kit.js](assets/thumbnail-kit/kit.js) kitinden alır: "ANİMASYON LAB" işareti, konu etiketi, sarı vurgulu büyük başlık, süre etiketi, renk işleme. Ana görsel her videoda kendi konusundan çizilir; her video için 5 konsept üretilir.
 
 Animasyon `?video=1` adresinde `window.__video` nesnesini sunar (`duration`, `renderAt`, `prepareSound`, `soundChunk`, `srt`, `chapters`). Araç kareleri headless Chrome'da tek tek çizer, film sesini sayfada çevrimdışı üretir ve ffmpeg ile birleştirir. `.srt` dosyası YouTube'a ayrıca yüklenir, izleyici altyazıyı açıp kapatabilir.
 
@@ -66,14 +84,18 @@ Animasyon `?video=1` adresinde `window.__video` nesnesini sunar (`duration`, `re
 ```
 animasyon-lab/
 ├─ animations/
-│  └─ digestive-journey/        her animasyon bağımsız bir proje; içi animasyona göre değişir
-│     ├─ animation.json         kimlik kartı: başlık, açıklama, teknik, derleme komutu, çıktı klasörü (zorunlu)
-│     ├─ README.md              bu animasyonun anlatımı ve komutları (zorunlu)
-│     └─ poster.jpg             sitedeki kart görseli, 16:9 (isteğe bağlı)
+│  ├─ biology/                  kategori klasörleri (İngilizce): biology, history, geography, physics,
+│  │  └─ digestive-journey/     chemistry, math, space, technology, software … (tools/lib/animations.mjs)
+│  │     ├─ animation.json      her animasyon bağımsız bir proje; kimlik kartı: başlık, açıklama, teknik, derleme (zorunlu)
+│  │     ├─ README.md           bu animasyonun anlatımı ve komutları (zorunlu)
+│  │     └─ poster.jpg          sitedeki kart görseli, 16:9 (isteğe bağlı)
+│  ├─ history/ · technology/ · software/ …
 ├─ assets/avatars/             isteğe bağlı avatar kütüphanesi: catalog.json, models/*.glb, thumbs/*.jpg
 ├─ assets/voices/              anlatıcı sesleri: catalog.json + her sesin kimlik kaydı
+├─ assets/thumbnail-kit/       YouTube kapaklarının ortak kanal kimliği
 ├─ tools/
-│  ├─ new-animation.mjs         boş bir animasyon klasörü açar
+│  ├─ lib/animations.mjs        kategori listesi; araçlar animasyonu slug ile bulur
+│  ├─ new-animation.mjs         boş bir animasyon klasörü açar (<kategori>/<slug>)
 │  ├─ avatars.mjs               avatar kütüphanesi: list, add, use, thumbs
 │  ├─ voice.mjs                 yerel seslendirme (OmniVoice, Piper) + Whisper denetimi
 │  ├─ tts/                      motor çalışanları: OmniVoice, Supertonic, Chatterbox, EMA-TTS (+ Whisper denetimi)
@@ -87,7 +109,7 @@ animasyon-lab/
 
 ## Bir animasyon klasörünün kuralları
 
-1. Klasör adı İngilizce; küçük harf, rakam ve tire: `heartbeat`, `digestive-journey`. Türkçe başlık ve metinler `animation.json` içinde durur.
+1. Yer: `animations/<kategori>/<slug>/`. Kategori ve slug İngilizce; küçük harf, rakam ve tire: `biology/heartbeat`, `software/git-version-control`. Slug bütün kategorilerde tektir; sitedeki adres kategori içermez (`…/<slug>/`). Türkçe başlık ve metinler `animation.json` içinde durur.
 2. `animation.json` şu alanları taşır:
    ```json
    {
