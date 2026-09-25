@@ -1,5 +1,5 @@
-// Plays the page in real time and checks the narration: no sentence cut short by the next one,
-// no mid-sentence skips, with artificial hitches thrown in.
+// Plays the page in real time and checks the chapter narration: no mid-recording skips, story time
+// never running backwards, with artificial hitches thrown in.
 //   node tools/check-voice.mjs [--from 0] [--secs 90]
 import http from 'http';
 import fs from 'fs';
@@ -32,15 +32,17 @@ await page.waitForFunction(() => window.__dig && !document.getElementById('b-sta
 await page.click('#b-start');
 if (from) await page.evaluate(f => { document.getElementById('timeline').dispatchEvent(new PointerEvent('pointerdown', { clientX: 0, bubbles: true })); }, from);
 const t0 = Date.now();
-let hitches = 0, spoken = new Set(), silentSec = 0;
+let hitches = 0, spoken = new Set(), silentSec = 0, backT = 0, lastT = -1;
 while (Date.now() - t0 < secs * 1000) {
   await new Promise(r => setTimeout(r, 250));
   if (Math.random() < 0.06) { hitches++; await page.evaluate(() => { const e = performance.now() + 300; while (performance.now() < e); }); }
-  const s = await page.evaluate(() => ({ key: window.__dig.VOICE.key, sp: window.__dig.VOICE.speaking, T: window.__dig.T() }));
+  const s = await page.evaluate(() => ({ key: window.__dig.VOICE.ch?.id, sp: window.__dig.VOICE.speaking, T: window.__dig.T() }));
   if (s.sp) spoken.add(s.key); else silentSec += 0.25;
+  if (s.T + 1e-6 < lastT) backT++;
+  lastT = s.T;
 }
-const r = await page.evaluate(() => ({ cuts: window.__dig.cuts, seeks: window.__seeks.filter(([a, b]) => a > 0.05 && Math.abs(a - b) > 0.3), T: window.__dig.T() }));
-console.log(`${secs} sn oynatıldı (T → ${r.T.toFixed(1)}), ${hitches} yapay takılma, ${spoken.size} cümle seslendirildi, sessiz ${silentSec.toFixed(0)} sn`);
-console.log(`yarıda kesilen cümle: ${r.cuts.length}`, r.cuts.slice(0, 8));
-console.log(`cümle ortasında atlatma: ${r.seeks.length}`);
+const r = await page.evaluate(() => ({ seeks: window.__seeks.filter(([a, b]) => a > 0.05 && Math.abs(a - b) > 0.3), T: window.__dig.T() }));
+console.log(`${secs} sn oynatıldı (T → ${r.T.toFixed(1)}), ${hitches} yapay takılma, ${spoken.size} bölüm kaydı çaldı, sessiz ${silentSec.toFixed(0)} sn`);
+console.log(`hikâye zamanının geri gitmesi: ${backT}`);
+console.log(`kayıt ortasında atlatma: ${r.seeks.length}`);
 await browser.close(); server.close();

@@ -27,7 +27,7 @@ Animasyonların anlatım sesleri. `npm run voice -- <slug> --voice <id>` ile se�
 
 ## Motorlar
 
-Kurulum `C:\ProgramData\tts_lab` altında; her motorun ayrı bir Python ortamı ve `tools/tts/` altında bir çalışanı var. Her cümle Whisper ile dinlenip denetlenir, bozuk çıkan yeniden üretilir.
+Kurulum `C:\ProgramData\tts_lab` altında; her motorun ayrı bir Python ortamı ve `tools/tts/` altında bir çalışanı var. Her kayıt Whisper ile dinlenip denetlenir, bozuk çıkan yeniden üretilir.
 
 | motor | lisans | ortam | çalışan | not |
 |---|---|---|---|---|

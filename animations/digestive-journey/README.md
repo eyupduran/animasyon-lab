@@ -26,7 +26,7 @@ npm run avatar -- "C:/Users/Eyüp/Desktop/cafe-avatars-glb/set-01-m01.glb" asset
 
 ### Anlatım ve altyazı
 
-Sayfadaki anlatım, her alt yazı için yerelde üretilmiş bir kayıttır (OmniVoice, O1 sesi: genç kadın; `narration/voice/`). Kayıt, alt yazısı ekrana geldiğinde başlar; cümle bir sonraki alt yazıya taşacaksa sahne önceden, fark edilmeyecek kadar yavaşlar. Alt çubukta **CC** (ya da C tuşu) alt yazıyı, **Anlatım** (ya da N tuşu) sesi açıp kapatır; seçimler tarayıcıda hatırlanır.
+Sayfadaki anlatım, her bölüm için yerelde üretilmiş tek parça bir kayıttır (OmniVoice, O1 sesi: genç kadın; `narration/voice/<bölüm>.mp3`). Cümleler ayrı ayrı değil, bir paragraf gibi akarak okunur. Kayıt çalarken sahne onu izler: her alt yazının sahnedeki anı, cümlesinin kayıtta başladığı ana eşlenir; görüntü hiç geri gitmez, kayıt yüklenirken bekler. Kelimeler anlatıcı söyledikçe açılır. Alt çubukta **CC** (ya da C tuşu) alt yazıyı, **Anlatım** (ya da N tuşu) sesi açıp kapatır; seçimler tarayıcıda hatırlanır.
 
 Alt yazı metni değişince:
 

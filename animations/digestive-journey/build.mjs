@@ -31,6 +31,16 @@ function fill(tpl, data) {
     .replace(/\{\{\s*([\w.]+)\s*\}\}/g, (_, k) => esc(get(k) ?? ''));
 }
 
+// recorded narration (one recording per chapter) + where each subtitle's sentence starts in it
+function narration() {
+  const mf = path.join(DIR, 'narration', 'manifest.json'), lf = path.join(DIR, 'narration', 'lines.json');
+  if (!fs.existsSync(mf)) return null;
+  const m = JSON.parse(fs.readFileSync(mf, 'utf8'));
+  const lines = fs.existsSync(lf) ? JSON.parse(fs.readFileSync(lf, 'utf8')).lines : [];
+  for (const l of lines) if (m.lines[l.id]) { m.lines[l.id].marks = l.marks; m.lines[l.id].len = l.say.length; }
+  return m;
+}
+
 export function build() {
   const cfg = JSON.parse(read('animation.json'));
   const missing = cfg.scenes.filter(f => !fs.existsSync(path.join(DIR, 'src', 'scenes', f)));
@@ -39,7 +49,7 @@ export function build() {
   const js = [
     HEADER,
     `const PAGE = ${JSON.stringify(cfg.page || {})};`,
-    `const NARRATION = ${fs.existsSync(path.join(DIR, 'narration', 'manifest.json')) ? read('narration', 'manifest.json').trim() : 'null'};`,
+    `const NARRATION = ${JSON.stringify(narration())};`,
     ...embeds,
     ...['core.js', 'engine.js'].map(f => `// ---- src/engine/${f}\n` + read('src', 'engine', f)),
     ...cfg.scenes.map(f => `// ---- src/scenes/${f}\n` + read('src', 'scenes', f)),
@@ -67,6 +77,7 @@ ${body.slice(cut).trim()}
   // recorded narration (npm run voice -- digestive-journey at the repository root)
   const vsrc = path.join(DIR, 'narration', 'voice');
   if (fs.existsSync(vsrc)) {
+    fs.rmSync(path.join(out, 'voice'), { recursive: true, force: true });
     fs.mkdirSync(path.join(out, 'voice'), { recursive: true });
     for (const f of fs.readdirSync(vsrc)) if (f.endsWith('.mp3')) fs.copyFileSync(path.join(vsrc, f), path.join(out, 'voice', f));
   }

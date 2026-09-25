@@ -409,9 +409,10 @@ const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 // ---------------------------------------------------------------- sound: narration clips + machine
 const cueList = tl.chapters.flatMap(c => c.cues);
 function audio(st, prev, dt) {
-  const cue = explore ? null : tl.cueAt(T);
-  narr.sync(T, playing, speed, cue);
-  if (playing) { const i = cue ? cueList.indexOf(cue) : cueList.findIndex(q => q.start > T); narr.prefetch(cueList.slice(Math.max(0, i), i + 4)); }
+  const ch = explore ? null : tl.voiceAt(T);
+  narr.sync(T, playing, speed, ch);
+  const cur = tl.chapterAt(T);
+  narr.prefetch([cur, tl.chapters[cur.index + 1]]);
   sound.setDuck(narr.speaking);
   sound.step(st, prev, dt, tl, { playing, explore });
 }
@@ -424,12 +425,16 @@ function frame(now) {
   const dt = Math.min(0.1, raw / 1000);
   last = now;
   if (playing && !explore) {
+    const before = T;
     T += dt * speed;
-    // while a narration clip plays, the clip is the clock (the voice never skips)
+    // while a chapter recording plays it is the clock: the picture catches up with the voice,
+    // or waits for it, but story time never runs backwards (no visible jumps)
     const at = narr.clock();
     if (at !== null) {
       const d = at - T;
-      if (Math.abs(d) < 1.5) T += d * 0.25;
+      if (narr.waiting) T = before;                              // recording still buffering: wait for it
+      else if (d > -6 && d < 1.5) T = Math.max(before, T + d * 0.25);
+      else if (d <= -6) narr.seekTo(T - narr.ch.voice.start);    // far behind (e.g. tab was hidden)
     }
     if (T >= tl.total) { T = tl.total - 0.001; enterExplore(); }
   }
@@ -438,8 +443,10 @@ function frame(now) {
   prevSt = st;
   idleTimer += dt;
   if (playing && idleTimer > 3.5 && panel.hidden) document.body.classList.add('idle');
-  // resolution: measured once in the first seconds of playback, lowered if needed, then fixed
-  if (!dprLocked && playing) {
+  // resolution: measured once while the start screen shows, lowered if needed, then fixed
+  // measured behind the start screen, so playback itself never changes resolution
+  if (!dprLocked && playing) dprLocked = true;
+  if (!dprLocked) {
     playClock += dt;
     if (playClock > 1.5) dprSamples.push(raw);
     if (dprSamples.length >= 90) {

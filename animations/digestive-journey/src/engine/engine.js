@@ -170,7 +170,7 @@ function updateHUD(c, t) {
     else { hud.sub.classList.add('out'); clearTimeout(hud._st); hud._st = setTimeout(() => { setSubWords(c, cue, txt); hud.sub.classList.remove('out'); }, cache.first ? 260 : 0); }
     APP.classList.toggle('has-sub', !!txt && !CAPTURE);
     cache.first = true;
-    if (playing && txt && !CAPTURE) { VOICE.say(c.id + '-' + cue, t - c.cues[cue][0]); VOICE.prefetch([c.id + '-' + (cue + 1), c.id + '-' + (cue + 2)]); }
+
   }
   if (CAPTURE) {
     const cs = cue != null ? c.cues[cue][0] : 0;
@@ -179,17 +179,10 @@ function updateHUD(c, t) {
     hud.card.style.transform = `translateY(${((1 - sstep(0.1, 1.0, t)) * 14).toFixed(1)}px)`;
   }
   // hold if narration still speaking near the next cue
-  if (!CAPTURE && SUBW.els.length) revealSubWords(c, t, next);
-  // pace: a sentence longer than its slot plays the whole slot a little slower (steady, not a sudden brake)
+  if (!CAPTURE && SUBW.els.length) revealSubWords(c, t);
   holdTarget = 1;
-  if (cue != null && VOICE.on && VOICE.ok && playing && !CAPTURE) {
-    const v = VOICE.info(c.id + '-' + cue), slot = next - c.cues[cue][0];
-    if (v && v.dur + 0.35 > slot) holdTarget = Math.max(0.35, slot / (v.dur + 0.35));
-    // safety net: still talking right before the next subtitle
-    if (VOICE.speaking && next - t < 0.35 && VOICE.left() > 0.2) holdTarget = Math.min(holdTarget, 0.3);
-  }
   // without narration: slow down a cue that is on screen for less time than it takes to read (~14 chars/s)
-  if (cue != null && !CAPTURE && holdTarget === 1) {
+  if (cue != null && !CAPTURE && !(VOICE.on && VOICE.map(c))) {
     const read = 1.2 + c.cues[cue][1].length / 14, span = next - c.cues[cue][0];
     if (span < read) holdTarget = Math.max(0.4, span / read);
   }
@@ -361,45 +354,70 @@ const AU = {
 };
 
 // ---------------- Voice (recorded narration) ----------------
-// Each subtitle has a clip (narration/voice/<chapter>-<n>.mp3, made with `npm run voice` at the
-// repository root). The clip plays from the moment its subtitle appears; if it is longer than the
-// subtitle's slot, story time slows gently ahead of time instead of cutting the sentence.
+// One recording per chapter (narration/voice/<chapter>.mp3, `npm run voice` at the repository root),
+// read as a whole paragraph. While it plays, story time follows it: each subtitle's scene time is
+// matched to the moment its sentence starts in the recording, so the pictures keep pace with the
+// narrator (never jumping backwards) and sentences flow into each other.
 const VOICE = {
-  on: true, ok: false, el: null, key: null, pool: new Map(),
+  on: true, ok: false, el: null, ch: null, pool: new Map(), maps: new Map(),
   init() { this.ok = !!(NARRATION && NARRATION.lines); try { const v = localStorage.getItem('sindirim:voice'); if (v !== null) this.on = v === '1'; } catch (e) {} this.btn(); },
   btn() { const b = $('b-voice'); b.style.display = this.ok ? '' : 'none'; b.setAttribute('aria-pressed', String(this.on)); },
-  toggle() { this.on = !this.on; try { localStorage.setItem('sindirim:voice', this.on ? '1' : '0'); } catch (e) {} this.btn(); if (!this.on) this.stop(); else cache.cue = null; },
+  toggle() { this.on = !this.on; try { localStorage.setItem('sindirim:voice', this.on ? '1' : '0'); } catch (e) {} this.btn(); if (!this.on) this.stop(); },
   get speaking() { return !!this.el && !this.el.paused && !this.el.ended; },
-  info(key) { return this.ok ? NARRATION.lines[key] : null; },
-  audio(key) {
-    let a = this.pool.get(key);
-    if (!a) { const l = this.info(key); if (!l) return null; a = new Audio(); a.preload = 'auto'; a.preservesPitch = true; a.src = './' + l.file; this.pool.set(key, a); }
+  get waiting() { return this.speaking && (this.el.readyState < 3 || this.el.seeking); },
+  // story-time <-> recording-time map of a chapter: anchors at every subtitle start
+  map(c) {
+    if (this.maps.has(c.id)) return this.maps.get(c.id);
+    const info = this.ok ? NARRATION.lines[c.id] : null;
+    let m = null;
+    if (info && c.cues && c.cues.length) {
+      const at = speechClock(info.words, info.dur);
+      const len = info.len || 1, marks = info.marks || c.cues.map((q, k) => k * len / c.cues.length);
+      const S = [], A = [];
+      c.cues.forEach((q, k) => { S.push(q[0]); A.push(k === 0 ? 0 : at(marks[k] / len)); });
+      S.push(Math.max(S[S.length - 1] + 0.5, c.dur - 0.3)); A.push(info.dur + 0.25);
+      for (let k = 1; k < A.length; k++) { if (A[k] <= A[k - 1]) A[k] = A[k - 1] + 0.05; if (S[k] <= S[k - 1]) S[k] = S[k - 1] + 0.05; }
+      const lerpArr = (X, Y, x) => { if (x <= X[0]) return Y[0] + (x - X[0]); for (let k = 1; k < X.length; k++) if (x <= X[k]) return Y[k - 1] + (Y[k] - Y[k - 1]) * (x - X[k - 1]) / (X[k] - X[k - 1]); return Y[Y.length - 1] + (x - X[X.length - 1]); };
+      m = { info, at, marks, len, url: './' + info.file, s2a: t => lerpArr(S, A, t), a2s: a => lerpArr(A, S, a), s0: S[0] };
+    }
+    this.maps.set(c.id, m);
+    return m;
+  },
+  audio(url) {
+    let a = this.pool.get(url);
+    if (!a) { a = new Audio(); a.preload = 'auto'; a.preservesPitch = true; a.src = url; this.pool.set(url, a); }
     return a;
   },
-  prefetch(keys) { for (const k of keys) this.audio(k); if (this.pool.size > 10) for (const [k, a] of this.pool) { if (a !== this.el && !keys.includes(k)) { a.removeAttribute('src'); a.load(); this.pool.delete(k); } if (this.pool.size <= 8) break; } },
-  say(key, offset = 0) {
-    if (!this.on || !this.ok) return;
-    const a = this.audio(key); if (!a) return;
-    if (this.el && this.el !== a) { if (this.speaking && this.left() > 0.15) window.__dig?.cuts.push([this.key, +this.left().toFixed(2)]); this.el.pause(); }
-    this.el = a; this.key = key;
-    const dur = this.info(key).dur;
-    if (offset >= dur - 0.05) return;
-    const set = () => { try { a.currentTime = Math.max(0, offset); } catch (e) {} };
-    if (offset > 0.05 || a.currentTime > 0.05) { if (a.readyState >= 1) set(); else a.addEventListener('loadedmetadata', set, { once: true }); }
-    a.playbackRate = speed; a.muted = !AU.on;
-    a.play().catch(() => {});
+  prefetch(cs) {
+    const keep = new Set(cs.map(c => c && this.map(c)?.url).filter(Boolean));
+    for (const u of keep) this.audio(u);
+    for (const [u, a] of this.pool) if (!keep.has(u) && a !== this.el) { a.removeAttribute('src'); a.load(); this.pool.delete(u); }
   },
-  // seconds of speech left, in story time
-  left() { if (!this.speaking) return 0; return (this.info(this.key).dur - this.el.currentTime); },
+  // called every frame: start / keep the chapter recording in step with story time t (chapter-local)
+  sync(c, t) {
+    const m = this.map(c);
+    if (!this.on || !m || !playing || CAPTURE) { this.pause(); return; }
+    const a = m.s2a(t);
+    if (this.ch !== c) {
+      if (t < m.s0 || a >= m.info.dur - 0.05) return;
+      if (this.el) this.el.pause();
+      this.ch = c; this.el = this.audio(m.url);
+      const el = this.el, set = () => { try { el.currentTime = Math.max(0, a); } catch (e) {} };
+      if (a > 0.05 || el.currentTime > 0.05 || el.ended) { if (el.readyState >= 1) set(); else el.addEventListener('loadedmetadata', set, { once: true }); }
+    }
+    this.el.playbackRate = speed; this.el.muted = !AU.on;
+    if (this.el.paused && !this.el.ended) this.el.play().catch(() => {});
+  },
+  // story time (chapter-local) as told by the recording, or null
+  clock(c) { const m = this.map(c); return this.speaking && this.ch === c && m ? m.a2s(this.el.currentTime) : null; },
   resume() { if (this.on && this.el && this.el.paused && !this.el.ended && this.el.currentTime > 0) { this.el.playbackRate = speed; this.el.play().catch(() => {}); } },
   pause() { if (this.el && !this.el.paused) this.el.pause(); },
-  stop() { this.pause(); this.el = null; this.key = null; },
+  stop() { this.pause(); this.el = null; this.ch = null; },
 };
 
 // ---------------- Subtitles: words appear as they are spoken ----------------
 // Each written word gets the moment its position in the sentence is reached in the recording
 // (Whisper word timings in NARRATION), so "%20" follows "yüzde yirmi" and lines never reflow.
-const SUBW = { els: [], times: [], key: null, dur: 0, shown: 0 };
 function speechClock(words, dur) {
   if (!words || !words.length) return f => f * dur;
   const total = words.reduce((a, w) => a + w[2].length + 1, 0);
@@ -412,24 +430,29 @@ function speechClock(words, dur) {
     return pts[pts.length - 1][1];
   };
 }
+const SUBW = { els: [], times: [], key: null, shown: 0 };
 function setSubWords(c, cue, txt) {
-  const key = c.id + '-' + cue, info = NARRATION?.lines?.[key];
-  const dur = info?.dur ?? Math.max(1.5, txt.length / 15);
-  const at = speechClock(info?.words, dur);
+  const m = VOICE.map(c);
   const words = txt.split(/\s+/).filter(Boolean);
   let pos = 0;
-  SUBW.times = words.map(w => { const i = txt.indexOf(w, pos); pos = i + w.length; return at(i / txt.length); });
+  const frac = words.map(w => { const i = txt.indexOf(w, pos); pos = i + w.length; return i / txt.length; });
+  if (m) {
+    // a written word takes the time of its place inside its sentence's stretch of the recording
+    const f0 = m.marks[cue] / m.len, f1 = (cue + 1 < m.marks.length ? m.marks[cue + 1] : m.len) / m.len;
+    SUBW.times = frac.map(f => m.at(f0 + (f1 - f0) * f));
+  } else {
+    const cs = c.cues[cue][0], next = c.cues[cue + 1]?.[0] ?? c.dur;
+    SUBW.times = frac.map(f => cs + (next - cs - 0.4) * f);
+  }
   hud.sub.innerHTML = words.map(w => `<i>${w.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</i>`).join(' ');
   SUBW.els = [...hud.sub.querySelectorAll('i')];
-  SUBW.key = key; SUBW.dur = dur; SUBW.shown = 0;
+  SUBW.key = c.id + '-' + cue; SUBW.shown = 0; SUBW.voiced = !!m;
 }
-function revealSubWords(c, t, next) {
-  const cs = c.cues.find(q => c.id + '-' + c.cues.indexOf(q) === SUBW.key)?.[0] ?? 0;
-  let clip;
-  if (VOICE.on && VOICE.key === SUBW.key && VOICE.el) clip = VOICE.el.ended ? 1e9 : VOICE.el.currentTime;
-  else { const room = Math.max(0.5, next - cs - 0.3); clip = (t - cs) * Math.max(1, SUBW.dur / room); }
+function revealSubWords(c, t) {
+  const m = VOICE.map(c);
+  const now = SUBW.voiced && m ? (VOICE.ch === c && VOICE.el && !VOICE.el.ended ? VOICE.el.currentTime : m.s2a(t)) : t;
   let n = 0;
-  while (n < SUBW.times.length && SUBW.times[n] <= clip + 0.06) n++;
+  while (n < SUBW.times.length && SUBW.times[n] <= now + 0.06) n++;
   if (n !== SUBW.shown) { SUBW.els.forEach((el, i) => el.classList.toggle('on', i < n)); SUBW.shown = n; }
 }
 
@@ -504,7 +527,17 @@ function frame(now) {
   requestAnimationFrame(frame);
   const dt = Math.min(0.05, (now - lastNow) / 1000); lastNow = now; REAL += dt;
   holdK += (holdTarget - holdK) * Math.min(1, dt * 3);
-  if (playing) T += dt * speed * holdK;
+  if (playing) {
+    const before = T;
+    T += dt * speed * holdK;
+    const ci = chapterAt(before), cc = CH[ci];
+    const vt = VOICE.clock(cc);
+    if (vt !== null) {
+      const want = cc.start + vt;
+      if (VOICE.waiting) T = before; // recording still buffering: wait for it
+      else if (Math.abs(want - T) < 6) T = Math.max(before, T + (want - T) * 0.3);
+    }
+  }
   if (started && dt > 0 && !TEST.has('noadapt') && REAL - (PERF.t0 ??= REAL) < 12) {
     PERF.acc += dt; PERF.n++;
     if (PERF.acc > 1.5) {
@@ -545,6 +578,7 @@ function render(dt) {
   const bph = frac(bt / BEAT); const beatEnv = Math.exp(-bph * 7);
   if (REAL - (AU._last || 0) > 0.066) { AU._last = REAL; AU.set({ ...(c.audio || {}), _beat: beatEnv, amb: c.audio?.amb, flow: c.audio?.flow }); }
   updateHUD(c, t); updateLabels(c, t); MAP.update(c, t);
+  if (!CAPTURE) { VOICE.sync(c, t); VOICE.prefetch([c, CH[i + 1]]); }
   // timeline
   const segs = $('segs').children;
   for (let k = 0; k < CH.length; k++) { const f = k < i ? 1 : k > i ? 0 : t / c.dur; const s = f.toFixed(3); const b = segs[k].firstChild; if (b._f !== s) { b._f = s; b.style.transform = `scaleX(${s})`; } }
@@ -631,7 +665,7 @@ async function preloadWorlds() {
 function boot() {
   layoutChapters();
   MAP.init(); initControls(); VOICE.init(); setSubs(SUBS);
-  window.__dig = { VOICE, T: () => T, total: () => TOTAL, cuts: [] };
+  window.__dig = { VOICE, T: () => T, total: () => TOTAL };
   resize();
   if (TEST.has('ch')) {
     started = true; APP.classList.remove('pre'); $('start').classList.add('gone');

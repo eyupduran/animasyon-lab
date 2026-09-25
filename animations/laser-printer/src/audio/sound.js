@@ -146,11 +146,12 @@ export async function renderSoundtrack(tl, S, { from = 0, to = tl.total, sampleR
   if (!effects) snd.master.gain.value = 0;
   const vbus = C.createGain(); vbus.gain.value = 1; vbus.connect(snd.out);
   if (voice) {
-    for (const c of tl.chapters) for (const q of c.cues) {
-      if (!q.voice || q.start + q.voice.dur < from || q.start > to) continue;
-      const buf = await C.decodeAudioData(await (await fetch(q.voice.url)).arrayBuffer());
+    for (const c of tl.chapters) {
+      const v = c.voice;
+      if (!v || v.start + v.dur < from || v.start > to) continue;
+      const buf = await C.decodeAudioData(await (await fetch(v.url)).arrayBuffer());
       const src = C.createBufferSource(); src.buffer = buf; src.connect(vbus);
-      const at = q.start - from;
+      const at = v.start - from;
       if (at >= 0) src.start(at); else src.start(0, -at);
     }
   }
@@ -160,8 +161,7 @@ export async function renderSoundtrack(tl, S, { from = 0, to = tl.total, sampleR
     const st = S(t);
     const when = t - from;
     if (effects) {
-      const q = tl.cueAt(t);
-      snd.setDuck(!!(voice && q?.voice && t >= q.start && t < q.start + q.voice.dur), when);
+      snd.setDuck(!!(voice && tl.voiceAt(t)), when);
       snd.step(st, prev, dt, tl, { when });
     }
     prev = st;

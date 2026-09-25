@@ -1,4 +1,4 @@
-// Writes narration/lines.json (what the narrator says for every subtitle) from the scene files.
+// Writes narration/lines.json (what the narrator says, one paragraph per chapter) from the scene files.
 // Then, at the repository root: npm run voice -- digestive-journey [--voice omni-kadin-genc]
 import fs from 'fs';
 import path from 'path';
@@ -55,13 +55,20 @@ for (const f of cfg.scenes) {
   while ((m = re.exec(src))) {
     const [, id, body] = m;
     const cue = /\[\s*[\d.]+\s*,\s*'((?:[^'\\]|\\.)*)'\s*\]/g;
-    let k = 0, c;
-    while ((c = cue.exec(body))) lines.push({ id: `${id}-${k++}`, text: c[1].replace(/\\'/g, "'"), say: spoken(c[1].replace(/\\'/g, "'")) });
+    let c;
+        const texts = [];
+    while ((c = cue.exec(body))) texts.push(c[1].replace(/\'/g, "'"));
+    // one recording per chapter: the whole paragraph is read in one go, so sentences flow into each other
+    if (texts.length) {
+      const says = texts.map(spoken), marks = [];
+      let o = 0; for (const x of says) { marks.push(o); o += x.length + 1; }
+      lines.push({ id, text: texts.join(' '), say: says.join(' '), marks });
+    }
   }
 }
 const file = path.join(DIR, 'narration', 'lines.json');
 const old = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {};
 fs.mkdirSync(path.dirname(file), { recursive: true });
-fs.writeFileSync(file, JSON.stringify({ voice: old.voice || 'omni-kadin-genc', speed: old.speed || 0.92, out: 'narration/voice', url: 'voice', manifest: 'narration/manifest.json', lines: lines.map(({ id, say }) => ({ id, say })) }, null, 1) + '\n');
+fs.writeFileSync(file, JSON.stringify({ voice: old.voice || 'omni-kadin-genc', speed: old.speed || 0.92, out: 'narration/voice', url: 'voice', manifest: 'narration/manifest.json', lines: lines.map(({ id, say, marks }) => ({ id, say, marks })) }, null, 1) + '\n');
 console.log(`narration/lines.json: ${lines.length} satır`);
 if (process.argv.includes('--show')) for (const l of lines) if (l.say !== l.text) console.log(`${l.id}\n  ${l.text}\n  ${l.say}`);

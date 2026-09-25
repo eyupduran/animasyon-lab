@@ -6,256 +6,151 @@
  "manifest": "narration/manifest.json",
  "lines": [
   {
-   "id": "intro-0",
-   "say": "Bir kafede, bir tabak fıstıklı lokum ve bir bardak çay."
+   "id": "intro",
+   "say": "Bir kafede, bir tabak fıstıklı lokum ve bir bardak çay. Bir parçayı başparmak ve işaret parmağıyla alıyor. Birazdan bu besinin vücuttaki yolculuğu başlayacak. Ağız açılıyor; öndeki kesici dişler onu ısırıp keser. Dudaklar kapanır, çene kasları çalışır; azı dişleri besini öğütür. İçeriden bakalım: dil lokmayı dişlerin arasına iter, tükürük onu yumuşatır. Sonra lokma yutağa, oradan yemek borusuna iner. Şimdi minik bir kamera olup besinle birlikte ağızdan içeri giriyoruz.",
+   "marks": [
+    0,
+    56,
+    159,
+    213,
+    280,
+    404
+   ]
   },
   {
-   "id": "intro-1",
-   "say": "Bir parçayı başparmak ve işaret parmağıyla alıyor. Birazdan bu besinin vücuttaki yolculuğu başlayacak."
+   "id": "mouth",
+   "say": "Kesici dişler besini keser; dil onu hemen azı dişlerinin arasına iter. Azı dişleri bir değirmen gibi çalışır: besin ezilir, küçük parçalara ayrılır. Tükürük bezleri devreye girer. Tükürükteki amilaz enzimi nişastayı daha ağızdayken parçalamaya başlar. Parçalar tükürükle yoğrulup yumuşak bir top olur. Buna lokma ya da bolus denir. Dil lokmayı damağa bastırıp geriye, boğaza doğru iter.",
+   "marks": [
+    0,
+    71,
+    149,
+    252,
+    332
+   ]
   },
   {
-   "id": "intro-2",
-   "say": "Ağız açılıyor; öndeki kesici dişler onu ısırıp keser."
+   "id": "pharynx",
+   "say": "Yutkunma başladı. Bundan sonrası isteğimiz dışında, refleksle olur. Yumuşak damak yükselip burun yolunu kapatır. Gırtlak kapağı, yani epiglot, soluk borusunun üstüne kapanır; lokma yanlış yola sapamaz. Bu sırada nefes bir anlığına durur. Lokma yemek borusuna kayar.",
+   "marks": [
+    0,
+    68,
+    113,
+    202
+   ]
   },
   {
-   "id": "intro-3",
-   "say": "Dudaklar kapanır, çene kasları çalışır; azı dişleri besini öğütür."
+   "id": "eso",
+   "say": "Yemek borusu, yaklaşık yirmi beş santimetrelik kaslı bir tüp. Arkadaki kaslar kasılır, öndekiler gevşer: bu dalgaya peristaltizm denir. Bu yüzden baş aşağı dursanız bile yutabilirsiniz; yerçekimine ihtiyaç yok. Sonunda mide ağzındaki kapı, yani alt yemek borusu sfinkteri, açılıyor.",
+   "marks": [
+    0,
+    62,
+    136,
+    211
+   ]
   },
   {
-   "id": "intro-4",
-   "say": "İçeriden bakalım: dil lokmayı dişlerin arasına iter, tükürük onu yumuşatır. Sonra lokma yutağa, oradan yemek borusuna iner."
+   "id": "stomach",
+   "say": "Mideye ulaştık. İçerisi asidik mide özsuyuyla dolu. Hidroklorik asit, midenin pe ha değerini bir buçuk ile üç buçuğa indirir; mikropların çoğu burada ölür. Tükürükteki amilaz bu asitte etkisini yitirir. Pepsin enzimi ise fıstıktaki proteinleri parçalar. Mide duvarı dalga dalga kasılıp içeriği çalkalar. Besin artık kimus denen koyu bir bulamaç. Mide kapısı, yani pilor, aralanır ve kimusu azar azar ince bağırsağa bırakır.",
+   "marks": [
+    0,
+    52,
+    156,
+    254,
+    346
+   ]
   },
   {
-   "id": "intro-5",
-   "say": "Şimdi minik bir kamera olup besinle birlikte ağızdan içeri giriyoruz."
+   "id": "duo",
+   "say": "İnce bağırsağın ilk bölümü: onikiparmak bağırsağı. Adı, uzunluğunun yaklaşık on iki parmak eni olmasından gelir. Karaciğerin ürettiği safra ve pankreas özsuyu buraya dökülür. Pankreastan gelen bikarbonat asidi nötrler; safra ise yağları küçük damlacıklara böler. Pankreas amilazı, nişasta zincirlerini ikili şeker parçalarına, yani maltoza, keser.",
+   "marks": [
+    0,
+    113,
+    175,
+    263
+   ]
   },
   {
-   "id": "mouth-0",
-   "say": "Kesici dişler besini keser; dil onu hemen azı dişlerinin arasına iter."
+   "id": "jejunum",
+   "say": "İnce bağırsak yaklaşık altı ile yedi metre uzunluğunda; sindirim kanalının en uzun bölümü. İç yüzeyi milyonlarca parmaksı çıkıntıyla kaplı: villuslar, yani bağırsak tüyleri. Bu kıvrımlar ve tüyler sayesinde emilim yüzeyi yaklaşık otuz metrekareye, küçük bir odanın tabanı kadar alana ulaşır. Şimdi bir villusa yaklaşıp moleküllerin dünyasına iniyoruz.",
+   "marks": [
+    0,
+    91,
+    174,
+    292
+   ]
   },
   {
-   "id": "mouth-1",
-   "say": "Azı dişleri bir değirmen gibi çalışır: besin ezilir, küçük parçalara ayrılır."
+   "id": "absorb",
+   "say": "Villusun yüzeyi mikrovillus denen çok daha küçük tüylerle kaplı. Artık mikrometre ölçeğindeyiz. Besindeki sofra şekeri, yani sükroz, sükraz enzimiyle ikiye ayrılıyor: glikoz ve fruktoz. Kahramanımız artık bu glikoz molekülü. Sodyumla birlikte özel bir kapıdan hücreye giriyor. Hücrenin içinden geçip karşı uçtaki glut iki kapısından dışarı çıkıyor. Ve kılcal damara giriyor. Besindeki şeker artık kanda!",
+   "marks": [
+    0,
+    96,
+    186,
+    277,
+    349
+   ]
   },
   {
-   "id": "mouth-2",
-   "say": "Tükürük bezleri devreye girer. Tükürükteki amilaz enzimi nişastayı daha ağızdayken parçalamaya başlar."
+   "id": "liver",
+   "say": "Bağırsaktan gelen kan önce kapı toplardamarıyla karaciğere taşınır. Alyuvarlar, akyuvarlar, glikozlar ve diğer besinler birlikte akıyor. Karaciğer hücreleri fazla glikozu yakalayıp glikojen adlı dallı zincirler halinde depolar. Fruktozun büyük kısmı da burada işlenir. Bizim glikoz ise yoluna devam ediyor.",
+   "marks": [
+    0,
+    68,
+    137,
+    228
+   ]
   },
   {
-   "id": "mouth-3",
-   "say": "Parçalar tükürükle yoğrulup yumuşak bir top olur. Buna lokma ya da bolus denir."
+   "id": "lungs",
+   "say": "Akciğer kılcalları o kadar incedir ki alyuvarlar tek sıra halinde geçer. Hava keseciklerindeki, yani alveollerdeki, oksijen kana geçer; alyuvarlar parlak kırmızıya döner. Karbondioksit ise kandan çıkıp nefesle dışarı atılır. Glikozumuz burada sadece yolcu.",
+   "marks": [
+    0,
+    73,
+    171
+   ]
   },
   {
-   "id": "mouth-4",
-   "say": "Dil lokmayı damağa bastırıp geriye, boğaza doğru iter."
+   "id": "heartR",
+   "say": "Karaciğerden çıkan kan alt ana toplardamarla kalbe ulaşıyor. Burası sağ kulakçık. Vücudun dört bir yanından gelen, oksijeni azalmış kan burada toplanır. Üç yapraklı kapakçık, yani triküspit, açılıyor; sağ karıncığa geçiyoruz. Karıncık kasılıyor! Kan, akciğer atardamarına fırlatılıyor.",
+   "marks": [
+    0,
+    61,
+    153,
+    226
+   ]
   },
   {
-   "id": "pharynx-0",
-   "say": "Yutkunma başladı. Bundan sonrası isteğimiz dışında, refleksle olur."
+   "id": "heartL",
+   "say": "Oksijen yüklü kan akciğer toplardamarlarıyla sol kulakçığa döner. İki yapraklı mitral kapakçıktan sol karıncığa iniyoruz. Sol karıncık kalbin en güçlü odasıdır. Kasılınca kan aorta fışkırır. Aort kavsinden ayrılan şah damarına sapıyoruz: rota beyin!",
+   "marks": [
+    0,
+    66,
+    122,
+    191
+   ]
   },
   {
-   "id": "pharynx-1",
-   "say": "Yumuşak damak yükselip burun yolunu kapatır."
+   "id": "brain",
+   "say": "Şah damarı boyunca yukarı, beyne tırmanıyoruz. Beyindeki kılcal damarlar özel bir duvarla korunur: kan-beyin bariyeri. Astrosit hücreleri bu duvarı sarar. Glikoz, glut bir adlı kapıdan geçerek beyin dokusuna giriyor. Bir nöron glikozu içeri alıyor; mitokondriler onu yakıp a te pe enerjisi üretiyor. Bu enerjiyle elektrik sinyalleri ateşlenir: bir düşünce, bir anı, bir tat… Beyin vücut ağırlığının yalnızca yüzde ikisi kadardır ama enerjinin yaklaşık yüzde yirmisini kullanır. Az önce yediğin besin, şu an bir düşünceye güç veriyor.",
+   "marks": [
+    0,
+    47,
+    155,
+    217,
+    300,
+    375,
+    478
+   ]
   },
   {
-   "id": "pharynx-2",
-   "say": "Gırtlak kapağı, yani epiglot, soluk borusunun üstüne kapanır; lokma yanlış yola sapamaz."
-  },
-  {
-   "id": "pharynx-3",
-   "say": "Bu sırada nefes bir anlığına durur. Lokma yemek borusuna kayar."
-  },
-  {
-   "id": "eso-0",
-   "say": "Yemek borusu, yaklaşık yirmi beş santimetrelik kaslı bir tüp."
-  },
-  {
-   "id": "eso-1",
-   "say": "Arkadaki kaslar kasılır, öndekiler gevşer: bu dalgaya peristaltizm denir."
-  },
-  {
-   "id": "eso-2",
-   "say": "Bu yüzden baş aşağı dursanız bile yutabilirsiniz; yerçekimine ihtiyaç yok."
-  },
-  {
-   "id": "eso-3",
-   "say": "Sonunda mide ağzındaki kapı, yani alt yemek borusu sfinkteri, açılıyor."
-  },
-  {
-   "id": "stomach-0",
-   "say": "Mideye ulaştık. İçerisi asidik mide özsuyuyla dolu."
-  },
-  {
-   "id": "stomach-1",
-   "say": "Hidroklorik asit, midenin pe ha değerini bir buçuk ile üç buçuğa indirir; mikropların çoğu burada ölür."
-  },
-  {
-   "id": "stomach-2",
-   "say": "Tükürükteki amilaz bu asitte etkisini yitirir. Pepsin enzimi ise fıstıktaki proteinleri parçalar."
-  },
-  {
-   "id": "stomach-3",
-   "say": "Mide duvarı dalga dalga kasılıp içeriği çalkalar. Besin artık kimus denen koyu bir bulamaç."
-  },
-  {
-   "id": "stomach-4",
-   "say": "Mide kapısı, yani pilor, aralanır ve kimusu azar azar ince bağırsağa bırakır."
-  },
-  {
-   "id": "duo-0",
-   "say": "İnce bağırsağın ilk bölümü: onikiparmak bağırsağı. Adı, uzunluğunun yaklaşık on iki parmak eni olmasından gelir."
-  },
-  {
-   "id": "duo-1",
-   "say": "Karaciğerin ürettiği safra ve pankreas özsuyu buraya dökülür."
-  },
-  {
-   "id": "duo-2",
-   "say": "Pankreastan gelen bikarbonat asidi nötrler; safra ise yağları küçük damlacıklara böler."
-  },
-  {
-   "id": "duo-3",
-   "say": "Pankreas amilazı, nişasta zincirlerini ikili şeker parçalarına, yani maltoza, keser."
-  },
-  {
-   "id": "jejunum-0",
-   "say": "İnce bağırsak yaklaşık altı ile yedi metre uzunluğunda; sindirim kanalının en uzun bölümü."
-  },
-  {
-   "id": "jejunum-1",
-   "say": "İç yüzeyi milyonlarca parmaksı çıkıntıyla kaplı: villuslar, yani bağırsak tüyleri."
-  },
-  {
-   "id": "jejunum-2",
-   "say": "Bu kıvrımlar ve tüyler sayesinde emilim yüzeyi yaklaşık otuz metrekareye, küçük bir odanın tabanı kadar alana ulaşır."
-  },
-  {
-   "id": "jejunum-3",
-   "say": "Şimdi bir villusa yaklaşıp moleküllerin dünyasına iniyoruz."
-  },
-  {
-   "id": "absorb-0",
-   "say": "Villusun yüzeyi mikrovillus denen çok daha küçük tüylerle kaplı. Artık mikrometre ölçeğindeyiz."
-  },
-  {
-   "id": "absorb-1",
-   "say": "Besindeki sofra şekeri, yani sükroz, sükraz enzimiyle ikiye ayrılıyor: glikoz ve fruktoz."
-  },
-  {
-   "id": "absorb-2",
-   "say": "Kahramanımız artık bu glikoz molekülü. Sodyumla birlikte özel bir kapıdan hücreye giriyor."
-  },
-  {
-   "id": "absorb-3",
-   "say": "Hücrenin içinden geçip karşı uçtaki glut iki kapısından dışarı çıkıyor."
-  },
-  {
-   "id": "absorb-4",
-   "say": "Ve kılcal damara giriyor. Besindeki şeker artık kanda!"
-  },
-  {
-   "id": "liver-0",
-   "say": "Bağırsaktan gelen kan önce kapı toplardamarıyla karaciğere taşınır."
-  },
-  {
-   "id": "liver-1",
-   "say": "Alyuvarlar, akyuvarlar, glikozlar ve diğer besinler birlikte akıyor."
-  },
-  {
-   "id": "liver-2",
-   "say": "Karaciğer hücreleri fazla glikozu yakalayıp glikojen adlı dallı zincirler halinde depolar."
-  },
-  {
-   "id": "liver-3",
-   "say": "Fruktozun büyük kısmı da burada işlenir. Bizim glikoz ise yoluna devam ediyor."
-  },
-  {
-   "id": "lungs-0",
-   "say": "Akciğer kılcalları o kadar incedir ki alyuvarlar tek sıra halinde geçer."
-  },
-  {
-   "id": "lungs-1",
-   "say": "Hava keseciklerindeki, yani alveollerdeki, oksijen kana geçer; alyuvarlar parlak kırmızıya döner."
-  },
-  {
-   "id": "lungs-2",
-   "say": "Karbondioksit ise kandan çıkıp nefesle dışarı atılır. Glikozumuz burada sadece yolcu."
-  },
-  {
-   "id": "heartR-0",
-   "say": "Karaciğerden çıkan kan alt ana toplardamarla kalbe ulaşıyor."
-  },
-  {
-   "id": "heartR-1",
-   "say": "Burası sağ kulakçık. Vücudun dört bir yanından gelen, oksijeni azalmış kan burada toplanır."
-  },
-  {
-   "id": "heartR-2",
-   "say": "Üç yapraklı kapakçık, yani triküspit, açılıyor; sağ karıncığa geçiyoruz."
-  },
-  {
-   "id": "heartR-3",
-   "say": "Karıncık kasılıyor! Kan, akciğer atardamarına fırlatılıyor."
-  },
-  {
-   "id": "heartL-0",
-   "say": "Oksijen yüklü kan akciğer toplardamarlarıyla sol kulakçığa döner."
-  },
-  {
-   "id": "heartL-1",
-   "say": "İki yapraklı mitral kapakçıktan sol karıncığa iniyoruz."
-  },
-  {
-   "id": "heartL-2",
-   "say": "Sol karıncık kalbin en güçlü odasıdır. Kasılınca kan aorta fışkırır."
-  },
-  {
-   "id": "heartL-3",
-   "say": "Aort kavsinden ayrılan şah damarına sapıyoruz: rota beyin!"
-  },
-  {
-   "id": "brain-0",
-   "say": "Şah damarı boyunca yukarı, beyne tırmanıyoruz."
-  },
-  {
-   "id": "brain-1",
-   "say": "Beyindeki kılcal damarlar özel bir duvarla korunur: kan-beyin bariyeri. Astrosit hücreleri bu duvarı sarar."
-  },
-  {
-   "id": "brain-2",
-   "say": "Glikoz, glut bir adlı kapıdan geçerek beyin dokusuna giriyor."
-  },
-  {
-   "id": "brain-3",
-   "say": "Bir nöron glikozu içeri alıyor; mitokondriler onu yakıp a te pe enerjisi üretiyor."
-  },
-  {
-   "id": "brain-4",
-   "say": "Bu enerjiyle elektrik sinyalleri ateşlenir: bir düşünce, bir anı, bir tat…"
-  },
-  {
-   "id": "brain-5",
-   "say": "Beyin vücut ağırlığının yalnızca yüzde ikisi kadardır ama enerjinin yaklaşık yüzde yirmisini kullanır."
-  },
-  {
-   "id": "brain-6",
-   "say": "Az önce yediğin besin, şu an bir düşünceye güç veriyor."
-  },
-  {
-   "id": "colon-0",
-   "say": "Peki besinin geri kalanı? Fıstığın lifleri gibi sindirilemeyen kısımlar kalın bağırsağa ulaşır."
-  },
-  {
-   "id": "colon-1",
-   "say": "Burada trilyonlarca bakteri yaşar. Lifleri mayalayıp vücuda faydalı kısa zincirli yağ asitleri üretirler."
-  },
-  {
-   "id": "colon-2",
-   "say": "Kalın bağırsak içerikteki suyun büyük kısmını geri emer; atık yavaş yavaş katılaşır."
-  },
-  {
-   "id": "colon-3",
-   "say": "Yolculuğun son durağı rektum. Bir iki gün içinde geriye kalanlar vücuttan atılır."
+   "id": "colon",
+   "say": "Peki besinin geri kalanı? Fıstığın lifleri gibi sindirilemeyen kısımlar kalın bağırsağa ulaşır. Burada trilyonlarca bakteri yaşar. Lifleri mayalayıp vücuda faydalı kısa zincirli yağ asitleri üretirler. Kalın bağırsak içerikteki suyun büyük kısmını geri emer; atık yavaş yavaş katılaşır. Yolculuğun son durağı rektum. Bir iki gün içinde geriye kalanlar vücuttan atılır.",
+   "marks": [
+    0,
+    96,
+    202,
+    287
+   ]
   }
  ]
 }
