@@ -24,7 +24,7 @@ Bundan sonrası animasyonu yapacak yapay zekâya yöneliktir.
 
 ## 0. Amaç
 
-Bu animasyonu izleyen bir öğrenci konuyu **gerçekten anlamalı**. Yalnızca "güzel görüntüler" yetmez. İyi bir öğretmenin karşısına oturmuş gibi hissetmeli. Animasyon ilgi çekici, bilimsel ve tarihsel olarak doğru, akıcı ve okunaklı olmalı. Sesli anlatımı ve kelime kelime açılan altyazısı olmalı. YouTube videosuna da çevrilebilmeli.
+Bu animasyonu izleyen bir öğrenci konuyu **gerçekten anlamalı**. Yalnızca "güzel görüntüler" yetmez. İyi bir öğretmenin karşısına oturmuş gibi hissetmeli. Animasyon ilgi çekici, bilimsel ve tarihsel olarak doğru, akıcı ve okunaklı olmalı. Sesli anlatımı ve kelime kelime açılan altyazısı olmalı. İleride YouTube videosuna çevrilebilecek biçimde kurulmalı, ama **ilk aşamada video üretilmez** (bkz. bölüm 6).
 
 Kullanıcı seni beklemeden çalışmanı ister. Soru sorma; mantıklı kararı kendin ver, sonunda neyi neden seçtiğini kısaca anlat. Dışarıya para ödenen bir servise hiçbir şey gönderme (bkz. `CLAUDE.md`).
 
@@ -47,7 +47,7 @@ Bu depo bir koleksiyondur; içindeki animasyonların ortak bir motoru ya da stil
 
 - `animations/` altındaki başka animasyonların kodunu, arayüzünü, renklerini, yazı tiplerini, kamera dilini ve dosya düzenini **açma, okuma, örnek alma**. İhtiyacın olan ortak teknik (ses, altyazı, video) bu dosyada anlatılmıştır; bunun için başka animasyona bakmana gerek yok.
 - Yine de bir şekilde önceki bir animasyonu görürsen (kök README'deki tablo, site kartları, bir hata ayıklama sırasında): **onun stilini, mantığını ya da paketlerini uygulamak zorunda değilsin, uygulamamalısın da.** Depoda bir animasyonun Three.js, koyu tema ya da belli bir oynatıcı kullanması, yenisinin de öyle olması gerektiği anlamına gelmez. Bunlar o konu için verilmiş kararlardı; senin konun kendi kararlarını ister. Gördüğün şeyi "bu zaten yapıldı, ben başka türlü yapayım" diye oku, "depoda böyle yapılıyor" diye değil.
-- Tutarlılık yalnızca teknikte aranır (bölüm başına tek kayıt, kelime kelime altyazı, `window.__video`); görünümde, yapıda ve teknoloji seçiminde aranmaz. İki animasyonun yan yana konduğunda farklı ellerden çıkmış gibi görünmesi istenen sonuçtur.
+- Tutarlılık yalnızca teknikte aranır (bölüm başına tek kayıt, kelime kelime altyazı, zamanın fonksiyonu olan sahne durumu); görünümde, yapıda ve teknoloji seçiminde aranmaz. İki animasyonun yan yana konduğunda farklı ellerden çıkmış gibi görünmesi istenen sonuçtur.
 - Kullanılabilecek ortak şeyler yalnızca kökteki araçlar ve varlıklardır: `tools/voice.mjs`, `tools/render-video.mjs`, `assets/voices/`, `assets/avatars/`. Bunlar görünüm dayatmaz.
 - **Kodlamadan önce bir tasarım kartı yaz** (`animations/<slug>/DESIGN.md`):
   1. Konunun özü tek cümlede: izleyici sonunda neyi anlamış olmalı?
@@ -155,22 +155,24 @@ Görsel stil animasyona özgüdür; aşağıdaki **teknik** ise her animasyonda 
   - İzleyici altyazıyı ve anlatımı **ayrı ayrı** açıp kapatabilir. Düğmeler (CC, ses) ve kısayollar (C, N) olsun; seçim `localStorage` ile hatırlanır. Ayarlarda altyazı boyutu (küçük, orta, büyük) seçilebilir.
 - Oynatıcı: oynat/duraklat, bölüm atlama, bölüm işaretli ilerleme çubuğu, hız, tam ekran, klavye (boşluk, oklar). Telefonda da kullanılabilir olmalı. Anlatım sırasında efekt sesleri kısılır (ducking). Efekt sesleri hazır dosyalardan değil, tercihen Web Audio ile üretilir.
 
-## 6. Video (YouTube)
+## 6. Video (YouTube): şimdilik yok
 
-Kullanıcı ses ve görüntüyü onaylamadan video üretme. Sayfa `?video=1` ile açıldığında şu nesneyi sunmalı; kök araç (`npm run video -- <slug>`) bunu kullanır:
+**İlk aşamada video üretme** ve video için ayrıca uğraşma. Önce web sayfası, ses ve altyazı eksiksiz olsun; kullanıcı izleyip onaylasın. Video daha sonra, kullanıcı ayrıca isterse yapılır.
+
+Şimdiden yapılacak tek şey, sonradan videoya çevirmeyi kolaylaştıran bir kuruluştur: sahne durumu **zamanın saf bir fonksiyonu** olsun, yani `durum = f(t)` (aynı t → aynı kare). Bu oynatıcıda atlamayı da kolaylaştırır.
+
+Video istendiğinde sayfa `?video=1` ile açılınca kök aracın (`npm run video -- <slug>`) kullandığı şu nesneyi sunacak:
 
 ```js
 window.__video = {
   duration,                       // saniye
-  renderAt(t),                    // t anını kesin olarak çizer (durumsuz: aynı t → aynı kare)
+  renderAt(t),                    // t anını kesin olarak çizer
   prepareSound(from, to, opts),   // film sesini OfflineAudioContext ile üretir (anlatım + efektler)
   soundChunk(i),                  // üretilen WAV'ı parça parça verir
   srt(),                          // altyazı dosyası metni
   chapters(),                     // YouTube bölüm listesi metni ("0:00 Başlık")
 };
 ```
-
-Bunun için sahne durumu **zamanın saf bir fonksiyonu** olmalı: `durum = f(t)`. Böylece hem oynatıcıda atlama hem de kare kare video kolaylaşır.
 
 ## 7. Klasör ve teslim
 
@@ -199,5 +201,5 @@ Bunun için sahne durumu **zamanın saf bir fonksiyonu** olmalı: `durum = f(t)`
 - [ ] Altyazı en çok iki satır, kelime kelime açılıyor, okunaklı; altyazı ve anlatım ayrı ayrı açılıp kapanıyor.
 - [ ] Oynatma testinde sarma 0, geri gitme 0; takılma ya da donma yok.
 - [ ] Masaüstü ve telefonda ekran görüntüleri kontrol edildi.
-- [ ] `window.__video` sözleşmesi hazır (video yalnızca kullanıcı onaylayınca üretilir).
+- [ ] Video üretilmedi; sahne durumu zamanın fonksiyonu, yani video sonradan eklenebilir.
 - [ ] README'ler güncel; başka bir animasyonun dosyasına dokunulmadı.
