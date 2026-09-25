@@ -31,14 +31,14 @@ for (const { slug, category, dir } of listAnimations()) {
   items.push({ ...cfg, slug, category, poster: fs.existsSync(path.join(dir, 'poster.jpg')) });
 }
 
-const card = a =>`<a class="card" href="./${a.slug}/">${a.poster ? `<img src="./${a.slug}/poster.jpg" alt="" loading="lazy">` : '<div class="ph"></div>'}<div class="txt"><b>${esc(a.title)}</b><span>${esc(a.description)}</span>${a.tech ? `<i>${esc(a.tech)}</i>` : ''}</div></a>`;
-// one section per category, in the order of CATEGORIES (new categories last)
+const card = a =>`<a class="card" data-c="${a.category}" href="./${a.slug}/">${a.poster ? `<img src="./${a.slug}/poster.jpg" alt="" loading="lazy">` : '<div class="ph"></div>'}<div class="txt"><em>${esc(label(a.category))}</em><b>${esc(a.title)}</b><span>${esc(a.description)}</span>${a.tech ? `<i>${esc(a.tech)}</i>` : ''}</div></a>`;
+// one grid with every card; the chips filter it by category (order of CATEGORIES, new categories last)
 const cats = [...new Set([...Object.keys(CATEGORIES), ...items.map(a => a.category)])].filter(c => items.some(a => a.category === c));
-const label = c => (CATEGORIES[c] && CATEGORIES[c].tr) || c;
+function label(c) { return (CATEGORIES[c] && CATEGORIES[c].tr) || c; }
 const chips = cats.length > 1 ? `<nav class="chips"><button class="on" data-c="">Tümü</button>${cats.map(c => `<button data-c="${c}">${esc(label(c))}</button>`).join('')}</nav>` : '';
-const sections = cats.map(c => `<section data-c="${c}"><h2>${esc(label(c))}</h2><div class="grid">
-${items.filter(a => a.category === c).map(card).join('\n')}
-</div></section>`).join('\n');
+const grid = `<div class="grid">
+${[...items].sort((a, b) => cats.indexOf(a.category) - cats.indexOf(b.category) || a.title.localeCompare(b.title, 'tr')).map(card).join('\n')}
+</div>`;
 fs.mkdirSync(DIST, { recursive: true });
 fs.writeFileSync(path.join(DIST, 'index.html'), `<!doctype html>
 <html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -58,7 +58,7 @@ p{color:var(--muted);max-width:60ch;line-height:1.55;margin:0 0 2.2em}
 .card:hover{border-color:var(--gold);transform:translateY(-2px)}
 .card img,.card .ph{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#1d0f14}
 .txt{padding:14px 16px 16px;display:grid;gap:6px}.txt b{font-size:17px}.txt span{font-size:13.5px;color:var(--muted);line-height:1.45}
-section{margin:0 0 38px}h2{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:26px;margin:0 0 14px}
+.card[hidden]{display:none}.txt em{font-style:normal;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 30px}.chips button{font:600 14px 'IBM Plex Sans',sans-serif;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:30px;padding:7px 14px;cursor:pointer}
 .chips button.on,.chips button:hover{color:var(--ink);background:var(--gold);border-color:var(--gold)}
 .txt i{font-style:normal;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim)}
@@ -68,9 +68,9 @@ section{margin:0 0 38px}h2{font-family:Fraunces,Georgia,serif;font-weight:600;fo
 <h1>Animasyon <em>Lab</em></h1>
 <p>Her animasyon tarayıcıda, kodla çiziliyor. Bir karta tıklayıp izlemeye başlayın; ses için hoparlörü açın.</p>
 ${chips}
-${sections}
+${grid}
 </main>
-<script>document.querySelectorAll('.chips button').forEach(b => b.onclick = () => { document.querySelectorAll('.chips button').forEach(x => x.classList.toggle('on', x === b)); document.querySelectorAll('section[data-c]').forEach(s => { s.hidden = !!b.dataset.c && s.dataset.c !== b.dataset.c; }); });</script>
+<script>document.querySelectorAll('.chips button').forEach(b => b.onclick = () => { document.querySelectorAll('.chips button').forEach(x => x.classList.toggle('on', x === b)); document.querySelectorAll('.card[data-c]').forEach(c => { c.hidden = !!b.dataset.c && c.dataset.c !== b.dataset.c; }); });</script>
 </body></html>
 `);
 console.log(`site → dist/index.html (${items.length} animasyon)`);
