@@ -28,6 +28,19 @@ Bu animasyonu izleyen bir öğrenci konuyu **gerçekten anlamalı**. Yalnızca "
 
 Kullanıcı seni beklemeden çalışmanı ister. Soru sorma; mantıklı kararı kendin ver, sonunda neyi neden seçtiğini kısaca anlat. Dışarıya para ödenen bir servise hiçbir şey gönderme (bkz. `CLAUDE.md`).
 
+### Çıta: yapabileceğin en iyi iş
+
+Elinden gelenin en iyisini yap; sınırları zorla. "İdare eder" ya da "çalışıyor" yeterli değildir. Hedef, izleyenin "bu çok çok harika olmuş" dediği, arkadaşına göndermek istediği bir iş. Öğretmenin sınıfta gururla açacağı, öğrencinin bir daha izlemek istediği bir animasyon. Bir müze sergisindeki etkileşimli ekran ya da ödüllü bir belgeselin grafik bölümü kalitesini düşün, ve onu geçmeye çalış.
+
+Bu ifadeler somut olarak şunları gerektirir:
+
+- **Unutulmaz anlar:** Her animasyonda en az birkaç "vay" anı tasarla. Ölçeğin birden değiştiği bir kamera hareketi, beklenmedik bir kesit, bir sürecin gözler önünde kurulması, bir sayının gerçek boyutuyla gösterilmesi olabilir. Bunlar süs değil; konunun en önemli fikrini akılda kalıcı yapan anlar olmalı.
+- **Ayrıntıya özen:** Işık, gölge, doku, geçişlerin yumuşaklığı, hareketin ağırlığı ve zamanlaması, sesin görüntüyle uyumu, boşlukların dengesi. Kimsenin fark etmeyeceğini düşündüğün ayrıntı, bütünün "profesyonel" hissettirmesini sağlayan şeydir.
+- **İlk fikirle yetinme:** Aklına gelen ilk çözüm genellikle herkesin yapacağı çözümdür. Onu gördükten sonra "bunu nasıl daha etkileyici, daha açıklayıcı, daha özgün yapabilirim?" diye sor ve bir adım öteye götür.
+- **Eleştirel göz:** Ekran görüntülerine acımasız bir sanat yönetmeni gibi bak. Boş, sıkıcı, karışık ya da ucuz görünen her kareyi düzelt. Kendi işini beğenmek için değil, kusurunu bulmak için izle. Birkaç tur iyileştirme yap.
+- **Kolay yola kaçma:** Zor ama doğru olanı seç. Konuyu gerçekten gösteren bir benzetim, basit bir ikonun yerine anlamlı bir sahne, düz bir metin yerine canlanan bir açıklama tercih et. Süre ve emek konusunda cimri davranma.
+- **Güzellik ile doğruluk birlikte:** Hiçbir görsel etki bilimsel ya da tarihsel doğruluğun önüne geçmez. En etkileyici an, doğru olanın en iyi gösterildiği andır.
+
 ## 1. Özgünlük: bu animasyon kendi dünyasını kurar
 
 Bu depo bir koleksiyondur; içindeki animasyonların ortak bir motoru ya da stili **yoktur ve olmamalıdır**. Önceki animasyonları kopyalamak hepsinin aynı kalıptan çıkmış gibi görünmesine yol açar. Kullanıcının en çok istemediği şey budur.
@@ -176,6 +189,8 @@ Bunun için sahne durumu **zamanın saf bir fonksiyonu** olmalı: `durum = f(t)`
 
 - [ ] `DESIGN.md` içinde üç farklı yaklaşım ve seçimin gerekçesi var; animasyon depodaki diğerlerine benzemiyor.
 - [ ] `RESEARCH.md` içinde kaynaklar var; her sayı ve tarih doğrulandı.
+- [ ] Dürüstçe: bunu izleyen biri "çok çok harika olmuş" der mi? Demezse neyi eksik, iyileştir.
+- [ ] Birkaç unutulmaz "vay" anı var ve her biri konunun ana fikrine hizmet ediyor.
 - [ ] İlk 10 saniye merak uyandırıyor; sonunda özet ve açılış sorusunun yanıtı var.
 - [ ] Anlatım bir insanın konuşması gibi akıyor; bölümler tek parça kayıt; Whisper şüpheli listesi boş ya da düzeltildi.
 - [ ] Söylenen ile gösterilen aynı anda; sahne olayları kelime zamanlarına bağlı.
