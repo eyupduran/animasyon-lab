@@ -7,7 +7,7 @@
 
 ## 1. Seslendirme metinleri nerede
 
-Her animasyonun metni `animations/<slug>/narration/lines.json` dosyasının `lines[].say` alanında durur.
+Her animasyonun metni `animations/<kategori>/<slug>/narration/lines.json` dosyasının `lines[].say` alanında durur.
 
 - Metin zaten okunacak hâliyle yazılıdır: rakamlar sözcüğe çevrilmiş, kısaltmalar söylenişe göre düzenlenmiştir.
 - Sahne notu, kod ya da zaman damgası içermez. Karakter sayısı doğrudan bu alandan alınabilir.

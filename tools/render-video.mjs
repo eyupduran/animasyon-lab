@@ -1,9 +1,9 @@
 // Renders an animation to an MP4 for YouTube, frame by frame in headless Chrome.
 //   npm run video -- <slug> [--subs burn] [--fps 30] [--size 1920x1080] [--from 0] [--to 60] [--crf 18]
 // Output (renders/ is not in git):
-//   animations/<slug>/renders/<slug>.mp4             picture + soundtrack (narration and effects)
-//   animations/<slug>/renders/<slug>.srt             subtitles to upload to YouTube (viewers turn them on/off)
-//   animations/<slug>/renders/<slug>-chapters.txt    chapter list for the YouTube description
+//   animations/<kategori>/<slug>/renders/<slug>.mp4             picture + soundtrack (narration and effects)
+//   animations/<kategori>/<slug>/renders/<slug>.srt             subtitles to upload to YouTube (viewers turn them on/off)
+//   animations/<kategori>/<slug>/renders/<slug>-chapters.txt    chapter list for the YouTube description
 // With --subs burn the subtitles are drawn into the picture instead (file name ends with -altyazili).
 //
 // The animation opts in by answering to ?video=1 with window.__video:

@@ -23,7 +23,7 @@ Seçilen animasyon için YouTube'a yüklemeye hazır bir paket hazırla ve `C:\U
 
 ## Adımlar
 
-1. **Animasyonu bul.** İstekteki adı `animation.json` → `title` ya da `slug` ile eşleştir (Türkçe karakter ve büyük/küçük harf farkını önemseme).
+1. **Animasyonu bul.** Animasyonlar `animations/<kategori>/<slug>/` altında. İstekteki adı `animation.json` → `title` ya da `slug` ile eşleştir (Türkçe karakter ve büyük/küçük harf farkını önemseme). Araçlara yalnızca slug verilir. Kapaktaki konu etiketi kategoriden gelir (`tools/lib/animations.mjs` → `CATEGORIES[kategori].cover`, ör. YAZILIM).
 
 2. **Video arayüzünü denetle.** Kök `README.md` ("YouTube videosu") ve `tools/render-video.mjs` şunları ister. Sayfa `?video=1` ile açılınca:
    - `window.__video = { duration, renderAt(t), prepareSound(from, to) → parça sayısı, soundChunk(i) → base64 WAV, srt(from, to) → metin, chapters(from) → [{ t, title }] }`

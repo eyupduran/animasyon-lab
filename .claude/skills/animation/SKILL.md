@@ -18,6 +18,7 @@ Kullanıcının isteği:
 - **Konu:** istekte ne yazıyorsa. Kısa yazılmış olabilir ("telefon simülasyonu yap" gibi). Bunu "telefonun nasıl çalıştığını anlatan eğitim animasyonu" diye anla. "Simülasyon", "oyun", "harita" gibi sözcükler tür ya da his ipucudur; anlatım, ses ve altyazılı bir animasyon yine yapılır.
 - **Hedef kitle, süre, tür ve his, anlatıcı sesi:** istekte yoksa konuya göre sen seç. Süre verilmediyse konunun gerektirdiği kadar olsun (genelde 5–7 dakika).
 - **Ek istekler:** istekte başka ne varsa onlar da uygulanır.
+- **Kategori:** konuya göre bir klasör seç: biology, history, geography, physics, chemistry, math, space, technology ya da software. Liste ve Türkçe karşılıkları `tools/lib/animations.mjs` → `CATEGORIES` içinde. Hiçbiri uymuyorsa yeni bir İngilizce ad aç ve Türkçe karşılığını listeye ekle. Klasörü `npm run new -- <kategori>/<slug> "<Başlık>"` ile aç; animasyon `animations/<kategori>/<slug>/` altında durur. Araçlara (voice, build, video, thumbnail) yalnızca slug verilir.
 
 Kullanıcı beklemeden çalışmanı istiyor. Soru sorma, mantıklı kararı kendin ver ve sonunda neyi neden seçtiğini kısaca anlat. Ücretli bir dış servise hiçbir şey gönderme.
 

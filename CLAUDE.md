@@ -12,7 +12,7 @@ Ayrıntılı istek şablonu ve kalite ölçütleri: `prompts/new-animation.md` (
 3. Yalnızca `animations/<kategori>/<slug>/` içinde çalış. Başka bir animasyonun dosyalarını değiştirme.
 4. `animation.json` içindeki `slug`, `title`, `description`, `tech`, `build`, `output` alanlarını doldur. Sitenin kartı bunlardan üretilir. `build` komutu animasyon klasöründe çalışır ve `output` klasörüne kendi başına açılan bir `index.html` üretmelidir.
 5. Animasyonun `README.md` dosyasını yaz: ne anlattığı, bölümleri ve komutları.
-6. Kök `README.md` içindeki "Animasyonlar" tablosuna bir satır ekle.
+6. Kök `README.md` içindeki "Animasyonlar" tablosuna kategorisiyle birlikte bir satır ekle.
 7. Kökte `npm run build -- <slug>` çalıştır, ardından sayfayı headless Chrome ile ekran görüntüsü alarak kontrol et (masaüstü ve telefon genişliği). Metinlerin hızlı akışta okunabildiğini de kontrol et.
 8. Kullanıcı isterse commit edip `main`'e gönder. Pages yayını otomatik.
 
@@ -35,4 +35,4 @@ Ayrıntılı istek şablonu ve kalite ölçütleri: `prompts/new-animation.md` (
 ## Dil ve adlandırma
 
 - Arayüz metinleri, README'ler ve commit mesajları Türkçe; kod tanımlayıcıları İngilizce.
-- Klasör, dosya ve slug adları İngilizce: `digestive-journey`, `heartbeat`. Türkçe yalnızca ekranda görünen metinlerde (başlık, alt yazı, README) kullanılır ve düzgün Türkçe olmalıdır.
+- Klasör, dosya, kategori ve slug adları İngilizce: `biology/digestive-journey`, `software/git-version-control`. Türkçe yalnızca ekranda görünen metinlerde (başlık, alt yazı, README) kullanılır ve düzgün Türkçe olmalıdır.

@@ -4,7 +4,7 @@
 //   (speed < 1 speaks slower; saved in lines.json like the voice)
 //   npm run voice -- <slug> --words-only   only add word timings to existing clips
 //   npm run voice -- voices            list the voices
-// The animation provides animations/<slug>/narration/lines.json:
+// The animation provides animations/<kategori>/<slug>/narration/lines.json:
 //   { "voice": "omni-erkek-derin", "out": "public/voice", "manifest": "narration/manifest.json",
 //     "lines": [ { "id": "intro-0", "say": "Metnin söylenecek hâli." }, ... ] }
 // Each line becomes <out>/<id>.mp3; the manifest records every clip's exact duration so the

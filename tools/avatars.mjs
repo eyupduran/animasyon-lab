@@ -2,7 +2,7 @@
 //   npm run avatars -- list                         avatars in the library
 //   npm run avatars -- add <id...>                  slim raw <id>.glb from the source folder into models/ (+ thumbnail, catalog row)
 //   npm run avatars -- thumbs [id...]               (re)render thumbnails (all when no id is given)
-//   npm run avatars -- use <id> <slug> [file.glb]   copy a library model into animations/<slug>/assets/
+//   npm run avatars -- use <id> <slug> [file.glb]   copy a library model into animations/<kategori>/<slug>/assets/
 //   npm run avatars -- readme                       rewrite assets/avatars/README.md from catalog.json
 // Raw Avaturn GLBs (~14 MB each) stay outside git in catalog.json → "source" (override: AVATAR_SOURCE env).
 // Library models keep every face shape (ARKit expressions + visemes for lip sync), drop the 1-frame idle
@@ -131,7 +131,7 @@ Bu dosya \`npm run avatars -- readme\` ile \`catalog.json\`'dan üretilir; elle 
 \`\`\`
 npm install                                          # kökte, bir kez (araçların bağımlılıkları)
 npm run avatars -- list                              # kütüphanedeki karakterler
-npm run avatars -- use set-01-f02 heartbeat          # → animations/heartbeat/assets/avatar-set-01-f02.glb
+npm run avatars -- use set-01-f02 heartbeat          # → animations/biology/heartbeat/assets/avatar-set-01-f02.glb
 npm run avatars -- use set-01-f02 heartbeat teacher.glb
 npm run avatars -- add set-02-f03                    # ham <kimlik>.glb dosyasını küçültüp ekler (+ küçük resim)
 npm run avatars -- thumbs                            # küçük resimleri yeniden çizer
@@ -183,7 +183,7 @@ if (cmd === 'list') {
   if (!id || !slug) die('usage: npm run avatars -- use <id> <slug> [file.glb]');
   const src = modelPath(id), dir = findAnimation(slug).dir;
   if (!fs.existsSync(src)) die(`${id} kütüphanede yok; önce: npm run avatars -- add ${id}`);
-  if (!fs.existsSync(dir)) die(`animasyon yok: animations/${slug}`);
+  if (!fs.existsSync(dir)) die(`animasyon yok: ${slug}`);
   const dst = path.join(dir, 'assets', name || `avatar-${id}.glb`);
   fs.mkdirSync(path.dirname(dst), { recursive: true });
   fs.copyFileSync(src, dst);

@@ -6,12 +6,12 @@ Tarayıcıda çalışan eğitim animasyonlarının ve denemelerinin koleksiyonu.
 
 ## Animasyonlar
 
-| Animasyon | Teknik | Açıklama |
-|---|---|---|
-| [Sindirim Yolculuğu](animations/biology/digestive-journey) · [izle](https://eyupduran.github.io/animasyon-lab/digestive-journey/) | Three.js · Avaturn GLB | Bir besinin ağızdan mideye, bağırsaklara, kana ve beyne uzanan yolculuğu |
-| [Yazıcının İçinde](animations/technology/laser-printer) · [izle](https://eyupduran.github.io/animasyon-lab/laser-printer/) | Three.js · Vite · GPU simülasyonu | Renkli lazer yazıcı ve fotokopinin kesit hâlinde anlatımı; kopyadan kopyaya biriken kayıplar |
-| [İstanbul'un Fethi](animations/history/fall-of-constantinople) · [izle](https://eyupduran.github.io/animasyon-lab/fall-of-constantinople/) | Canvas 2D · prosedürel minyatür harita | 1453 kuşatması canlanan bir harita üzerinde: Boğazkesen, dev top, Haliç'teki zincir, karadan yürüyen gemiler ve son saldırı |
-| [Git Hattı: Sürüm Kontrolü](animations/software/git-version-control) · [izle](https://eyupduran.github.io/animasyon-lab/git-version-control/) | Canvas 2D · Web Audio | Git bir metro haritası üzerinde: commit, dal, birleştirme, çakışma, push ve pull |
+| Animasyon | Kategori | Teknik | Açıklama |
+|---|---|---|---|
+| [Sindirim Yolculuğu](animations/biology/digestive-journey) · [izle](https://eyupduran.github.io/animasyon-lab/digestive-journey/) | Biyoloji | Three.js · Avaturn GLB | Bir besinin ağızdan mideye, bağırsaklara, kana ve beyne uzanan yolculuğu |
+| [Yazıcının İçinde](animations/technology/laser-printer) · [izle](https://eyupduran.github.io/animasyon-lab/laser-printer/) | Teknoloji | Three.js · Vite · GPU simülasyonu | Renkli lazer yazıcı ve fotokopinin kesit hâlinde anlatımı; kopyadan kopyaya biriken kayıplar |
+| [İstanbul'un Fethi](animations/history/fall-of-constantinople) · [izle](https://eyupduran.github.io/animasyon-lab/fall-of-constantinople/) | Tarih | Canvas 2D · prosedürel minyatür harita | 1453 kuşatması canlanan bir harita üzerinde: Boğazkesen, dev top, Haliç'teki zincir, karadan yürüyen gemiler ve son saldırı |
+| [Git Hattı: Sürüm Kontrolü](animations/software/git-version-control) · [izle](https://eyupduran.github.io/animasyon-lab/git-version-control/) | Yazılım | Canvas 2D · Web Audio | Git bir metro haritası üzerinde: commit, dal, birleştirme, çakışma, push ve pull |
 
 ## Yeni animasyon
 
@@ -28,7 +28,7 @@ Bir animasyonda gerçekçi bir insan karakteri gerekirse `assets/avatars/` altı
 ```
 npm install                                        # kökte, bir kez
 npm run avatars -- list                            # kütüphanedeki karakterler
-npm run avatars -- use set-01-f02 heartbeat        # modeli animations/heartbeat/assets/ içine kopyalar
+npm run avatars -- use set-01-f02 heartbeat        # modeli animations/biology/heartbeat/assets/ içine kopyalar
 npm run avatars -- add set-02-f03                  # ham modeli (~14 MB) küçültüp kütüphaneye ekler (~3,5 MB)
 ```
 

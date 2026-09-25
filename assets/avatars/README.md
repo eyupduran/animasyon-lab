@@ -9,7 +9,7 @@ Bu dosya `npm run avatars -- readme` ile `catalog.json`'dan üretilir; elle düz
 ```
 npm install                                          # kökte, bir kez (araçların bağımlılıkları)
 npm run avatars -- list                              # kütüphanedeki karakterler
-npm run avatars -- use set-01-f02 heartbeat          # → animations/heartbeat/assets/avatar-set-01-f02.glb
+npm run avatars -- use set-01-f02 heartbeat          # → animations/biology/heartbeat/assets/avatar-set-01-f02.glb
 npm run avatars -- use set-01-f02 heartbeat teacher.glb
 npm run avatars -- add set-02-f03                    # ham <kimlik>.glb dosyasını küçültüp ekler (+ küçük resim)
 npm run avatars -- thumbs                            # küçük resimleri yeniden çizer
