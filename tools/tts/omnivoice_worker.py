@@ -1,7 +1,7 @@
 # OmniVoice worker for tools/voice.mjs: speaks each line in a fixed voice (the voice's reference
 # clip keeps it identical in every video), checks every clip with Whisper and retries bad takes.
 #   python omnivoice_worker.py job.json
-# job.json: { "ref_audio", "ref_text", "language", "speed", "lines": [{ "id", "text", "out" }], "tries", "max_cer" }
+# job.json: { "ref_audio", "ref_text", "language", "speed", "num_step", "lines": [{ "id", "text", "out" }], "tries", "max_cer" }
 # Prints one JSON line per finished clip: { "id", "cer", "tries", "dur", "heard" }.
 import json, os, re, sys, time, zlib
 
@@ -34,7 +34,8 @@ for line in job["lines"]:
     for k in range(tries):
         torch.manual_seed(zlib.crc32(line["id"].encode()) % 100000 + 7919 * k)
         audio = model.generate(text=line["text"], language=job.get("language", "tr"),
-                               ref_audio=job["ref_audio"], ref_text=job["ref_text"], speed=job.get("speed"))
+                               ref_audio=job["ref_audio"], ref_text=job["ref_text"], speed=job.get("speed"),
+                               num_step=int(job.get("num_step") or 32))
         x = trim(np.asarray(audio[0], dtype=np.float32))
         tmp = line["out"] + ".check.wav"
         sf.write(tmp, x, SR)

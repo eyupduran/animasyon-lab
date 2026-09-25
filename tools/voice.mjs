@@ -34,6 +34,8 @@ const PIPER_MODEL = 'tr_TR-dfki-medium.onnx';
 const WORKERS = {
   omnivoice: { env: 'omni', script: 'omnivoice_worker.py', name: 'OmniVoice' },
   ema: { env: 'ema', script: 'ema_worker.py', name: 'EMA-TTS' },
+  supertonic: { env: 'stonic', script: 'supertonic_worker.py', name: 'Supertonic 3' },
+  chatterbox: { env: 'cbox', script: 'chatterbox_worker.py', name: 'Chatterbox' },
 };
 
 const args = process.argv.slice(2);
@@ -65,10 +67,10 @@ const publicBase = spec.url || path.relative(path.join(dir, 'public'), outDir).s
 const refFile = voice.ref ? path.join(ROOT, 'assets', 'voices', voice.ref) : null;
 const speed = Number(flag('speed') || spec.speed || 1);
 if (flag('speed')) { spec.speed = speed; fs.writeFileSync(linesFile, JSON.stringify(spec, null, 1) + '\n'); }
-const voiceKey = JSON.stringify([voiceId, speed, voice.engine, voice.profile, voice.model_dir, voice.ref_text, refFile && crypto.createHash('sha1').update(fs.readFileSync(refFile)).digest('hex')]);
+const voiceKey = JSON.stringify([voiceId, speed, voice.engine, voice.profile, voice.model_dir, voice.voice_name, voice.model_version, voice.num_step, voice.ref_text, refFile && crypto.createHash('sha1').update(fs.readFileSync(refFile)).digest('hex')]);
 
 // OmniVoice misreads Turkish capital letters (Ş, Ç, Ğ, Ö, Ü, İ, I) at the start of words; lower-case them.
-const forEngine = s => (voice.engine !== 'piper'
+const forEngine = s => (voice.engine === 'omnivoice' || voice.engine === 'ema'
   ? s.replace(/[ŞÇĞÖÜİI]/g, c => ({ Ş: 'ş', Ç: 'ç', Ğ: 'ğ', Ö: 'ö', Ü: 'ü', İ: 'i', I: 'ı' })[c])
   : s);
 
@@ -121,6 +123,7 @@ async function runWorker(w) {
   fs.writeFileSync(job, JSON.stringify({
     ref_audio: ref, ref_text: voice.ref_text ? forEngine(voice.ref_text) : null,
     model_dir: voice.model_dir ? path.join(LAB, voice.model_dir) : null,
+    voice_name: voice.voice_name || null, model_version: voice.model_version || null, num_step: voice.num_step || null,
     language: 'tr', speed: speed === 1 ? null : speed, tries: 4, max_cer: 0.06,
     lines: todo.map(l => ({ id: l.id, text: forEngine(l.say), check: l.say, out: wavOf(l.id) })),
   }));
