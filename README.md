@@ -11,6 +11,7 @@ Tarayıcıda çalışan eğitim animasyonlarının ve denemelerinin koleksiyonu.
 | [Sindirim Yolculuğu](animations/biology/digestive-journey) · [izle](https://eyupduran.github.io/animasyon-lab/digestive-journey/) | Biyoloji | Three.js · Avaturn GLB | Bir besinin ağızdan mideye, bağırsaklara, kana ve beyne uzanan yolculuğu |
 | [Yazıcının İçinde](animations/technology/laser-printer) · [izle](https://eyupduran.github.io/animasyon-lab/laser-printer/) | Teknoloji | Three.js · Vite · GPU simülasyonu | Renkli lazer yazıcı ve fotokopinin kesit hâlinde anlatımı; kopyadan kopyaya biriken kayıplar |
 | [İstanbul'un Fethi](animations/history/fall-of-constantinople) · [izle](https://eyupduran.github.io/animasyon-lab/fall-of-constantinople/) | Tarih | Canvas 2D · prosedürel minyatür harita | 1453 kuşatması canlanan bir harita üzerinde: Boğazkesen, dev top, Haliç'teki zincir, karadan yürüyen gemiler ve son saldırı |
+| [Spring Boot'un İçi](animations/software/spring-boot-internals) · [izle](https://eyupduran.github.io/animasyon-lab/spring-boot-internals/) | Yazılım | Canvas 2D · Web Audio | `SpringApplication.run()` ağır çekimde: konteyner, bean yaşam döngüsü, otomatik yapılandırma, proxy'ler ve bir HTTP isteğinin yolculuğu |
 | [Git Hattı: Sürüm Kontrolü](animations/software/git-version-control) · [izle](https://eyupduran.github.io/animasyon-lab/git-version-control/) | Yazılım | Canvas 2D · Web Audio | Git bir metro haritası üzerinde: commit, dal, birleştirme, çakışma, push ve pull |
 
 ## Yeni animasyon
@@ -51,7 +52,7 @@ Ya da [prompts/new-animation.md](prompts/new-animation.md) dosyasındaki "İSTEK
 Anlatım sesleri bu bilgisayarda üretilir; dışarıya hiçbir şey gönderilmez. Dört motor var: **OmniVoice**, **Supertonic 3**, **Chatterbox** ve **EMA-TTS**; hepsinin lisansı ticari kullanıma açık, atıf şartı yok. Sesler sentetiktir, gerçek bir kişiden kopyalanmamıştır. Liste ve açıklama [assets/voices/README.md](assets/voices/README.md) dosyasında.
 
 ```
-npm run voice -- voices                                  # 20 ses: OmniVoice (O…), Supertonic (S…), Chatterbox (C…), EMA-TTS (E1)
+npm run voice -- voices                                  # 19 ses: OmniVoice (O…), Supertonic (S…), Chatterbox (C…), EMA-TTS (E1)
 npm run voice -- laser-printer                           # animations/technology/laser-printer/narration/lines.json → public/voice/*.mp3
 npm run voice -- laser-printer --voice omni-kadin-genc   # sesi değiştirir (seçim lines.json'a yazılır)
 ```

@@ -11,6 +11,10 @@ Biçim: **belirti** → neden → çözüm. Her oturum sonunda yeni bulunanlar e
 
 ## Sahne ve kamera
 
+- **Hareket eden işaretçi (paket, nokta) kutuların içinden geçip yazıları örtüyor** → yol, istasyon kutularının ortasından çizilmiş → paketi kutuların altından ya da üstünden giden ayrı bir hat üzerinde yürüt, istasyonları hatta kısa dikey çizgilerle bağla.
+- **Kod paneli satırı kenardan taşıyor** → sabit yazı boyutu, uzun satır → kod sayfasında yazı boyutunu en uzun satıra göre küçült (alt sınırla); örnek kodu yine de ≤ 40 karakterlik satırlarla yaz.
+- **Damga yazının üstüne düşünce okunmuyor** → damganın içi saydam → damgaya kâğıt renginde bir dolgu ver.
+- **Çizim sırası yüzünden nesne kayboluyor** (raf, üstüne konan nesneyi örtüyor) → kap önce, içine konan sonra çizilir.
 - **Yazılar çizgilerle kesişiyor** (durak adlarını birleşme çizgisi kesiyor) → yazının arkasında kontur yok → zemin renginde `strokeText` ile halo ver.
 - **Etiketin altındaki bağlantı çizgisi dev gibi uzuyor** → çizgi hedef istasyona kadar çekiliyor, etiket ise kayarken arada kalıyor → bağlantı çizgisini sabit uzunlukta çiz.
 - **Yakınlaşınca açıklama kartı anlatılan öğenin üstüne düşüyor** → kart ekranın ortasında → kamerayı öğeyi aşağıda tutacak biçimde kaydır, kartı üste koy ve ok ile öğeye bağla.
@@ -21,6 +25,8 @@ Biçim: **belirti** → neden → çözüm. Her oturum sonunda yeni bulunanlar e
 
 ## Ses
 
+- **Kod terimleri (Spring, bean, @Transactional…) yanlış okunuyor** → söyleniş sözlüğü kur (`PRON`: "bean" → "bin", "@Transactional" → "et trenzekşınıl"), kesme işaretinden sonraki eki birleştir ("Tomcat'e" → "tomkete"), ek uyumuna dikkat et ("classpath'e" için "klaspet" → "klaspete"). Whisper doğru okunan İngilizce terimleri İngilizce yazdığı için yüzde 5–10 "fark" normaldir; yalnızca anlamı bozulan kelimeler için satırı yeniden kur.
+- **O27 sesi** → kullanıcı "çok kötü" buldu, katalogdan çıkarıldı. Önerme.
 - **Oyun, program ya da teknik adı yanlış okunuyor** (commit, merge, HEAD…) → OmniVoice İngilizceyi Türkçe gibi okuyor → söylenecek metinde okunuşu yaz (komit, mörç, hed), ekrandaki metin değişmesin.
 - **Türkçe büyük harfle başlayan kelime yanlış okunuyor** → OmniVoice'un bilinen sorunu → `voice.mjs` bunu zaten küçük harfe çeviriyor; elle bir şey yapma.
 

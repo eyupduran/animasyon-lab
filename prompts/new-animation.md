@@ -113,7 +113,7 @@ Ses yerelde, `tools/voice.mjs` ile üretilir. Seslerin listesi ve özellikleri `
 - **Söylenecek metin ekrandaki metinden ayrıdır.** Ekranda "%20, 37 °C, 1453, H₂O, CMYK, (yani…)" yazabilir. Söylenecek metinde bunlar okunduğu gibi olmalı: "yüzde yirmi, otuz yedi derece, bin dört yüz elli üç, ha iki o, ce me ye ka". Rakamları sözcüğe çevir, parantezleri cümleye yedir, kısaltmaları ve yabancı adları okunuşa göre yaz. Ekrandaki metin değişmesin.
 - **Ses seçimi:** konuya ve kitleye uygun sesi seç. Kullanıcı belirttiyse onu kullan.
   - Belgesel ya da tarih için derin ya da yaşlı erkek sesi: O9, O10, O33.
-  - Canlı bir anlatı için genç ses: O1, O27.
+  - Canlı bir anlatı için genç ses: O1.
   - OmniVoice sesleri (O…) en doğal olanlardır.
   - Hız genelde 0.85–0.95; dakikada ~140–150 kelime anlaşılır bir hızdır.
 - Komutlar (depo kökünde):

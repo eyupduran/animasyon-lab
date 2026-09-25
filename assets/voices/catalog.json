@@ -31,14 +31,6 @@
   "ref_text": "Yazıcının kalbi, ışığa duyarlı bir tamburdur. Karanlıkta elektrik yükünü tutar, ışık gördüğü yerde ise bu yükü kaybeder.",
   "num_step": 64
  },
- "omni-erkek-genc-kalin": {
-  "code": "O27",
-  "label": "Erkek, genç, kalın",
-  "engine": "omnivoice",
-  "ref": "omnivoice/erkek-genc-kalin.wav",
-  "ref_text": "Yazıcının kalbi, ışığa duyarlı bir tamburdur. Karanlıkta elektrik yükünü tutar, ışık gördüğü yerde ise bu yükü kaybeder.",
-  "num_step": 64
- },
  "omni-erkek-orta-yas-tiz": {
   "code": "O32",
   "label": "Erkek, orta yaş, tiz",

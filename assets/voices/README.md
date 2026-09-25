@@ -8,7 +8,6 @@ Animasyonların anlatım sesleri. `npm run voice -- <slug> --voice <id>` ile se�
 | `omni-erkek-yasli` | O10 | Erkek, yaşlı | OmniVoice |
 | `omni-kadin-genc` | O1 | Kadın, genç | OmniVoice |
 | `omni-kadin-yasli` | O5 | Kadın, yaşlı | OmniVoice |
-| `omni-erkek-genc-kalin` | O27 | Erkek, genç, kalın | OmniVoice |
 | `omni-erkek-orta-yas-tiz` | O32 | Erkek, orta yaş, tiz | OmniVoice |
 | `omni-erkek-yasli-derin` | O33 | Erkek, yaşlı, çok derin | OmniVoice |
 | `omni-erkek-yasli-derin-2` | O34 | Erkek, yaşlı, çok derin (2) | OmniVoice |
