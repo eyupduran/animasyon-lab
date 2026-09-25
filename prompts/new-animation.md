@@ -46,6 +46,8 @@ Bu ifadeler somut olarak şunları gerektirir:
 Bu depo bir koleksiyondur; içindeki animasyonların ortak bir motoru ya da stili **yoktur ve olmamalıdır**. Önceki animasyonları kopyalamak hepsinin aynı kalıptan çıkmış gibi görünmesine yol açar. Kullanıcının en çok istemediği şey budur.
 
 - `animations/` altındaki başka animasyonların kodunu, arayüzünü, renklerini, yazı tiplerini, kamera dilini ve dosya düzenini **açma, okuma, örnek alma**. İhtiyacın olan ortak teknik (ses, altyazı, video) bu dosyada anlatılmıştır; bunun için başka animasyona bakmana gerek yok.
+- Yine de bir şekilde önceki bir animasyonu görürsen (kök README'deki tablo, site kartları, bir hata ayıklama sırasında): **onun stilini, mantığını ya da paketlerini uygulamak zorunda değilsin, uygulamamalısın da.** Depoda bir animasyonun Three.js, koyu tema ya da belli bir oynatıcı kullanması, yenisinin de öyle olması gerektiği anlamına gelmez. Bunlar o konu için verilmiş kararlardı; senin konun kendi kararlarını ister. Gördüğün şeyi "bu zaten yapıldı, ben başka türlü yapayım" diye oku, "depoda böyle yapılıyor" diye değil.
+- Tutarlılık yalnızca teknikte aranır (bölüm başına tek kayıt, kelime kelime altyazı, `window.__video`); görünümde, yapıda ve teknoloji seçiminde aranmaz. İki animasyonun yan yana konduğunda farklı ellerden çıkmış gibi görünmesi istenen sonuçtur.
 - Kullanılabilecek ortak şeyler yalnızca kökteki araçlar ve varlıklardır: `tools/voice.mjs`, `tools/render-video.mjs`, `assets/voices/`, `assets/avatars/`. Bunlar görünüm dayatmaz.
 - **Kodlamadan önce bir tasarım kartı yaz** (`animations/<slug>/DESIGN.md`):
   1. Konunun özü tek cümlede: izleyici sonunda neyi anlamış olmalı?
