@@ -143,6 +143,8 @@ function subs(t) {
       mk(k.a, k.br); if (k.br < k.b) mk(k.br, k.b);
     }
   }
+  // CC off: hide outright (the fade below writes an inline opacity every frame)
+  subsEl.style.display = cc ? '' : 'none';
   if (k) subsEl.style.opacity = Math.min(1, (t - (k.t0 - 0.15)) / 0.2, (k.t1 - 0.05 - t) / 0.2);
   for (const [s, wt] of spans) {
     const u = Math.max(0, Math.min(1, (t - wt + 0.06) / 0.3));
