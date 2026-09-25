@@ -74,12 +74,19 @@ button{font:inherit;color:inherit}
 .facts dt{font-size:11.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .facts dd{margin:0;font-size:15px;line-height:1.35;font-weight:500;color:var(--text);font-variant-numeric:tabular-nums}
 
-.subtitle{position:absolute;left:50%;bottom:66px;transform:translateX(-50%);width:min(900px,calc(100% - 2*var(--gut)));text-align:center;
-  font-size:clamp(19px,1.9vw,26px);line-height:1.35;font-weight:500;color:#fff;display:flex;align-items:flex-end;justify-content:center}
-.subtitle span{display:inline-block;padding:.32em .75em .38em;border-radius:8px;background:rgba(8,3,5,.84);box-shadow:0 6px 30px rgba(0,0,0,.45);
-  transition:opacity .3s,transform .3s;text-wrap:balance}
+#sub-scrim{position:absolute;left:0;right:0;bottom:0;height:32vh;pointer-events:none;opacity:0;transition:opacity .5s;
+  background:linear-gradient(to top,rgba(6,2,4,.72) 0%,rgba(6,2,4,.42) 40%,rgba(6,2,4,0) 100%)}
+#app.has-sub #sub-scrim{opacity:1}
+#app.nosubs #sub-scrim{display:none}
+.subtitle{position:absolute;left:50%;bottom:70px;transform:translateX(-50%);width:min(820px,calc(100% - 2*var(--gut)));text-align:center;
+  font-size:clamp(17px,1.5vw,23px);line-height:1.45;font-weight:500;color:#fff;letter-spacing:.01em;
+  text-shadow:0 1px 2px rgba(0,0,0,.6),0 0 16px rgba(0,0,0,.4)}
+.subtitle span{display:block;transition:opacity .3s}
 .subtitle span:empty{display:none}
-.subtitle span.out{opacity:0;transform:translateY(6px)}
+.subtitle span.out{opacity:0}
+.subtitle i{font-style:normal;display:inline-block;opacity:0;transform:translateY(.28em);filter:blur(3px);
+  transition:opacity .28s ease-out,transform .32s cubic-bezier(.2,.7,.2,1),filter .32s ease-out}
+.subtitle i.on{opacity:1;transform:none;filter:none}
 
 #banner{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding-bottom:26vh;pointer-events:none;opacity:0}
 #banner span{font-family:var(--display);font-weight:800;font-size:clamp(34px,6vw,88px);letter-spacing:-.01em;color:#fff;
@@ -170,7 +177,7 @@ button{font:inherit;color:inherit}
   .chapter{bottom:150px;max-width:calc(100% - 2*var(--gut))}
   .ch-name{font-size:38px}
   .ch-blurb{display:none}
-  .subtitle{bottom:56px;font-size:17px}
+  .subtitle{bottom:58px;font-size:16px}
   #controls{gap:4px}
   #controls .wide{display:none}
   #controls button{height:32px;min-width:32px;padding:0 7px}
@@ -231,6 +238,7 @@ button{font:inherit;color:inherit}
       </div>
       <dl class="facts" id="facts"></dl>
     </aside>
+    <div id="sub-scrim"></div>
     <div class="subtitle" id="subtitle"><span id="sub-text"></span></div>
   </div>
   <div id="banner"><span id="banner-text"></span></div>

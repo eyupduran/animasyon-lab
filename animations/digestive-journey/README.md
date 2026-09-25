@@ -73,3 +73,7 @@ tools/                render-video.mjs, slim-avatar.mjs
 Karakteri değiştirmek için `npm run avatar` komutunu başka bir modelle çalıştırıp yeniden derlemek yeterli. Oturma pozu, kol hareketi (ters kinematik), parmaklar ve yüz ifadeleri `src/scenes/cafe.js` içinde.
 
 Eğitim amaçlıdır; ölçekler ve süreler yaklaşıktır, moleküller görünür olsun diye büyütülmüştür.
+
+### Altyazı
+
+Altyazının kelimeleri anlatıcı onları söyledikçe tek tek açılır. Her kaydın kelime zamanları Whisper ile çıkarılıp `narration/manifest.json` dosyasına yazılır (`npm run voice -- digestive-journey --words-only`). Stil kutusuz: altta yumuşak bir karartma, gölgeli beyaz yazı.

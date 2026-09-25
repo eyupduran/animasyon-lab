@@ -347,7 +347,7 @@ function hoverLoupe() {
   return [{ sheet: best.sheet, u: best.u, v: best.v, span: 2.4, dx: 0.14, dy: -0.14, label: names[best.sheet] }];
 }
 
-let insetKind = null;
+let insetKind = null, subWords = [], subShown = 0;
 function texts(st) {
   const c = st.chapter;
   if (c !== lastChapter) {
@@ -367,9 +367,22 @@ function texts(st) {
   const sg = explore ? null : tl.segAt(T);
   const sub = $('subText');
   if (sg !== lastSeg) {
-    if (sg) { sub.innerHTML = twoLines(sg.text).map(l => `<span>${esc(l)}</span>`).join('<br>'); sub.classList.add('show'); }
-    else sub.classList.remove('show');
+    if (sg) {
+      // every word is its own element, laid out from the start so lines never reflow as words appear
+      let k = 0;
+      sub.innerHTML = twoLines(sg.text).map(l => `<span class="ln">${l.split(/\s+/).map(w => `<i data-k="${k++}">${esc(w)}</i>`).join(' ')}</span>`).join('');
+      subWords = [...sub.querySelectorAll('i')].map((el, i) => ({ el, t: sg.words[i]?.t ?? sg.start }));
+      subShown = 0;
+      sub.classList.add('show'); document.body.classList.add('has-sub');
+    } else { sub.classList.remove('show'); document.body.classList.remove('has-sub'); subWords = []; }
     lastSeg = sg;
+  }
+  // reveal the words that have been spoken (a hair early, so the eye is not behind the voice)
+  let n = 0;
+  while (n < subWords.length && subWords[n].t <= T + 0.06) n++;
+  if (n !== subShown) {
+    subWords.forEach((w, i) => w.el.classList.toggle('on', i < n));
+    subShown = n;
   }
   // inset
   const ch = c.inset && !explore ? c.inset : null;

@@ -83,3 +83,7 @@ node tools/shot.mjs <klasör> 1600x900 "ch=transfer&t=19" "ch=compare&t=14"   # 
 node tools/check-player.mjs --from 80 --secs 60   # canlı oynatma: yapay takılmalarla anlatımın atlamadığını ölçer
 node tools/perf-run.mjs                            # her karenin maliyeti; ilk kullanımda sıçrayan kareleri listeler
 ```
+
+### Altyazı
+
+Altyazının kelimeleri anlatıcı onları söyledikçe tek tek açılır. Her kaydın kelime zamanları Whisper ile çıkarılıp `narration/manifest.json` dosyasına yazılır (`npm run voice -- laser-printer --words-only`). Stil kutusuz: altta yumuşak bir karartma, gölgeli beyaz yazı.

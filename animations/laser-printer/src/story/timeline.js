@@ -45,6 +45,24 @@ export function splitSubtitle(text) {
   });
 }
 
+// time (in the clip) at which a given fraction of the sentence's characters has started to be spoken
+function speechClock(words, dur) {
+  if (!words || !words.length) return f => f * dur;
+  const total = words.reduce((a, w) => a + w[2].length + 1, 0);
+  const pts = [];
+  let acc = 0;
+  for (const w of words) { pts.push([acc / total, w[0]]); acc += w[2].length + 1; }
+  pts.push([1, words[words.length - 1][1]]);
+  return f => {
+    if (f <= 0) return pts[0][1];
+    for (let i = 1; i < pts.length; i++) if (f <= pts[i][0]) {
+      const [f0, t0] = pts[i - 1], [f1, t1] = pts[i];
+      return t0 + (t1 - t0) * (f - f0) / Math.max(1e-6, f1 - f0);
+    }
+    return pts[pts.length - 1][1];
+  };
+}
+
 export function buildTimeline() {
   let T = 0;
   const chapters = CHAPTERS.map((c, i) => {
@@ -57,17 +75,22 @@ export function buildTimeline() {
       const read = 0.8 + text.length / 18;
       const d = Math.max(read, voice ? voice.dur + GAP : 1.3 + text.length / 14.5);
       const cue = { text, say: spoken(raw), start: start + t, end: start + t + d, voice };
-      // segments share the spoken part in proportion to their length
+      // when is each written word spoken? The recorded words give a time for every position in the
+      // sentence; a written word gets the time of its position (so "600" follows "altı yüz").
       const parts = splitSubtitle(raw);
       const speak = voice ? voice.dur : d - 0.4;
-      const total = parts.reduce((a, p) => a + p.length, 0);
-      let acc = 0;
-      cue.segs = parts.map((p, k) => {
-        const s = cue.start + speak * acc / total;
-        acc += p.length;
-        const e = k === parts.length - 1 ? cue.end : cue.start + speak * acc / total;
-        return { text: p, start: s, end: e };
+      const at = speechClock(v?.words, speak);
+      const all = parts.join(' ');
+      let pos = 0;
+      cue.segs = parts.map(p => {
+        const words = p.split(/\s+/).filter(Boolean).map(w => {
+          const i = all.indexOf(w, pos); pos = i + w.length;
+          return { w, t: cue.start + at(i / all.length) };
+        });
+        return { text: p, words, start: words[0].t, end: 0 };
       });
+      cue.segs[0].start = cue.start;
+      cue.segs.forEach((g, k) => { g.end = k < cue.segs.length - 1 ? cue.segs[k + 1].start : cue.end; });
       t += d + 0.12;
       return cue;
     });

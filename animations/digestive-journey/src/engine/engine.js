@@ -167,7 +167,8 @@ function updateHUD(c, t) {
   if (cache.cue !== key) {
     cache.cue = key; const txt = cue != null ? c.cues[cue][1] : '';
     if (CAPTURE) hud.sub.textContent = txt;
-    else { hud.sub.classList.add('out'); clearTimeout(hud._st); hud._st = setTimeout(() => { hud.sub.textContent = txt; hud.sub.classList.remove('out'); }, cache.first ? 260 : 0); }
+    else { hud.sub.classList.add('out'); clearTimeout(hud._st); hud._st = setTimeout(() => { setSubWords(c, cue, txt); hud.sub.classList.remove('out'); }, cache.first ? 260 : 0); }
+    APP.classList.toggle('has-sub', !!txt && !CAPTURE);
     cache.first = true;
     if (playing && txt && !CAPTURE) { VOICE.say(c.id + '-' + cue, t - c.cues[cue][0]); VOICE.prefetch([c.id + '-' + (cue + 1), c.id + '-' + (cue + 2)]); }
   }
@@ -178,6 +179,7 @@ function updateHUD(c, t) {
     hud.card.style.transform = `translateY(${((1 - sstep(0.1, 1.0, t)) * 14).toFixed(1)}px)`;
   }
   // hold if narration still speaking near the next cue
+  if (!CAPTURE && SUBW.els.length) revealSubWords(c, t, next);
   // pace: a sentence longer than its slot plays the whole slot a little slower (steady, not a sudden brake)
   holdTarget = 1;
   if (cue != null && VOICE.on && VOICE.ok && playing && !CAPTURE) {
@@ -394,12 +396,50 @@ const VOICE = {
   stop() { this.pause(); this.el = null; this.key = null; },
 };
 
+// ---------------- Subtitles: words appear as they are spoken ----------------
+// Each written word gets the moment its position in the sentence is reached in the recording
+// (Whisper word timings in NARRATION), so "%20" follows "yüzde yirmi" and lines never reflow.
+const SUBW = { els: [], times: [], key: null, dur: 0, shown: 0 };
+function speechClock(words, dur) {
+  if (!words || !words.length) return f => f * dur;
+  const total = words.reduce((a, w) => a + w[2].length + 1, 0);
+  const pts = []; let acc = 0;
+  for (const w of words) { pts.push([acc / total, w[0]]); acc += w[2].length + 1; }
+  pts.push([1, words[words.length - 1][1]]);
+  return f => {
+    if (f <= 0) return pts[0][1];
+    for (let i = 1; i < pts.length; i++) if (f <= pts[i][0]) { const [f0, t0] = pts[i - 1], [f1, t1] = pts[i]; return t0 + (t1 - t0) * (f - f0) / Math.max(1e-6, f1 - f0); }
+    return pts[pts.length - 1][1];
+  };
+}
+function setSubWords(c, cue, txt) {
+  const key = c.id + '-' + cue, info = NARRATION?.lines?.[key];
+  const dur = info?.dur ?? Math.max(1.5, txt.length / 15);
+  const at = speechClock(info?.words, dur);
+  const words = txt.split(/\s+/).filter(Boolean);
+  let pos = 0;
+  SUBW.times = words.map(w => { const i = txt.indexOf(w, pos); pos = i + w.length; return at(i / txt.length); });
+  hud.sub.innerHTML = words.map(w => `<i>${w.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</i>`).join(' ');
+  SUBW.els = [...hud.sub.querySelectorAll('i')];
+  SUBW.key = key; SUBW.dur = dur; SUBW.shown = 0;
+}
+function revealSubWords(c, t, next) {
+  const cs = c.cues.find(q => c.id + '-' + c.cues.indexOf(q) === SUBW.key)?.[0] ?? 0;
+  let clip;
+  if (VOICE.on && VOICE.key === SUBW.key && VOICE.el) clip = VOICE.el.ended ? 1e9 : VOICE.el.currentTime;
+  else { const room = Math.max(0.5, next - cs - 0.3); clip = (t - cs) * Math.max(1, SUBW.dur / room); }
+  let n = 0;
+  while (n < SUBW.times.length && SUBW.times[n] <= clip + 0.06) n++;
+  if (n !== SUBW.shown) { SUBW.els.forEach((el, i) => el.classList.toggle('on', i < n)); SUBW.shown = n; }
+}
+
 // ---------------- Subtitles on/off ----------------
 let SUBS = true;
 try { SUBS = localStorage.getItem('sindirim:subs') !== '0'; } catch (e) {}
 function setSubs(v) {
   SUBS = v; try { localStorage.setItem('sindirim:subs', v ? '1' : '0'); } catch (e) {}
   $('subtitle').style.display = v ? '' : 'none';
+  APP.classList.toggle('nosubs', !v);
   $('b-sub').setAttribute('aria-pressed', String(v));
 }
 

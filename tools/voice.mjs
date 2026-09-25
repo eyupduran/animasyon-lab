@@ -2,6 +2,7 @@
 //   OmniVoice voices (natural, designed voices; GPU) and the older Piper voice (robotic, fast).
 //   npm run voice -- <slug> [--voice omni-erkek-derin] [--speed 0.88] [--force]
 //   (speed < 1 speaks slower; saved in lines.json like the voice)
+//   npm run voice -- <slug> --words-only   only add word timings to existing clips
 //   npm run voice -- voices            list the voices
 // The animation provides animations/<slug>/narration/lines.json:
 //   { "voice": "omni-erkek-derin", "out": "public/voice", "manifest": "narration/manifest.json",
@@ -74,8 +75,9 @@ const forEngine = s => (voice.engine === 'omnivoice' || voice.engine === 'ema'
   ? s.replace(/[ŞÇĞÖÜİI]/g, c => ({ Ş: 'ş', Ç: 'ç', Ğ: 'ğ', Ö: 'ö', Ü: 'ü', İ: 'i', I: 'ı' })[c])
   : s);
 
-const todo = [], manifest = { voice: voiceId, engine: voice.engine, lines: {} };
-for (const line of spec.lines) {
+// --words-only: keep every recorded clip as it is and only add the missing word timings
+const todo = [], manifest = flag('words-only') ? old : { voice: voiceId, engine: voice.engine, lines: {} };
+for (const line of (flag('words-only') ? [] : spec.lines)) {
   const hash = crypto.createHash('sha1').update(voiceKey + '\n' + line.say).digest('hex').slice(0, 12);
   const prev = old.lines?.[line.id];
   if (!flag('force') && prev && prev.hash === hash && fs.existsSync(path.join(outDir, `${line.id}.mp3`))) manifest.lines[line.id] = prev;
@@ -101,6 +103,8 @@ try {
 } finally {
   fs.rmSync(tmp, { recursive: true, force: true });
 }
+// word timings (subtitles that appear word by word as they are spoken)
+await addWordTimes();
 // remove clips of lines that no longer exist
 const keep = new Set(spec.lines.map(l => `${l.id}.mp3`));
 for (const f of fs.readdirSync(outDir)) if (f.endsWith('.mp3') && !keep.has(f)) fs.rmSync(path.join(outDir, f));
@@ -174,4 +178,29 @@ function wavDuration(file) {
     o += 8 + size + (size & 1);
   }
   return bytesPerSec ? data / bytesPerSec : 0;
+}
+
+// Whisper word timestamps for every clip that has none yet: manifest.lines[id].words = [[start, end, word], …]
+async function addWordTimes() {
+  const need = Object.entries(manifest.lines).filter(([, l]) => !l.words).map(([id]) => ({ id, file: path.join(outDir, `${id}.mp3`) }));
+  if (!need.length) return;
+  const py = path.join(LAB, 'omni', 'Scripts', 'python.exe');
+  if (!fs.existsSync(py)) { console.log('Kelime zamanları için Whisper ortamı yok; atlandı.'); return; }
+  const job = path.join(LAB, `words_${process.pid}.json`);
+  fs.writeFileSync(job, JSON.stringify({ clips: need }));
+  console.log(`kelime zamanları: ${need.length} kayıt`);
+  const p = spawn(py, [path.join(ROOT, 'tools', 'tts', 'word_times.py'), job], {
+    cwd: LAB, env: { ...process.env, PYTHONIOENCODING: 'utf-8', TTS_LAB: LAB }, stdio: ['ignore', 'pipe', 'pipe'],
+  });
+  let err = '';
+  p.stderr.on('data', d => { err = (err + d).slice(-3000); });
+  for await (const ln of readline.createInterface({ input: p.stdout })) {
+    if (!ln.startsWith('{')) continue;
+    const r = JSON.parse(ln);
+    if (r.words && manifest.lines[r.id]) manifest.lines[r.id].words = r.words;
+  }
+  const code = await new Promise(r => p.on('close', r));
+  fs.rmSync(job, { force: true });
+  if (code !== 0) console.log(`Kelime zamanları çıkarılamadı:
+${err}`);
 }
