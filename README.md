@@ -37,7 +37,7 @@ Ham modeller git'te tutulmaz (`catalog.json` → `source`).
 Anlatım sesleri bu bilgisayarda üretilir; dışarıya hiçbir şey gönderilmez. Varsayılan motor **OmniVoice** (Apache 2.0, ticari kullanım serbest, ekran kartıyla çalışır). Sesler tarifle tasarlanmış sentetik seslerdir, gerçek bir kişiden kopyalanmamıştır. Liste ve açıklama [assets/voices/README.md](assets/voices/README.md) dosyasında.
 
 ```
-npm run voice -- voices                                  # sesler: omni-erkek-derin (O9), omni-erkek-yasli (O10), omni-kadin-genc (O1), omni-kadin-yasli (O5), piper-dfki
+npm run voice -- voices                                  # sesler: omni-erkek-derin (O9), omni-erkek-yasli (O10), omni-kadin-genc (O1), omni-kadin-yasli (O5), ema-kadin (E1), ema-kadin-2 (E3), piper-dfki
 npm run voice -- laser-printer                           # animations/laser-printer/narration/lines.json → public/voice/*.mp3
 npm run voice -- laser-printer --voice omni-kadin-genc   # sesi değiştirir (seçim lines.json'a yazılır)
 ```
@@ -70,7 +70,7 @@ animasyon-lab/
 │  ├─ new-animation.mjs         boş bir animasyon klasörü açar
 │  ├─ avatars.mjs               avatar kütüphanesi: list, add, use, thumbs
 │  ├─ voice.mjs                 yerel seslendirme (OmniVoice, Piper) + Whisper denetimi
-│  ├─ tts/omnivoice_worker.py   OmniVoice + Whisper çalışanı
+│  ├─ tts/                      OmniVoice ve EMA-TTS çalışanları (+ Whisper denetimi)
 │  ├─ render-video.mjs          YouTube için MP4 + SRT + bölüm listesi
 │  └─ build-site.mjs            her animasyonu kendi komutuyla derler, siteyi dist/ altında toplar
 ├─ .github/workflows/pages.yml  her gönderimde siteyi derleyip GitHub Pages'e yayınlar

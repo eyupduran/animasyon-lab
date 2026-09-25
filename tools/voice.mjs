@@ -30,6 +30,12 @@ const PIPER = {
 };
 const PIPER_MODEL = 'tr_TR-dfki-medium.onnx';
 
+// Python workers per engine: their environment under the lab folder and the worker script
+const WORKERS = {
+  omnivoice: { env: 'omni', script: 'omnivoice_worker.py', name: 'OmniVoice' },
+  ema: { env: 'ema', script: 'ema_worker.py', name: 'EMA-TTS' },
+};
+
 const args = process.argv.slice(2);
 const slug = args.find((a, i) => !a.startsWith('--') && args[i - 1] !== '--voice');
 const flag = n => { const i = args.indexOf(`--${n}`); return i >= 0 ? (args[i + 1] && !args[i + 1].startsWith('--') ? args[i + 1] : true) : null; };
@@ -59,10 +65,10 @@ const publicBase = spec.url || path.relative(path.join(dir, 'public'), outDir).s
 const refFile = voice.ref ? path.join(ROOT, 'assets', 'voices', voice.ref) : null;
 const speed = Number(flag('speed') || spec.speed || 1);
 if (flag('speed')) { spec.speed = speed; fs.writeFileSync(linesFile, JSON.stringify(spec, null, 1) + '\n'); }
-const voiceKey = JSON.stringify([voiceId, speed, voice.engine, voice.profile, voice.ref_text, refFile && crypto.createHash('sha1').update(fs.readFileSync(refFile)).digest('hex')]);
+const voiceKey = JSON.stringify([voiceId, speed, voice.engine, voice.profile, voice.model_dir, voice.ref_text, refFile && crypto.createHash('sha1').update(fs.readFileSync(refFile)).digest('hex')]);
 
 // OmniVoice misreads Turkish capital letters (Ş, Ç, Ğ, Ö, Ü, İ, I) at the start of words; lower-case them.
-const forEngine = s => (voice.engine === 'omnivoice'
+const forEngine = s => (voice.engine !== 'piper'
   ? s.replace(/[ŞÇĞÖÜİI]/g, c => ({ Ş: 'ş', Ç: 'ç', Ğ: 'ğ', Ö: 'ö', Ü: 'ü', İ: 'i', I: 'ı' })[c])
   : s);
 
@@ -80,7 +86,7 @@ const tmp = fs.mkdtempSync(path.join(LAB, 'voice_'));
 const wavOf = id => path.join(tmp, `${id}.wav`);
 const problems = [];
 try {
-  if (todo.length && voice.engine === 'omnivoice') await runOmni();
+  if (todo.length && WORKERS[voice.engine]) await runWorker(WORKERS[voice.engine]);
   if (todo.length && voice.engine === 'piper') runPiper();
   for (const line of todo) {
     const wav = wavOf(line.id);
@@ -106,17 +112,19 @@ if (problems.length) {
 }
 
 // ---------------------------------------------------------------------------
-async function runOmni() {
-  const py = path.join(LAB, 'omni', 'Scripts', 'python.exe');
-  if (!fs.existsSync(py)) { console.log(`OmniVoice ortamı yok: ${py} (assets/voices/README.md)`); process.exit(1); }
-  const ref = path.join(tmp, 'ref.wav');
-  fs.copyFileSync(refFile, ref);
+async function runWorker(w) {
+  const py = path.join(LAB, w.env, 'Scripts', 'python.exe');
+  if (!fs.existsSync(py)) { console.log(`${w.name} ortamı yok: ${py} (assets/voices/README.md)`); process.exit(1); }
+  let ref = null;
+  if (refFile) { ref = path.join(tmp, 'ref.wav'); fs.copyFileSync(refFile, ref); }
   const job = path.join(tmp, 'job.json');
   fs.writeFileSync(job, JSON.stringify({
-    ref_audio: ref, ref_text: forEngine(voice.ref_text), language: 'tr', speed: speed === 1 ? null : speed, tries: 4, max_cer: 0.06,
+    ref_audio: ref, ref_text: voice.ref_text ? forEngine(voice.ref_text) : null,
+    model_dir: voice.model_dir ? path.join(LAB, voice.model_dir) : null,
+    language: 'tr', speed: speed === 1 ? null : speed, tries: 4, max_cer: 0.06,
     lines: todo.map(l => ({ id: l.id, text: forEngine(l.say), check: l.say, out: wavOf(l.id) })),
   }));
-  const p = spawn(py, [path.join(ROOT, 'tools', 'tts', 'omnivoice_worker.py'), job], {
+  const p = spawn(py, [path.join(ROOT, 'tools', 'tts', w.script), job], {
     cwd: LAB, env: { ...process.env, HF_HOME: path.join(LAB, 'hf'), PYTHONIOENCODING: 'utf-8', HF_HUB_DISABLE_SYMLINKS_WARNING: '1', TTS_LAB: LAB },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
@@ -136,7 +144,7 @@ async function runOmni() {
     console.log(`${String(n).padStart(3)}/${todo.length} ${r.id.padEnd(16)} ${r.dur.toFixed(1)} sn · deneme ${r.tries} · fark %${Math.round(r.cer * 100)}${n < todo.length ? ` · kalan ~${Math.ceil(eta / 60)} dk` : ''}`);
   }
   const code = await new Promise(r => p.on('close', r));
-  if (code !== 0) { console.log(`OmniVoice hata verdi:\n${err}`); process.exit(1); }
+  if (code !== 0) { console.log(`${w.name} hata verdi:\n${err}`); process.exit(1); }
 }
 
 function runPiper() {

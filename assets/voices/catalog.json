@@ -32,5 +32,17 @@
   "label": "Piper, erkek (eski, robotik)",
   "engine": "piper",
   "profile": "anlatici"
+ },
+ "ema-kadin": {
+  "code": "E1",
+  "label": "Kadın, Türkçeye özel (EMA-TTS)",
+  "engine": "ema",
+  "model_dir": "ema_models/canberkkkkkk"
+ },
+ "ema-kadin-2": {
+  "code": "E3",
+  "label": "Kadın, Türkçeye özel (EMA-TTS iyileştirilmiş)",
+  "engine": "ema",
+  "model_dir": "ema_models/mehmetefeaytas"
  }
 }

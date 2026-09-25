@@ -15,3 +15,6 @@ Thumbs.db
 
 # temporary session handoff note
 HANDOFF.md
+
+# python caches (tools/tts)
+__pycache__/
