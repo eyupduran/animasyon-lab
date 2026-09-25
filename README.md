@@ -32,6 +32,10 @@ npm run avatars -- add set-02-f03                  # ham modeli (~14 MB) küçü
 
 Ham modeller git'te tutulmaz (`catalog.json` → `source`).
 
+## Yeni animasyon istemek
+
+[prompts/new-animation.md](prompts/new-animation.md) dosyasındaki "İSTEK" bölümünü doldurup yeni bir oturumda şunu yazın: *"prompts/new-animation.md dosyasını oku ve uygula."* Şablon; konunun önce araştırılmasını, anlatımın bir insan konuşması gibi yazılmasını, ortak ses ve altyazı tekniğini ve her animasyonun diğerlerinden bağımsız, özgün bir tasarımla yapılmasını tarif eder.
+
 ## Seslendirme (yerel, ücretsiz)
 
 Anlatım sesleri bu bilgisayarda üretilir; dışarıya hiçbir şey gönderilmez. Dört motor var: **OmniVoice**, **Supertonic 3**, **Chatterbox** ve **EMA-TTS**; hepsinin lisansı ticari kullanıma açık, atıf şartı yok. Sesler sentetiktir, gerçek bir kişiden kopyalanmamıştır. Liste ve açıklama [assets/voices/README.md](assets/voices/README.md) dosyasında.

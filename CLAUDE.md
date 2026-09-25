@@ -4,6 +4,8 @@ Bu depo, kullanıcının tüm eğitim animasyonlarını ve denemelerini bir arad
 
 ## Yeni animasyon isteğinde
 
+Ayrıntılı istek şablonu ve kalite ölçütleri: `prompts/new-animation.md` (araştırma, anlatım, ses ve altyazı tekniği, özgün tasarım). Kullanıcı bu dosyaya atıf yaparsa baştan sona uygula.
+
 1. **Sıfırdan tasarla.** Başka animasyonların kodunu, motorunu, arayüzünü, renklerini ya da yazı tiplerini örnek alma; onları açıp okuma. Konunun ve hedef kitlenin ne gerektirdiğini düşün: teknik (Three.js, Babylon.js, WebGPU, Canvas 2D, SVG, CSS, Vite, React…), görsel dil, anlatım yapısı, arayüz ve ses tümüyle bu animasyon için seçilir. Kullanıcı açıkça "şu animasyon gibi" ya da "şundan başla" demedikçe önceki bir animasyonu temel alma.
 2. `npm run new -- <slug> "<Başlık>"` yalnızca boş bir klasör ile `animation.json` ve `README.md` açar. Paketler, derleme düzeni ve klasör yapısı animasyonun kendi ihtiyacına göre kurulur (kendi `package.json`'ı olabilir; derlemede gereken paketler `dependencies`, yalnızca yerel araçlar `devDependencies` altına).
 3. Yalnızca `animations/<slug>/` içinde çalış. Başka bir animasyonun dosyalarını değiştirme.
