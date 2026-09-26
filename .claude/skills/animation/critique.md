@@ -41,6 +41,12 @@ Temas sayfasını inceleyen ajanın (ya da kendi ikinci geçişinin) kuralları:
 - Her 3 sahnede bir soru karesi; bilgi yoğunluğu rampa gibi artar, tek sıçrama yok.
 - Yan öğeler sönükleşir, altta kalanlar solar; ekranda aynı anda tek yeni fikir.
 
+## Canlı ve yerleşim turu (her turda)
+
+- Canlıyı 1:1 kırp: bacaklar eklemli mi, ayaklar yüzeye değiyor mu, altında gölge var mı, uçuşta uzuvlar katlı mı, baş okunuyor mu? (`craft.md` → 14)
+- Etiketler ve yazılar birbirine giriyor mu? Yerleşim kaydı (`claim/placeFree`, `craft.md` → 12) çalışıyor mu; altyazı bandına giren var mı? Telefon karesinde en küçük yazı ≥ 12 px mi?
+- Geniş planda odak var mı, ön plan katmanı var mı, ufkun altı boş mu? (`craft.md` → 15)
+
 ## Akıcılık ve "ucuz" görünme turu
 
 - `dev/fpstest.mjs` her kademede: fps ve 50 ms üstü kare sayısı. Zayıf makine için `tier=min` de akıcı mı?

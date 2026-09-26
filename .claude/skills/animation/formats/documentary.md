@@ -22,6 +22,10 @@ Bu kart bir tarif değil, sınırdır: içinden bir nokta seçilir ve `TREATMENT
 
 Referanslar (kod tekniği için, görünüm kopyalamak için değil): stilize prosedürel Three.js vadi/orman sahneleri (toon malzeme + sis + ışık huzmesi), hacimsel bulut ve arazi shader'ları, SDF ile böcek/bitki, makro PBR (`ant-documentary`, ledger'da). Kaynak listesi: `docs/opus-code-animation-survey.md` → 5.
 
+## Geniş plan ve canlı
+
+Belgeselin yarısı geniş plandır: her birinde tek odak, ön plan katmanı, hava perspektifi (`craft.md` → 15). Kahraman canlı `craft.md` → 14 asgarisini karşılar; ilk eleştiri turunda canlı 1:1 kırpılıp incelenir.
+
 ## Bu türde "ucuz" görünen şeyler
 
 Dönen kamera, düz renk gökyüzü, sissiz uzak plan, gölgesiz ayak, aynı anda üç etiket, anlatımın gördüğümüzü tekrar etmesi.

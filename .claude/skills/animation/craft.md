@@ -126,3 +126,20 @@ Kaynak: threejs-conference (MIT), claude-studio-toolkit (MIT); ayrıntı `docs/c
 - **Parçacıklar:** curl-noise akış alanı (`curl(p) = ∇×noise`), GPU ping-pong ya da thin instance; sayı ekran boyutuna göre; kar/kıvılcım/polen aynı sistem farklı ön ayar.
 - **Hacimsel bulut (raymarch):** şekil fbm 3 oktav ×0,0003 − ayrıntı 5 oktav ×0,003; 80 adım kamera ışını + 6 adım ışığa; Beer-Lambert + "powder"; faz `HG(0,6)·0,7 + HG(−0,3)·0,3`; günün saatine göre palet.
 - **Ressam bitişi (Kuwahara):** 7×7 pencere, 4 çeyrek, ağırlık `1/(1+(σ·400)²)`, yarıçap 5, yarı çözünürlükte; üstüne tuval dokusu; sinema oranı için bantlar (2,35:1) isteğe bağlı. Tarih türü için doğal.
+
+## 14. Canlı modelleme asgarisi (belgesel ve her canlı için)
+
+Karınca ve arı belgesellerinin denetiminden: prosedürel bir canlı "oyuncak" görünmesin diye en az şunlar olmalı.
+- **Uzuvlar eklemli ve incelen:** düz çubuk bacak yasak; her bacak en az 3 segment (femur, tibia, tarsus), eklemde hafif düğüm, uca doğru incelme, tarsus kıvrık.
+- **Temas:** ayaklar durduğu yüzeye **değer** (yüzeye izdüşüm ya da IK); uçuş/yüzüşte uzuvlar gövdeye katlanır; altında yumuşak temas gölgesi (yükseldikçe solar).
+- **Segment ve doku:** gövde tek kapsül değil; halkalar/plakalar arasında koyu oluk; kıl kabuğu (shell) ya da fresnel kenar ışığı; kanat/yüzgeç hareketinde bulanıklık (vuruş yayına dağılmış soluk kopyalar).
+- **Baş okunur:** gözler, antenler/bıyıklar ve ağız parçaları ayrı; yakın planda baş kadrajın odağıdır, uzak planda siluet.
+- **Davranış:** dur-kalk, tereddüt, bakış yönü, idle (nefes, anten, kanat temizleme); sabit hızlı canlı ölü görünür.
+- **Ölçek:** gerçek boyut (mm/cm); ortamdaki nesneler ona göre; bir kez fiziksel ölçek karşılaştırması.
+
+## 15. Geniş plan kompozisyonu
+
+- Her geniş planda **tek odak** (canlı, güneş, bir olay); ufkun altı boş kalmaz.
+- **Üç katman:** ön planda odak dışı öğe (ot, dal, kaya), orta planda özne, uzakta hava perspektifi (doygunluk ve kontrast düşer, ama tamamen sise gömülmez).
+- Gökyüzünde değişim (bulut gölgesi, ışık kayması) ya da yerde hareket (rüzgâr); durağan geniş plan yalnızca bilinçli bir "nefes" için.
+- Başlık kartı ve büyük yazılar için arkada koyu, yumuşak kenarlı şerit ya da karartma; soluk gök üstüne açık yazı okunmaz.

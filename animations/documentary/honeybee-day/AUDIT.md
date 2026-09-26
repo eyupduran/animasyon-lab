@@ -42,3 +42,30 @@ Denetçi: Fable 5.1, 2026-09-26. Yapan: Opus 5.5 (yeni kurallarla ilk deneme). Y
 ## Karıncayla karşılaştırma
 
 Yan yana konunca aynı elden çıkmış gibi durmuyor: biri fotogerçekçi makro ve toprak tonları, öteki stilize, gök baskın, siyah–mum–mor. Teknik ortak (oynatıcı, altyazı, kademeler), dünya farklı. Kanal için istenen buydu.
+
+---
+
+# İkinci denetim (düzeltmelerden sonra, commit 017e9c2)
+
+Bağımsız yeniden ölçüm (aynı makine, aynı araçlar):
+
+| Test | Önce | Sonra |
+|---|---|---|
+| `verify` (saflık) | 1. çalıştırmada 2/9 hata | 4 çalıştırma (9+9+9+4 an) hepsi temiz |
+| `fpstest` auto (`high`) | 40 fps, 15 sn'de 8 yavaş kare | **63 fps, 2 yavaş kare** (ikisi de "İzle"den sonraki ilk 3 sn) |
+| `fpstest` `min` | 124 fps | 142 fps |
+| `playtest` | fark 15 ms | fark 14 ms, geri 0, sarma 0, hata 0 |
+| `endtest fast` | 11/11 | 11/11 |
+
+Kare kare (denetimin işaret ettiği anlar):
+1. **Arı modeli:** eklemli ve incelen bacaklar, uçuşta altına katlanmış, altında yumuşak gölge; çiçekte ayaklar taç yaprağa basıyor; karın halkalı. Oyuncak hissi büyük ölçüde gitti. Kalan: ağız parçaları basit, bacaklarda kıl yok (yapanın da not ettiği gibi).
+2. **Çayır geniş planları:** ön planda odak dışı ot ve çiçek, daha yoğun çiçek, bulut gölgesi. Daha iyi; ama sis hâlâ ağır, uzak plan kontrastsız. Kısmen.
+3. **Okunaklılık:** telefon etiketleri 12 px ve seyrek, iyi. Başlık kartı hâlâ soluk gök üstünde düşük kontrast (şerit fazla yumuşak). Kısmen. Yeni bulgu: "Son Hafta" bölümünde kariyer altıgenlerinin alt yazıları ("bakıcılık", "mum, petek", "bekçilik", "toplayıcılık") birbirine giriyor; yerleşim kaydı olmadığının kanıtı.
+4. **Tünel:** çayırın ortasında şeritli ahşap koridor, aynı ışık ve ön plan. Dünyanın içinde; iyi.
+5. **Saflık ve yük:** iki gerçek neden bulunmuş (sıfırlanmayan parıltı/halka durumu; erken "hazır" işareti) ve düzeltilmiş; ölçümler doğruluyor.
+
+**Puan güncellemesi:** Görsel 3,5 → **4**; Akıcılık 4 → **5**. Genel **4,6/5**.
+
+**Kalan üç şey (sonraki tur):** başlık kartı kontrastı; kariyer etiketlerinin çakışması (yerleşim kaydı); çayırda sis ve uzak plan kontrastı.
+
+**Kurallara işlenenler:** canlı modelleme asgarisi ve geniş plan kompozisyonu (`craft.md`), "canlıyı 1:1 kırp, ayaklar değiyor mu, etiketler çakışıyor mu" (`critique.md`), `verify` ×3 ve yerleşim kaydı zorunlu (`SKILL.md`), tür kartına geniş plan kuralı.
