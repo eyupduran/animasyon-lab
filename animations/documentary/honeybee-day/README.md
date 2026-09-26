@@ -100,7 +100,7 @@ Kalan yavaş kare "İzle"ye basıldığı ilk yarım saniyede (ses bağlamı aç
 
 - Altyazının arkasındaki koyu gradyan kaldırıldı (ekranın altını karartıyordu); okunaklılığı yakın bir yazı gölgesi sağlıyor.
 - Çubuk kenarlardan içeride yüzen bir tebeşir şerit; zaman çizgisi bölüm başına bir parça (o anki bölüm mor), saat ve bölüm adı yanında; telefonda süre tek satır, hız ve altyazı boyutu gizli, dokunma alanları 42 px.
-- : her bölüm parçasına tıklama doğru bölüme gidiyor (masaüstü ve telefon 11/11).
+- `dev/seektest.mjs`: her bölüm parçasına tıklama doğru bölüme gidiyor (masaüstü ve telefon 11/11).
 
 ## Bilinen kısıtlar
 
