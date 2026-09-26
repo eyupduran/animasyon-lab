@@ -1,0 +1,9 @@
+{
+  "slug": "silent-tooth",
+  "title": "Karar",
+  "description": "Sözsüz kısa film: bir müzik kutusunun, pimi kırık olduğu için hiç çalınmamış tozlu dişi, yay biterken kendini kırık pime uzatır ve her turda yarım kalan melodiyi bitirir.",
+  "format": "short",
+  "tech": "Three.js · özel bokeh alan derinliği ve bloom · eğilen diş shader'ı · Web Audio ile sentezlenmiş müzik kutusu",
+  "build": "node build.mjs",
+  "output": "dist"
+}

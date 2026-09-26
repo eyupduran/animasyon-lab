@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Karar · kapaklar</title>
+<style>html,body{margin:0;background:#000}#root{position:relative;width:1280px;height:720px;overflow:hidden}#root canvas{position:absolute;inset:0;width:1280px;height:720px}</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="module">
+// Covers: the hero picture is a clean frame of the film itself (rendered by its own code into
+// thumbs/ with dev/frames.mjs), its weight pushed right; the channel kit adds the shared identity.
+import * as kit from '/_kit/kit.js';
+const COVERS = [
+  { id: 'toz', img: 'cloud.jpg', title: 'SON *NOTA*', accent: 'Hiç çalınmamış bir dişin kararı', shift: 0.16, zoom: 1.15, cy: 0.5, tint: '#FFC46E' },
+  { id: 'tozlu-dis', img: 'dusty.jpg', title: 'TEK *TOZLU* DİŞ', accent: 'Neden hiç çalmadı?', shift: 0.2, zoom: 1.25, cy: 0.5, tint: '#AEB8C4' },
+  { id: 'kil-payi', img: 'touch.jpg', title: 'BİR KIL *PAYI*', accent: 'Kırık pime uzanan diş', shift: 0.12, zoom: 1.35, cy: 0.5, tint: '#AEB8C4' },
+  { id: 'eksik', img: 'box.jpg', title: 'EKSİK *NOTA*', accent: 'Sözsüz bir kısa film', shift: 0.18, zoom: 1.3, cy: 0.52, tint: '#8C7A52' },
+  { id: 'karar', img: 'warm.jpg', title: '*KARAR*', accent: 'Müzik kutusunun son turu', shift: 0.15, zoom: 1.2, cy: 0.5, tint: '#FFC46E' },
+];
+const v = Math.max(1, Math.min(COVERS.length, Number(new URLSearchParams(location.search).get('v')) || 1));
+const c = COVERS[v - 1];
+const img = new Image(); img.src = 'thumbs/' + c.img;
+await img.decode();
+const ctx = kit.layer();
+const s = Math.max(kit.W / img.width, kit.H / img.height) * c.zoom;
+const w = img.width * s, h = img.height * s;
+ctx.drawImage(img, kit.W / 2 - w / 2 + kit.W * c.shift, kit.H / 2 - h * c.cy, w, h);
+kit.brand({ title: c.title, accent: c.accent, topic: 'KISA FİLM', minutes: 1, tint: c.tint });
+await kit.ready();
+window.__thumbs = { count: COVERS.length, list: COVERS.map(x => ({ id: x.id, title: x.title.replace(/\*/g, '') })) };
+window.__thumbReady = true;
+</script>
+</body>
+</html>

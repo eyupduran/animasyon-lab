@@ -24,3 +24,7 @@ Amaç **tekrarı önlemek**: yeni bir treatment yazılırken aynı türden önce
 ## history
 
 - **fall-of-constantinople** (İstanbul'un Fethi): Canvas 2D prosedürel minyatür harita; parşömen + minyatür paleti; harita üstü kamera.
+
+## short
+
+- **silent-tooth** (Karar, 2026-09): sözsüz makro kısa film (Three.js PBR, kodla kurulmuş oda ortamı, yarım çözünürlükte bokeh DOF, bloom); palet: iki durum, soğuk "toz" (kurşun mavisi, kalay, sönük pirinç) → ılık "karar" (ılık pirinç, çelik ışığı, kor amber yalnız tozda); doku: fırçalanmış çelik, dökme pirinç, ceviz, kadife gibi toz; kamera: milimetre ölçeğinde uzun objektif makro, arkadan ışıklı profil, pencereyi dişlerde yansıtan ayna açısı, iki geniş plan; sahne düzeni: tek mekân (açık müzik kutusu), üç silindir turu; yazı: Bodoni Moda (yalnız başlık) + Jost; ses: anlatım yok, Web Audio müzik kutusu sentezi.

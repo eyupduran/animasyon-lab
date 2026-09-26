@@ -80,3 +80,9 @@ Biçim: **belirti** → neden → çözüm. Her oturum sonunda yeni bulunanlar e
 - **Ekran görüntüsü yanlış anı gösteriyor** → `bolum.isaret+0.5` gibi bir ifade noktadan bölünüp `+0` diye okunuyor → bölüm adını yalnızca ilk noktadan ayır.
 - **Bash'te `cat > dosya` komutu takılı kalıyor** → heredoc verilmemiş, komut girdi bekliyor → dosyayı Write aracıyla yaz ya da `<<'EOF'` kullan.
 - **Headless Chrome'da sayfa yükleme zaman aşımına uğruyor** (`networkidle`) → ses dosyaları akarken ağ hiç boşalmıyor → `waitUntil: 'load'` kullan ve sayfanın hazır işaretini bekle.
+
+## Kısa film "Karar"dan (silent-tooth)
+
+- **Yarım-float hedefte sonsuz parlaklık:** çok parlak speküler pikseller HalfFloat render hedefinde `Inf` olur; bloom piramidi bu NaN'ı ekranın yarısına kadar yayar (keskin kenarlı siyah dikdörtgenler). Son işlemenin ilk geçişinde `isnan/isinf` temizle ve üst sınırla (`min(c, 60)`).
+- **Three.js `anisotropy` teğetsiz geometride yansımayı saptırır:** ExtrudeGeometry gibi teğeti olmayan yüzeylerde fırçalanmış metal ortam penceresini hiç yansıtmadı. Anizotropiyi kapatıp fırçayı yalnızca pürüzlülük dokusuyla vermek yetti.
+- **Zamanın başındaki olay:** müzik kutusu silindirinde 0. vuruştaki pimler `timeOfBeat(0) = 0` yüzünden film açılmadan çaldı. Hiçbir olay t = 0'a denk gelmesin; sesi saniye saniye RMS ile ölç (`ffmpeg … astats`), açılış ve kapanışın gerçekten sessiz olduğunu gör.
