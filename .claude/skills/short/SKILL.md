@@ -17,11 +17,20 @@ Boşsa şu brief geçerlidir: *"Yapabileceğin en etkileyici kısa kod animasyon
 
 Bir **kısa film**: tek fikir, tek karakter (ya da tek nesne), tek ortam, tek dönüşüm. 30–90 saniye, 16:9. Anlatım yok ya da en çok bir iki cümle. İzleyici sözsüz şunu anlamalı: **durum → değişim → sonuç**. Doruk anı filmin %60–75'inde gelir ve görsel olarak en güçlü karedir. Referans: `docs/short-film-notes.md` (KOR incelemesi).
 
+## 0. Cazibe kapısı (özgünlükten önce gelir)
+
+İlk deneme ("Karar", müzik kutusu dişi) özgündü ama sevimsizdi: gri metal, karanlık, yüzsüz kahraman, dünyasız. Ders: **özgünlük cazibenin yerine geçmez.** Her fikir şu dördünü sağlamalı; sağlamayan puanlanmaz:
+1. **Sevilebilir kahraman:** tanınır bir siluet (uzaktan tek bakışta okunur), bir bakış yönü (göz ya da baş), bir yumuşak eklenti (atkı, kuyruk, anten, pelerin). Cansız nesne kahraman olabilir, ama bu üçü olmadan olmaz.
+2. **Dünya:** gökyüzü ya da derinlikli bir mekân, hava (rüzgâr, kar, sis, yağmur, toz), ışığın değiştiği bir gün saati. Kapalı kutu içi, tek masa, tek makine yasak.
+3. **Gösteri:** en az bir büyük görsel an (ışık yayılması, su, kar, ölçek sıçraması, kalabalık). Işık dönüşümü **serbesttir**; klişe olan sahne, malzeme değil.
+4. **Renk:** iki durumlu palet, ikisi de doygun ve birbirinden uzak (soğuk→sıcak, gri→renk, gece→gün). İki koyu durum olmaz.
+**Kapak testi:** filmin en güçlü karesi durağan hâlde bir YouTube kapağı olsa tıklanır mı? Hayırsa fikir elenir.
+
 ## 1. Fikir sprinti ve treatment (kodlamadan önce, `TREATMENT.md`)
 
 İlk akla gelen fikir herkesin yapacağı fikirdir ("küp döner, parçacıklar uçuşur"). Bunu yap:
-1. **Beş logline** yaz, her biri farklı **mekanik** ve farklı **ortamda**: hava/ışık dönüşümü, ölçek atlaması, bir şeyin canlanması, iki kuvvetin çatışması, bir yolculuğun sonu… Her logline tek cümle: kim, ne ister, ne değişir.
-2. Her birini üç ölçütle puanla: *videoda en güçlü görünecek olan hangisi* (ışık, hareket, ölçek), *sözsüz anlaşılır mı*, *kodla 1 günde yapılır mı*.
+1. **Beş logline** yaz, her biri farklı **ortamda** ve farklı **duygu yayıyla** (yalnızlık→buluşma, korku→cesaret, kayıp→bulma, küçük→büyük, uyku→uyanış). Her logline tek cümle: kim, ne ister, ne değişir. Özgünlük **birleşimden** gelir: tanıdık bir duygu yayı + alışılmadık bir kahraman ya da mekân (ör. bir buz sarkıtı, bir yol işareti, göçmen bir tohum, ıssız bir istasyondaki tabela). Yasak olan sahneler: karlı gecede atkılı yuvarlak yaratık + ışıklanan ağaç, gün doğumunu ilk gören robot, parçacıkların logoya toplanması, yalnız deniz feneri, neon yağmurlu şehir. Yasak olan malzeme **yoktur**: kar, ağaç, ışık, yaratık serbest.
+2. Her birini dört ölçütle puanla: **cazibe (×2)** (kapak testi, sevilebilir kahraman, dünya, gösteri), *sözsüz anlaşılır mı* (bir çocuk anlatabilir mi), *videoda en güçlü görünen*, *kodla 1 günde yapılır mı*. Özgünlük bir eleme ölçütüdür (yasak sahneler), puan ölçütü değil.
 3. Kazananı seç, gerekçesini yaz. Diğer dördünü de `DESIGN.md`'de bırak.
 4. **Treatment:** kazanan fikrin tek sayfası: logline, kimlik kartı, beat listesi. "Treatment'ı değiştirmek bir dakika, filmi değiştirmek bir saat": kod bundan sonra başlar.
 5. **Yay:** 5–8 beat'lik bir liste: açılış görüntüsü (durum) → istek → engel → dönüm → doruk → sonuç → son görüntü/başlık. Her beat için: süre, kamera, ışık durumu, ses.
@@ -43,7 +52,7 @@ Bir **kısa film**: tek fikir, tek karakter (ya da tek nesne), tek ortam, tek d�
 
 ## 4. Kamera
 
-- 6–12 çekim; her çekim tek bir şeyi söyler. Kesme, dönüş yerine. Yörünge (orbit) yok.
+- 6–12 çekim; her çekim tek bir şeyi söyler. Kesme, dönüş yerine. Yörünge (orbit) yok. **Çekimlerin en az yarısı geniş ya da orta plan** (kahraman + dünya birlikte); makro yalnızca vurgu için.
 - Uzun objektif ve alçak açı; karakter kadraja girer/çıkar; yavaş kaydırma; doruk anında bir kez geniş plan.
 - Hafif el titremesi; doruk anında 200 ms'lik hızlı push-in ya da kısa ağır çekim.
 - Başlık kartı en sonda, tek kelime, geniş harf aralığı, siyah üstüne.

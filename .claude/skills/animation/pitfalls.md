@@ -16,6 +16,8 @@ Biçim: **belirti** → neden → çözüm. Her oturum sonunda yeni bulunanlar e
 
 - **`renderAt(t)` aynı anda farklı piksel veriyor (saflık testi başarısız)** → Babylon `PostProcess` `reusable=true` ile kurulmuş; yeniden kullanılabilir katman iki dokuyu dönüşümlü kullanır, kare öncekine bağlanır → `reusable=false`; katmanı kademe değişiminde takıp çıkarırken `camera._postProcesses.includes(pp)` ile koru. `npm run verify -- <slug>` her kademede (`--query tier=…`) çalıştır.
 
+- **Kısa film özgün ama sevimsiz çıktı** (gri metal, karanlık, yüzsüz kahraman) → brief "en özgün"ü ödüllendirip malzemeyi (yaratık, manzara, ışık) yasakladı; cazibe ölçütü yoktu → özgünlük eleme ölçütü, cazibe puan ölçütü (×2); sevilebilir siluet + dünya + gösteri + kontrastlı iki renk durumu şart; kapak testi (`short/SKILL.md` → 0).
+
 ## Sahne ve kamera
 
 - **Hareket eden işaretçi (paket, nokta) kutuların içinden geçip yazıları örtüyor** → yol, istasyon kutularının ortasından çizilmiş → paketi kutuların altından ya da üstünden giden ayrı bir hat üzerinde yürüt, istasyonları hatta kısa dikey çizgilerle bağla.
