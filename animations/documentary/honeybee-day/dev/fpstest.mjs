@@ -8,8 +8,8 @@ await page.goto(`http://127.0.0.1:5230/index.html?t=${from}&${query}`, { waitUnt
 await page.waitForFunction('window.__ok === true', { timeout: 240000 });
 await page.click('#go');
 const r = await page.evaluate(secs => new Promise(done => {
-  const t0 = performance.now(); let n = 0, last = t0, worst = 0, slow = 0;
-  const step = () => { const now = performance.now(); const d = now - last; last = now; n++; if (d > worst) worst = d; if (d > 50) slow++; if (now - t0 < secs * 1000) requestAnimationFrame(step); else done({ fps: +(n / secs).toFixed(1), worst: +worst.toFixed(0), slowFrames: slow, tier: document.body.dataset.tier }); };
+  const t0 = performance.now(); let n = 0, last = t0, worst = 0, slow = 0; const at = [];
+  const step = () => { const now = performance.now(); const d = now - last; last = now; n++; if (d > worst) worst = d; if (d > 50) { slow++; at.push(((now - t0) / 1000).toFixed(2) + "s:" + d.toFixed(0) + "ms@" + window.__player.t.toFixed(1)); } if (now - t0 < secs * 1000) requestAnimationFrame(step); else done({ fps: +(n / secs).toFixed(1), worst: +worst.toFixed(0), slowFrames: slow, tier: document.body.dataset.tier, at: at.join(" ") }); };
   requestAnimationFrame(step);
 }), +secs);
 console.log(query || 'auto', JSON.stringify(r), logs.join(' | '));

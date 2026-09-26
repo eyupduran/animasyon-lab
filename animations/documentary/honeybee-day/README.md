@@ -27,8 +27,9 @@ Kaynaklar: `RESEARCH.md` (≈70 kaynak, temkinli bilgiler ayrıca işaretli). Sa
 - **Three.js + Vite.** Bütün malzemeler özel shader: üç basamaklı ramp gölgeleme, yarım küre ortam ışığı, kenar ışığı, hava sisi (`src/glsl.js`).
 - **Arı gözü:** malzemeler ortak bir "arı görüşü" dönüşümü taşır (kırmızı kararır, UV yansıması mor vurgu olur); son işlemde ekran uzayında altıgen omatidyum mozaiği; ekran ortadan bölünebilir (`uSplit`).
 - **Gökyüzü** (`src/sky.js`): saat ön ayarlarıyla gradyan, bulutlar, uzak sırtlar, yıldızlar; arı gözünde güneş çevresinde polarizasyon halkaları (polarizasyon derecesi `sin²θ/(1+cos²θ)`).
-- **Prosedürel arı** (`src/bee.js`): kıl kabukları, canvas'ta çizilmiş damarlı kanat, hız bulanıklığı yelpazesi, IK bacaklar, poz = parametrelerin saf fonksiyonu; kovan kalabalığı için tek çağrılı örneklenmiş basit arı.
-- **Setler:** ıhlamur ve kovuk (Voronoi levhalı kabuk, iki ölçekli; `src/tree.js`), çayır (örneklenmiş ot ve shader'da çizilen dört çiçek türü + gerçek taç yapraklı kahraman çiçek; `src/meadow.js`), kuş bakışı harita (`src/map.js`), shader'la boyanmış dikey petek, 3B hücre makrosu, desenli tünel (`src/comb.js`).
+- **Prosedürel arı** (`src/bee.js`): kıl kabukları, canvas'ta çizilmiş damarlı kanat; uçuşta kanat vuruş yayına dağılmış soluk kopyalarla hareket bulanıklığı; üst üste binen karın halkaları ve aralarında oluklar; eklem düğümlü, incelen bacaklar ve üç parçalı kıvrık tarsus; ayaklar verilen yüzey düzlemine (kovuk dudağı, çiçek göbeği, petek) IK ile oturur; uçarken bacaklar gövde altına katlanır, altında yüksekliğe göre solan yumuşak gölge. Poz = parametrelerin saf fonksiyonu. Kovan kalabalığı için tek çağrılı örneklenmiş basit arı.
+- **Setler:** ıhlamur ve kovuk (Voronoi levhalı kabuk, iki ölçekli; `src/tree.js`), çayır (örneklenmiş ot ve shader'da çizilen dört çiçek türü + gerçek taç yapraklı kahraman çiçek; `src/meadow.js`), kuş bakışı harita (`src/map.js`), shader'la boyanmış dikey petek, 3B hücre makrosu, çayırın ortasında içi ve zemini şeritli, üstü çıtalı ahşap tünel (`src/comb.js`).
+- **Geniş plan zanaatı:** son işlemde odak dışı ön plan katmanı (ot siluetleri + çiçek bokehi, zamanın saf fonksiyonu), çayırda sürüklenen bulut gölgeleri, uzaklıkla doygunluğu düşen hava perspektifi; her geniş planda tek odak (iniş yapan ya da kalkan arı, güneş).
 - **Yönetmen** (`src/director.js`, `src/shots.js`, `src/tod.js`): her kare hikâye zamanının saf fonksiyonu; çekimler anlatımdaki kelimelere bağlı (0,4 sn önce başlar); saha rehberi etiketleri SVG katmanında (`src/overlay.js`).
 - **Ortak belgesel tekniği** (oynatıcı, kayıt izleyen saat, iki satırlı kelime kelime altyazı, CC/N düğmeleri, video sözleşmesi, testler) `documentary-tech.md`'ye göre referans belgeselden alındı; görünüm sıfırdan.
 - **Ses** (`src/sound.js`): dosyasız, Web Audio; rüzgâr, kuş, Doppler'li geçen arı, koloni uğultusu, dansın 250 Hz darbeleri, cırcır böceği, alçak drone; aynı kod video sesini `OfflineAudioContext` ile üretir.
@@ -50,19 +51,37 @@ npm run thumbnail -- honeybee-day   # thumbs/ kareleri: node dev/thumbframes.mjs
 
 Geliştirme testleri (`dev/`, sunucu açıkken): `perftest`, `fpstest`, `playtest`, `endtest fast`, `toggletest`, `sheet`, `frames`, `poster`.
 
-## Ölçümler (RTX 3050 Ti dizüstü, 1600×900)
+## Ölçümler
 
-- Senkron kare maliyeti (high): medyan 14,2 ms, p90 27,4 ms.
-- Gerçek fps (otomatik seçim → high): açılış 60, çayır 98, dönüş 88, kovan 100, dans 91, gece 96; 12 sn'de 50 ms üstü kare 2–3 (bölüm/kayıt yüklenirken).
-- Kademeler (açılış sahnesi): high 61 · mid 73 · low 135 · min 141 fps.
-- Oynatma testi (40 sn, yapay takılmalarla): geri gitme 0, kayıt ortasında sarma 0, ses–görüntü farkı ort. 19 ms; konsol hatası 0.
+Koşul: RTX 3050 Ti dizüstü, headless Chrome (`--use-angle=d3d11`), 1600×900 pencere, `dev/fpstest.mjs` 12 sn; aynı makinede başka yük altında ölçümler daha düşük çıkabilir (bağımsız denetimde auto→high 40 fps ölçülmüştü; o sürümden bu yana `high` bütçesi 27 → 22 ms senkron yapıldı).
+
+| Kademe | açılış (8 sn) | çayır (75 sn) | kovan (230 sn) | 50 ms üstü kare / 12 sn |
+|---|---|---|---|---|
+| auto → high | 60 | 93 | 97 | 2 |
+| high | 59 | 92 | 97 | 2–3 |
+| mid | 73 | 113 | 118 | 2–4 |
+| low | 138 | 141 | 142 | 0–2 |
+| min | 140 | 141 | 142 | 0–2 |
+
+Kalan yavaş kare "İzle"ye basıldığı ilk yarım saniyede (ses bağlamı açılışı); bölüm geçişleri ve kayıt başlangıçları artık temiz (sonraki kayıt yüklenince bir kez sessizce çalınıp çözücüsü ısıtılıyor).
+
+- Oynatma testi (40 sn, 28 yapay takılma): geri gitme 0, kayıt ortasında sarma 0, ses–görüntü farkı ort. 19 ms; konsol hatası 0.
 - Bölüm sonları (`endtest fast`): 11 bölümde yeniden başlama 0, geri 0.
 - CC ve anlatım düğmeleri: kapalıyken altyazı 0 kez göründü, anlatımsız saat akıyor, seçim hatırlanıyor.
-- `npm run verify`: 9 anda `renderAt(t)` saf.
+- `npm run verify --n 15`: art arda 3 çalıştırma, 45/45 an saf (ilk çalıştırma dahil).
+- `npm run video -- honeybee-day --from 60 --to 75`: 1920×1080, ses var, tepe −1,9 dB.
+
+## Denetimden sonra (AUDIT.md → "Önce düzeltilecek 5 şey")
+
+1. Arı modeli: eklemler, incelen bacaklar, kıvrık tarsus, yüzeye değen ayaklar, uçuşta katlanan bacaklar, temas gölgesi, kanat hareket bulanıklığı, karın segment oluk ve basamakları.
+2. Çayır geniş planları: ön plan katmanı, hava perspektifi, bulut gölgeleri, tek odak.
+3. Okunaklılık: başlık kartına koyu yumuşak şerit ve daha erken giriş; telefonda en küçük yazı 12 px, ikincil satırlar gizli, ekrandan taşan etiketler ters yöne çevriliyor.
+4. Tünel: çayırın içinde, şeritli ahşap koridor.
+5. Saflık: her karede set durumu sıfırlanıyor, ısınma her çekimi çiziyor, `__ready` yazı tipleri ve yerleşim oturduktan sonra; `high` kademe bütçesi sıkılaştırıldı, kayıt çözücüsü önceden ısıtılıyor.
 
 ## Bilinen kısıtlar
 
-- Stilize prosedürel arı; yakın planlarda bacaklar hâlâ çubuk gibi, ağız parçaları basit.
+- Stilize prosedürel arı; ağız parçaları basit, bacaklarda kıl yok.
 - Kovan kalabalığı basit geometri; uzak planlarda karıncayı andırabiliyor.
 - Harita parselleri Voronoi; gerçek tarla dokusu kadar düzenli değil.
 - Kanat 230 Hz: normal hızda bulanıklık yelpazesiyle, yalnız ağır çekimde gerçek vuruş; sallanım normal hızda görsel olarak yarı frekansta (13 Hz kare hızında kırpışır).

@@ -55,10 +55,11 @@ export function createRenderer(canvas, { video }) {
       uCell: { value: 12 }, uGrain: { value: 0.05 }, uSeed: { value: 0 }, uVig: { value: 0.35 },
       uLift: { value: new THREE.Vector3(0, 0, 0) }, uGain: { value: new THREE.Vector3(1, 1, 1) }, uSat: { value: 1 },
       uFade: { value: 0 }, uFadeCol: { value: new THREE.Color(0, 0, 0) }, uBars: { value: 0 },
+      uFg: { value: 0 }, uFgCol: { value: new THREE.Color('#3e4a2c') }, uFgT: { value: 0 }, uFgSeed: { value: 0 },
     },
     vertexShader: FS_QUAD,
     fragmentShader: /* glsl */`
-      uniform sampler2D tSrc, tB1, tB2; uniform float uBloom, uExpo, uEye, uSplit, uCell, uGrain, uSeed, uVig, uSat, uFade, uBars;
+      uniform sampler2D tSrc, tB1, tB2; uniform float uBloom, uExpo, uEye, uSplit, uCell, uGrain, uSeed, uVig, uSat, uFade, uBars, uFg, uFgT, uFgSeed; uniform vec3 uFgCol;
       uniform vec2 uRes; uniform vec3 uLift, uGain, uFadeCol; varying vec2 vUv;
       float h21(vec2 p){ vec3 p3 = fract(vec3(p.xyx)*.1031); p3 += dot(p3, p3.yzx+33.33); return fract((p3.x+p3.y)*p3.z); }
       // nearest hexagon centre (pointy-top) in pixel space
@@ -67,6 +68,36 @@ export function createRenderer(canvas, { video }) {
         vec2 a = mod(p, r*s) - h*s; vec2 b = mod(p - h*s, r*s) - h*s;
         vec2 gv = dot(a,a) < dot(b,b) ? a : b;
         return vec4(gv, p - gv);
+      }
+      // soft blades rising from the bottom edge, far out of focus
+      vec4 foreground(vec2 uv){
+        float asp = uRes.x / uRes.y; vec2 p = vec2(uv.x * asp, uv.y);
+        float a = 0.; vec3 col = uFgCol;
+        for (int i = 0; i < 9; i++) {
+          float fi = float(i) + uFgSeed * 13.;
+          float x0 = h21(vec2(fi, 1.3)) * asp;
+          float side = step(.5, h21(vec2(fi, 4.1)));
+          x0 = mix(x0 * .28, asp - x0 * .28, side);              // keep them near the corners
+          float hgt = .14 + .3 * h21(vec2(fi, 2.7));
+          float lean = (h21(vec2(fi, 3.9)) - .5) * .5 + .03 * sin(uFgT * 1.1 + fi);
+          float y = p.y;
+          float cx = x0 + lean * y * y / hgt;
+          float w = .045 * (1. - y / hgt) + .004;
+          float d = abs(p.x - cx) - w;
+          float blade = (1. - smoothstep(-.02, .035, d)) * step(y, hgt);
+          a = max(a, blade * (.75 + .25 * h21(vec2(fi, 8.))));
+        }
+        // bokeh of flowers in the near grass
+        vec3 bk = vec3(0.); float ba = 0.;
+        for (int i = 0; i < 7; i++) {
+          float fi = float(i) + uFgSeed * 7.;
+          vec2 c = vec2(h21(vec2(fi, 5.5)) * asp, .03 + .22 * h21(vec2(fi, 6.6)));
+          float r = .035 + .04 * h21(vec2(fi, 7.7));
+          float disc = 1. - smoothstep(r * .7, r, length(p - c));
+          vec3 fc = h21(vec2(fi, 9.)) < .5 ? vec3(.95, .8, .25) : h21(vec2(fi, 10.)) < .5 ? vec3(.8, .25, .2) : vec3(.55, .6, .95);
+          bk += fc * disc * .55; ba = max(ba, disc * .5);
+        }
+        return vec4(mix(col, bk / max(ba, .001), ba * (1. - a)), max(a, ba));
       }
       vec3 filmic(vec3 x){ x *= uExpo; vec3 a = x*(2.51*x+.03), b = x*(2.43*x+.59)+.14; return clamp(a/b, 0., 1.); }
       void main(){
@@ -89,6 +120,7 @@ export function createRenderer(canvas, { video }) {
           m = mix(m, m*.25, wall);
           c = mix(c, m, eyeOn);
         }
+        if (uFg > .001) { vec4 fg = foreground(vUv); c = mix(c, fg.rgb, fg.a * uFg); }
         vec3 bl = texture2D(tB1, vUv).rgb + texture2D(tB2, vUv).rgb * 1.3;
         c += bl * uBloom;
         c = filmic(c);
@@ -162,6 +194,8 @@ export function createRenderer(canvas, { video }) {
     f.uFade.value = look.fade ?? 0;
     f.uFadeCol.value.set(look.fadeCol ?? '#000');
     f.uBars.value = look.bars ?? 0;
+    f.uFg.value = look.fg ?? 0; f.uFgT.value = look.fgT ?? 0; f.uFgSeed.value = look.fgSeed ?? 0;
+    if (look.fgCol) f.uFgCol.value.set(look.fgCol);
     pass(final, null);
   }
   return { renderer, render, size, setTier, get W() { return W; }, get H() { return H; }, gl: renderer.getContext() };

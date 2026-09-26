@@ -39,6 +39,8 @@ function abdomenMat() {
         vec3 base = mix(mix(dark, amber, amberK), dark, dk);
         base = mix(base, hair, smoothstep(.14, 0., f) * .55);
         base *= .85 + .3 * hash21(floor(vP.xz*vec2(260.,190.)));
+        float groove = smoothstep(.0, .045, f) * smoothstep(1., .985, f);
+        base *= mix(.3, 1., groove);
         vec3 N = normalize(vN);
         // segment ridges
         vec3 V = normalize(cameraPosition - vW);
@@ -226,7 +228,8 @@ export function createBee({ fur = 10 } = {}) {
   const root = new THREE.Group();
   const body = new THREE.Group(); root.add(body);
   const matC = cuticle();
-  const matLeg = cuticle('#1a120c', 0.9);
+  const matLeg = cuticle('#2b1d12', 1.1);
+  const matJoint = cuticle('#3a2818', 0.9);
   const shells = [];
   const NSH = 12;
   const addFur = (geo, parent, color, len, den) => {
@@ -269,7 +272,9 @@ export function createBee({ fur = 10 } = {}) {
   }
   // abdomen (pivot at petiole)
   const abd = new THREE.Group(); abd.position.set(-0.03, 0.02, 0); body.add(abd);
-  const abdMesh = new THREE.Mesh(ellip(0.36, 0.2, 0.22, 32, 20), abdomenMat());
+  const abdG = ellip(0.36, 0.2, 0.22, 48, 24);
+  { const p = abdG.attributes.position; for (let i = 0; i < p.count; i++) { const x = p.getX(i); const sg = (0.30 - x) / 0.68 * 6; const fr = sg - Math.floor(sg); const k = x < -0.33 ? 1 : 1 - 0.055 * (1 - fr); p.setY(i, p.getY(i) * k); p.setZ(i, p.getZ(i) * k); } abdG.computeVertexNormals(); }
+  const abdMesh = new THREE.Mesh(abdG, abdomenMat());
   abdMesh.position.set(-0.36, -0.05, 0); abdMesh.rotation.z = 0.18; abd.add(abdMesh);
   // honey stomach (crop), shown as if seen through the body
   const crop = new THREE.Mesh(ellip(0.13, 0.1, 0.1, 20, 14), new THREE.ShaderMaterial({
@@ -291,7 +296,13 @@ export function createBee({ fur = 10 } = {}) {
       const wm = wingMat(tex);
       const w = new THREE.Mesh(wg, wm); w.renderOrder = front ? 3 : 2; pivot.add(w);
       const fan = blurFan(len); if (s < 0) fan.scale.z = -1; fan.renderOrder = 4; pivot.add(fan);
-      wings.push({ pivot, mesh: w, fan, s, front, mat: wm });
+      const ghosts = [];
+      for (let g = 0; g < 5; g++) {
+        const gp = new THREE.Group(); gp.position.copy(pivot.position); gp.rotation.order = 'YXZ'; body.add(gp);
+        const gm = wingMat(tex); gm.uniforms.uOp.value = 0.14;
+        const gw = new THREE.Mesh(wg, gm); gw.renderOrder = 3; gp.add(gw); ghosts.push({ gp, gm });
+      }
+      wings.push({ pivot, mesh: w, fan, s, front, mat: wm, ghosts });
     }
   }
   // legs: base on the underside of the thorax; lengths femur / tibia / tarsus
@@ -299,15 +310,19 @@ export function createBee({ fur = 10 } = {}) {
   const LEGS = [[0.33, [0.17, 0.17, 0.13]], [0.21, [0.2, 0.2, 0.15]], [0.09, [0.24, 0.26, 0.17]]];
   LEGS.forEach(([x, L], pair) => {
     for (const s of [-1, 1]) {
-      const fem = new THREE.Mesh(limb(1, 0.034, 0.028, 7), matLeg);
-      const tg = limb(1, 0.026, pair === 2 ? 0.055 : 0.024, 7);
-      if (pair === 2) tg.scale(1, 0.6, 1.3);
+      const fem = new THREE.Mesh(limb(1, 0.03, 0.02, 8), matLeg);
+      const tg = limb(1, 0.018, pair === 2 ? 0.05 : 0.024, 8);
+      if (pair === 2) tg.scale(1, 0.55, 1.3);
       const tib = new THREE.Mesh(tg, matLeg);
-      const tar = new THREE.Mesh(limb(1, 0.018, 0.011, 6), matLeg);
-      body.add(fem, tib, tar);
+      const bg = limb(1, 0.02, 0.016, 6); if (pair === 2) bg.scale(1, 0.6, 1.45);
+      const tar = new THREE.Mesh(bg, matLeg);                 // basitarsus
+      const tar2 = new THREE.Mesh(limb(1, 0.012, 0.009, 5), matLeg);
+      const tar3 = new THREE.Mesh(limb(1, 0.009, 0.004, 5), matLeg);
+      const knobs = [0.032, 0.024, 0.02].map(r => new THREE.Mesh(new THREE.SphereGeometry(r, 8, 6), matJoint));
+      body.add(fem, tib, tar, tar2, tar3, ...knobs);
       let pollen = null;
       if (pair === 2) { pollen = new THREE.Mesh(ellip(0.075, 0.06, 0.055, 14, 10), toon({ color: '#c98f2c', rim: 0.8, uv: 0.1 })); body.add(pollen); }
-      legs.push({ fem, tib, tar, s, pair, L, base: V3(x, -0.1, 0.075 * s), pollen });
+      legs.push({ fem, tib, tar, tar2, tar3, knobs, s, pair, L, base: V3(x, -0.1, 0.075 * s), pollen });
     }
   });
 
@@ -322,7 +337,16 @@ export function createBee({ fur = 10 } = {}) {
     root.rotation.set(p.roll ?? 0, p.yaw ?? 0, p.pitch ?? 0);
     if (p.quat) root.quaternion.copy(p.quat);
     root.scale.setScalar(p.scale ?? 1);
+    root.updateMatrixWorld(true);
     const mode = p.mode ?? 'stand';
+    // surface the feet stand on: world plane { n, d } (dot(n, x) = d); default: body-local floor
+    const plane = p.plane || null;
+    const toPlane = (v, lift = 0) => {
+      if (!plane) return v;
+      const w = body.localToWorld(v.clone());
+      w.addScaledVector(plane.n, plane.d + lift - plane.n.dot(w));
+      return body.worldToLocal(w);
+    };
     const droop = p.droop ?? 0;
     head.rotation.set(0, 0, -0.12 + 0.04 * Math.sin(t * 0.7) - droop * 0.25);
     // antennae: independent searching rhythms; they sag when she sleeps
@@ -348,7 +372,15 @@ export function createBee({ fur = 10 } = {}) {
     const wmode = p.wing ?? (mode === 'fly' ? 'blur' : 'fold');
     for (const w of wings) {
       w.fan.visible = wmode === 'blur';
-      w.mat.uniforms.uOp.value = wmode === 'blur' ? 0.4 : 1;
+      w.mesh.visible = wmode !== 'blur';
+      w.mat.uniforms.uOp.value = 1;
+      w.ghosts.forEach((g, i) => {
+        g.gp.visible = wmode === 'blur';
+        if (wmode !== 'blur') return;
+        const a = -0.78 + i * 0.39, dv = 0.18 * Math.cos(i * 0.9 + t * 7);
+        g.gp.rotation.set(-w.s * (0.12 + dv), -w.s * 0.2 + w.s * a, 0.05 + dv * 0.5);
+        g.gm.uniforms.uOp.value = (w.front ? 0.3 : 0.2) * (i === 0 || i === 4 ? 1.3 : 0.8);
+      });
       if (wmode === 'fold') {
         // lying flat over the abdomen, tips slightly apart, forewing above hindwing
         w.pivot.rotation.set(w.s * 0.06, -w.s * (w.front ? 1.36 : 1.3), -0.1);
@@ -359,7 +391,7 @@ export function createBee({ fur = 10 } = {}) {
         const dev = wmode === 'blur' ? 0 : Math.cos(ph) * 0.18;
         w.pivot.rotation.set(-w.s * (0.12 + dev), -w.s * 0.2 + w.s * stroke, 0.05 + dev * 0.6);
       }
-      w.fan.material.uniforms.uOp.value = w.front ? 0.22 : 0.14;
+      w.fan.material.uniforms.uOp.value = w.front ? 0.12 : 0.08;
     }
     // legs: feet targets in body space, IK for the knee
     const walk = mode === 'walk' || mode === 'dance';
@@ -367,26 +399,34 @@ export function createBee({ fur = 10 } = {}) {
       const s = L.s, pair = L.pair, [l1, l2, l3] = L.L;
       let foot, ankle, pole;
       if (mode === 'fly') {
-        const hang = [[0.42, -0.34, 0.15], [0.12, -0.4, 0.2], [-0.28, -0.42, 0.15]][pair];
-        foot = V3(hang[0] - 0.08, hang[1] - 0.06, hang[2] * s);
-        ankle = V3(hang[0], hang[1], hang[2] * s);
-        pole = V3(pair === 0 ? -0.3 : 0.4, 0.6, s * 0.8);
+        const tr = 0.03 * Math.sin(t * 3 + pair + s);
+        const hang = [[0.46, -0.2, 0.12], [0.16, -0.27, 0.16], [-0.2, -0.33, 0.12]][pair];
+        ankle = V3(hang[0] + tr, hang[1], hang[2] * s);
+        foot = ankle.clone().add(pair === 2 ? V3(-0.12, -0.07, 0) : V3(-0.07, -0.08, s * 0.02));
+        pole = V3(pair === 0 ? 0.5 : pair === 1 ? 0.2 : -0.2, 0.3, s * 1);
       } else if (mode === 'sleep') {
         const f = [[0.5, 0.22], [0.18, 0.3], [-0.2, 0.26]][pair];
         foot = V3(f[0] + 0.05, -0.27, f[1] * s * 0.9); ankle = V3(f[0], -0.2, f[1] * s * 0.72);
         pole = V3(0, 1, s * 0.5);
       } else {
-        const f = [[0.62, 0.34], [0.2, 0.47], [-0.34, 0.42]][pair];
+        const f = [[0.56, 0.27], [0.17, 0.38], [-0.28, 0.34]][pair];
         const gy = p.ground ?? -0.3;
         const phase = walk ? (p.stride ?? t * 9) + ((pair + (s > 0 ? 1 : 0)) % 2 ? Math.PI : 0) : 0;
         const sw = walk ? Math.sin(phase) : 0, lift = walk ? Math.max(0, Math.cos(phase)) : 0;
-        foot = V3(f[0] + sw * 0.1, gy + lift * 0.06, f[1] * s);
-        const inward = V3(-f[0] * 0.15, 0.1, -s * 0.12);
-        ankle = foot.clone().add(inward.multiplyScalar(l3 / 0.2));
+        foot = toPlane(V3(f[0] + sw * 0.1, gy, f[1] * s), lift * 0.06);
+        // the tarsus lies along the surface, pointing outward-forward, its end curling to the claws
+        const out = V3(pair === 0 ? 0.6 : pair === 1 ? 0.1 : -0.55, 0, s * 0.8).normalize();
+        ankle = toPlane(foot.clone().addScaledVector(out, -l3 * 0.85), 0.05 + lift * 0.06);
         pole = V3(pair === 0 ? 0.2 : pair === 1 ? 0 : -0.3, 1, s * 0.4);
       }
       const r = knee(L.base, ankle, l1, l2, pole);
-      aim(L.fem, L.base, r.k); aim(L.tib, r.k, r.ankle); aim(L.tar, r.ankle, foot);
+      aim(L.fem, L.base, r.k); aim(L.tib, r.k, r.ankle);
+      // curved tarsus: quadratic curve from ankle to foot, arched upward
+      const mid = r.ankle.clone().lerp(foot, 0.5).add(V3(0, 0.025, 0));
+      const bz = u => { const a = r.ankle.clone().lerp(mid, u), b = mid.clone().lerp(foot, u); return a.lerp(b, u); };
+      const q1 = bz(0.5), q2 = bz(0.8);
+      aim(L.tar, r.ankle, q1); aim(L.tar2, q1, q2); aim(L.tar3, q2, foot);
+      L.knobs[0].position.copy(L.base); L.knobs[1].position.copy(r.k); L.knobs[2].position.copy(r.ankle);
       if (L.pollen) {
         const pl = p.pollen ?? 0;
         L.pollen.visible = pl > 0.02;

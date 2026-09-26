@@ -48,6 +48,8 @@ export function createDirector({ scene, camera, overlay, tl, video }) {
       camera.updateMatrixWorld();
     },
     tod(p) { return applyTOD(p); },
+    // every shot of every chapter: its start and each cue word (for warming up all looks)
+    allShotTimes() { const out = []; for (const c of tl.chapters) { out.push(c.start + 0.3); for (const v of Object.values(c.cues)) out.push(c.start + v + 0.3); out.push(c.start + c.dur - 0.2); } return out; },
   };
 
   function applyTOD(p) {
@@ -74,9 +76,19 @@ export function createDirector({ scene, camera, overlay, tl, video }) {
   function update(t) {
     const { ch, u } = tl.at(t);
     G.uT.value = t;
-    G.uBee.value = 0; G.uSplit.value = 0;
+    G.uBee.value = 0; G.uSplit.value = 0; G.uCloudSh.value = 0;
     overlay.begin();
     bee.root.visible = false; bee2.root.visible = false; shadow.visible = false;
+    // every piece of set state a shot may touch starts from the same values each frame,
+    // so a frame never depends on what was drawn before it (renderAt purity)
+    const hv = sets.hive.userData, cs = sets.cell.userData;
+    hv.heat.material.uniforms.uAmt.value = 0; hv.heat.scale.setScalar(1); hv.heat.position.set(0, 0, 0.6);
+    hv.rings.material.uniforms.uAmt.value = 0; hv.rings.material.uniforms.uPh.value = 0; hv.rings.scale.setScalar(1); hv.rings.position.set(0, 0, 0.5);
+    hv.mat.uniforms.uFocus.value.set(0, 0, 0); hv.mat.uniforms.uFocusR.value = 8; hv.mat.uniforms.uSense.value = 0.5;
+    for (const c of cs.caps) { c.visible = true; c.scale.setScalar(1); c.material.uniforms.uBack.value = 0; }
+    cs.cap.visible = false; cs.cap.scale.setScalar(1); cs.cap.material.uniforms.uBack.value = 0;
+    cs.wallMat.uniforms.uGlow.value = 1; cs.nectar.material.uniforms.uThick.value = 0; cs.nectar.position.set(0, 0, -cs.depth + 0.12);
+    sky.u.uPol.value = 0;
     const S = { look: {} };
     (CH[ch.id] || CH._fallback)(u, ch, S);
     const look = S.look;
@@ -96,6 +108,7 @@ export function createDirector({ scene, camera, overlay, tl, video }) {
       const fur = { ultra: 12, high: 12, mid: 8, low: 5, min: 3 }[name]; bee.setFur(fur); bee2.setFur(Math.min(fur, 6));
     },
     heavy: CH._heavy || [['safak', 0.2], ['cayir', 0.5], ['dans', 0.5]],
+    allShotTimes: () => ctx.allShotTimes(),
     posterTime() { return CH._poster ? CH._poster() : 5; },
   };
 }

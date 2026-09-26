@@ -27,7 +27,7 @@ export function groundMaterial(opts = {}) {
         base *= .85 + .3 * vnoise(p * 1.7);
         base = mix(base, beeColor(base, 0.), beeAmt());
         vec3 V = normalize(cameraPosition - vW);
-        vec3 col = shade(base, vec3(0.,1.,0.), V, .8, .0);
+        vec3 col = shade(base, vec3(0.,1.,0.), V, .8, .0) * cloudShade(vW);
         col = fogIt(col, length(cameraPosition - vW));
         gl_FragColor = vec4(col, 1.);
       }`,
@@ -128,6 +128,7 @@ export function createFlowers({ count = 2500, radius = 1500, center = [0, 0], se
         vec3 base = mix(f.rgb, beeColor(f.rgb, uvAmt), beeAmt());
         vec3 col = shade(base, N, V, 1., .5);
         col += f.rgb * .12 * uSunCol * (1. - uDark);    // translucency
+        col *= cloudShade(vW);
         col = fogIt(col, length(cameraPosition - vW));
         gl_FragColor = vec4(col, 1.);
       }`,
@@ -233,6 +234,8 @@ export function createMeadowSet({ distantTree } = {}) {
   const clear = (x, z) => HERO_SPOTS.some(h => Math.hypot(x - h.pos[0], z - h.pos[2]) < 26) || Math.hypot(x + 66, z - 92) < 60 || Math.hypot(x + 20, z - 140) < 50;
   const grass = createGrass({ count: 42000, radius: 2400, inner: 0, center: [0, 0], height: [8, 26], seed: 31, avoid: clear, color: ['#4d6232', '#8a9a58'] });
   set.add(grass);
+  const turf = createGrass({ count: 9000, radius: 170, inner: 0, center: [0, 40], height: [3, 9], seed: 37, avoid: (x, z) => !clear(x, z), color: ['#4d6232', '#7f914f'] });
+  set.add(turf);
   const flowers = createFlowers({ count: 3800, radius: 2200, center: [0, 0], seed: 41, heights: [16, 36], avoid: clear, mix: [0.38, 0.22, 0.25, 0.15] });
   set.add(flowers);
   const heroes = HERO_SPOTS.map(h => {
@@ -241,6 +244,6 @@ export function createMeadowSet({ distantTree } = {}) {
     set.add(f); return f;
   });
   set.userData = { grass, flowers, heroes };
-  set.setLOD = k => { grass.setLOD(k); flowers.setLOD(k); };
+  set.setLOD = k => { grass.setLOD(k); turf.setLOD(k); flowers.setLOD(k); };
   return set;
 }

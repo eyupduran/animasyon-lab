@@ -77,7 +77,7 @@ async function pickTier() {
     cost();
     const ms = cost();
     console.log(`[kalite] ${name}: ${ms.toFixed(1)} ms/kare`);
-    if (ms < 27 || name === 'min') return;
+    if (ms < (name === 'high' ? 22 : 27) || name === 'min') return;
   }
 }
 // playback: if frames stay slow for a while, drop one tier (never climbs back, to avoid flicker)
@@ -95,7 +95,15 @@ const clips = new Map();
 function clip(ch) {
   if (!ch.clip) return null;
   let a = clips.get(ch.id);
-  if (!a) { a = new Audio(); a.preload = 'auto'; a.src = './' + ch.clip.file; a.preservesPitch = true; clips.set(ch.id, a); }
+  if (!a) {
+    a = new Audio(); a.preload = 'auto'; a.src = './' + ch.clip.file; a.preservesPitch = true; clips.set(ch.id, a);
+    // warm the decoder once, silently, so the first real play() does not stall a frame
+    const el = a;
+    el.addEventListener('canplaythrough', () => {
+      if (el.__warm || activeClip === el) return; el.__warm = true;
+      el.muted = true; el.play().then(() => { if (activeClip !== el) { el.pause(); el.currentTime = 0; } el.muted = false; }).catch(() => { el.muted = false; });
+    }, { once: true });
+  }
   return a;
 }
 function keepClips(ch) {
@@ -255,8 +263,8 @@ $('go').onclick = start;
 
 // ---------------- warm-up: compile every look before the start button ----------------
 async function warmup() {
-  const probes = [];
-  for (const c of tl.chapters) for (const f of [0.15, 0.5, 0.85]) probes.push(c.start + c.dur * f);
+  // draw every shot of every chapter once (all sets, shaders, textures and buffers ready)
+  const probes = director.allShotTimes();
   for (let i = 0; i < probes.length; i++) {
     draw(probes[i]);
     $('prep').firstElementChild.style.width = ((i + 1) / probes.length * 100) + '%';
@@ -327,10 +335,15 @@ window.__video = {
   chapters(from = 0) { return tl.chapters.filter(c => c.start + c.dur > from).map(c => ({ t: Math.max(0, c.start - from), title: `${c.clock} · ${c.title}` })); },
 };
 
-warmup().then(() => {
+warmup().then(async () => {
   if (VIDEO) {
     document.body.classList.add('video');
     $('start').style.display = 'none'; $('bar').style.display = 'none';
+    // settle before promising purity: fonts, layout and canvas size must not change after __ready
+    await document.fonts.ready;
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    fixResolution();
+    for (const t of director.allShotTimes()) draw(t);
     draw(0); window.__ready = true; return;
   }
   const posterT = Q.has('t') ? storyT : director.posterTime();

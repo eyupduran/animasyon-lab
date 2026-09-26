@@ -26,6 +26,9 @@ const vlerp = (a, b, t) => a.clone().lerp(b, t);
 // hole geometry helpers (tree set, cm)
 const HOLE_FLOOR = HOLE.y - HOLE.h + 0.25;
 const holeLip = (x = 0) => V(TRUNK_R + 1.5 + x, HOLE_FLOOR, 0);
+const LIP = { n: V(0, 1, 0), d: HOLE_FLOOR };
+const COMB = { n: V(0, 0, 1), d: 0.02 };
+const flat = y => ({ n: V(0, 1, 0), d: y });
 
 export function chapters(X) {
   const { bee, overlay: O, sets } = X;
@@ -34,6 +37,7 @@ export function chapters(X) {
   const headW = () => bee.parts.head.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0.06, 0, 0).applyQuaternion(bee.root.quaternion));
   const fwd = yaw => V(Math.cos(yaw), 0, -Math.sin(yaw));
   const side = yaw => V(Math.sin(yaw), 0, Math.cos(yaw));
+  const flyShadow = (p, gy, yaw = 0) => { const h = Math.max(0, p.y - gy); shadowAt(V(p.x, gy + 0.05, p.z), yaw, 0.42 * Math.exp(-h / 28), 1 + h * 0.05); };
   const shadowAt = (p, yaw = 0, op = 0.5, s = 1) => { X.shadow.visible = true; X.shadow.position.copy(p); X.shadow.rotation.set(0, yaw, 0); X.shadow.material.uniforms.uOp.value = op; X.shadow.scale.setScalar(s); };
   // the crowd behind the hole: a few bees wandering on the glowing comb edge
   const holeCrowd = (u, n = 9) => {
@@ -121,7 +125,7 @@ export function chapters(X) {
           const walk = clamp(lt / 3.2);
           const x = lerp(-9, 1.5, easeOut(walk));
           const p = holeLip(x); p.y += 0.3;
-          put({ mode: walk < 1 ? 'walk' : 'stand', t: u, pos: p, yaw: 0.1 * Math.sin(u * 0.4), stride: x * 3.2 });
+          put({ mode: walk < 1 ? 'walk' : 'stand', plane: LIP, t: u, pos: p, yaw: 0.1 * Math.sin(u * 0.4), stride: x * 3.2 });
           shadowAt(holeLip(x + 0.05).add(V(0, 0.02, 0)), 0, 0.45);
           const k = ease(lt / d);
           X.cam(V(TRUNK_R + lerp(17, 14, k), HOLE_FLOOR + 2.2, lerp(9, 7, k)), V(TRUNK_R - 0.5, HOLE_FLOOR + 1.4, 0), 20, 0.3, 30000);
@@ -130,7 +134,7 @@ export function chapters(X) {
           // she lifts off; the camera stays
           const up = easeIn(clamp((lt - 1.4) / 2.2));
           const p = holeLip(1.5 + up * 14); p.y += 0.3 + up * 16;
-          put({ mode: up > 0 ? 'fly' : 'stand', t: u, pos: p, pitch: up * 0.3, wing: up > 0 ? 'blur' : 'fold' });
+          put({ mode: up > 0 ? 'fly' : 'stand', plane: LIP, t: u, pos: p, pitch: up * 0.3, wing: up > 0 ? 'blur' : 'fold' });
           if (up < 0.1) shadowAt(holeLip(1.55), 0, 0.45 * (1 - up * 10));
           X.cam(V(TRUNK_R + 14, HOLE_FLOOR + 2.2, 7), V(TRUNK_R + 1, HOLE_FLOOR + 1.6, 0), 20, 0.3, 30000);
         }],
@@ -143,7 +147,7 @@ export function chapters(X) {
           X.cam(cp, V(300, 420 + k * 20, -120), 30);
         }],
       ], ch.dur);
-      const tDay = ch.cues.day - 0.2;
+      const tDay = ch.cues.how + 0.6;
       O.title('Bal Arısının Bir Günü', 'Apis mellifera', smooth(tDay, tDay + 1.2, u) * (1 - smooth(ch.dur - 0.8, ch.dur, u)), { big: true, ink: 'ink' });
       S.noTitle = true;
     },
@@ -157,7 +161,7 @@ export function chapters(X) {
         [0, (lt, d) => {
           // her face: the compound eye holds the sky
           const p = holeLip(1.4); p.y += 0.3;
-          put({ mode: 'stand', t: u, pos: p, yaw: -0.35, ant: 1 });
+          put({ mode: 'stand', plane: LIP, t: u, pos: p, yaw: -0.35, ant: 1 });
           shadowAt(holeLip(1.45), -0.35, 0.45);
           const k = ease(lt / d);
           const head = headW();
@@ -184,7 +188,7 @@ export function chapters(X) {
           const up = easeIn(clamp((lt - (d - 2.4)) / 2.2));
           const p = holeLip(1.5 + up * 18); p.y += 0.3 + up * 10;
           const turn = ease(clamp(lt / 2.5));
-          put({ mode: up > 0 ? 'fly' : 'stand', t: u, pos: p, yaw: lerp(1.2, 0, turn), wing: up > 0 ? 'blur' : 'fold' });
+          put({ mode: up > 0 ? 'fly' : 'stand', plane: LIP, t: u, pos: p, yaw: lerp(1.2, 0, turn), wing: up > 0 ? 'blur' : 'fold' });
           if (up < 0.1) shadowAt(holeLip(1.5), lerp(1.2, 0, turn), 0.45);
           X.cam(V(TRUNK_R + 17, HOLE_FLOOR + 3.5, 19), V(TRUNK_R + 3, HOLE_FLOOR + 1.6, 0), 22, 0.3, 30000);
         }],
@@ -208,7 +212,7 @@ export function chapters(X) {
           const lit = on * (1 - next * 0.75);
           O.path('job' + i, d, { op: show * (0.35 + 0.65 * on), ink: i === 4 && on > 0.5 ? 'wax' : 'light' });
           O.path('jobF' + i, d, { cls: 'diag fill', op: show * lit * 0.55, ink: 'wax' });
-          O.text('jobT' + i, x, y + r + 20 * k, jobs[i][0], { op: show * (0.4 + 0.6 * on), anchor: 'middle', size: 14 });
+          if (!O.portrait || i === 0 || i === 4 || on * (1 - next) > 0.5) O.text('jobT' + i, x, y + r + 20 * k, jobs[i][0], { op: show * (0.4 + 0.6 * on), anchor: 'middle', size: 14, keep: true });
           O.text('jobD' + i, x, y - r - 9 * k, jobs[i][1], { cls: 'latin', op: show * (0.3 + 0.5 * on), anchor: 'middle', size: 13 });
         });
         O.text('jobDay', x0 + gap * 4 + r * 0.2, y0 - r - 26 * k, 'gün', { cls: 'latin', op: show * 0.6, anchor: 'middle', size: 12 });
@@ -228,14 +232,18 @@ export function chapters(X) {
       const patch = smooth(cue(ch, 'patch'), cue(ch, 'patch') + 2, u);
       tod = { ...tod, cloudOver: cloud, cloud: lerp(0.35, 0.62, cloud) + patch * 0.2 };
       S.look = X.tod(tod);
+      G.uCloudSh.value = 0.55;
       const sunDir = G.uSunDir.value.clone();
       seq(u, [
         [0, (lt, d) => {
           // low over the meadow, most of the frame is sky; she crosses it
           const k = lt / d;
           X.cam(V(0, 22, 420), V(-40, 150, -300), 34);
-          put({ mode: 'fly', t: u, pos: V(lerp(-260, 220, k), lerp(70, 150, k), lerp(40, -60, k)), yaw: -0.2, pitch: 0.12 });
+          const bp0 = V(lerp(-260, 220, k), lerp(34, 120, k), lerp(40, -60, k));
+          put({ mode: 'fly', t: u, pos: bp0, yaw: -0.2, pitch: 0.12, scale: 1 });
+          flyShadow(bp0, 14, -0.2);
           S.look.fade = 1 - smooth(0, 0.6, u);
+          Object.assign(S.look, { fg: 0.9, fgT: u, fgSeed: 1 });
         }],
         [cue(ch, 'wings'), (lt, d) => {
           // slowed down a hundredfold: each stroke sweeps about a quarter turn
@@ -251,6 +259,7 @@ export function chapters(X) {
           const b = V(lerp(-30, 60, k), lerp(90, 130, k), lerp(120, -80, k));
           put({ mode: 'fly', t: u, pos: b, yaw: 1.2, pitch: 0.1 });
           X.cam(cp, V(-30, 160, -300), 36);
+          Object.assign(S.look, { fg: 0.85, fgT: u, fgSeed: 2 });
           const sp = O.project(cp.clone().add(sunDir.clone().multiplyScalar(5000)));
           const bp = O.project(b);
           const hp = O.project(b.clone().add(V(Math.cos(1.2), 0, -Math.sin(1.2)).multiplyScalar(260)));
@@ -286,16 +295,24 @@ export function chapters(X) {
     cayir(u, ch, S) {
       X.useSet('meadow');
       S.look = X.tod(TOD.day);
+      G.uCloudSh.value = 0.6;
       const H = sets.meadow.userData.heroes;
       const flowerTop = i => H[i].position.clone().add(V(0, 0.4, 0));
       seq(u, [
         [0, (lt, d) => {
           const k = ease(lt / d);
-          X.cam(V(lerp(-420, -360, k), 34, lerp(330, 290, k)), V(0, 22, 0), 20);
+          X.cam(V(lerp(-74, -66, k), 54, lerp(56, 50, k)), V(-3, 30, 0), 26);
+          const land = flowerTop(0).add(V(0, -0.1, 0));
+          const a = clamp(lt / (d * 0.9));
+          const p = V(-60, 55, -45).lerp(land, easeOut(a)).add(V(0, Math.sin(a * Math.PI) * 10, 0));
+          put({ mode: a < 1 ? 'fly' : 'stand', plane: flat(land.y - 0.3), t: u, pos: a < 1 ? p : land, yaw: 0.35, pitch: 0.1 * (1 - a) });
+          flyShadow(a < 1 ? p : land, land.y - 0.3, 0.35);
+          Object.assign(S.look, { fg: 1, fgT: u, fgSeed: 3 });
         }],
         [cue(ch, 'ours'), (lt, d, uu) => {
           const k = ease(clamp((uu - cue(ch, 'ours')) / (cue(ch, 'target') - cue(ch, 'ours'))));
           X.cam(V(lerp(-70, -62, k), 40, lerp(95, 88, k)), V(4, 27, -2), 26);
+          Object.assign(S.look, { fg: 0.7, fgT: u, fgSeed: 7 });
           const w = smooth(cue(ch, 'theirs'), cue(ch, 'theirs') + 1.3, uu);
           G.uSplit.value = lerp(1, 0.5, w); G.uBee.value = w > 0 ? 1 : 0; S.look.eye = w > 0 ? 1 : 0;
           S.look.cell = 11 + 5 * env(uu, cue(ch, 'mosaic'), cue(ch, 'mosaic') + 0.8, cue(ch, 'mosaic') + 2.5, cue(ch, 'mosaic') + 3.5);
@@ -326,10 +343,13 @@ export function chapters(X) {
           const k = clamp(lt / (d - 0.5)) * seg;
           const i = Math.min(seg - 1, Math.floor(k)), f = k - i;
           const hop = Math.sin(Math.PI * f);
-          const p = route[i].clone().lerp(route[i + 1], ease(f)).add(V(0, 0.6 + hop * 9, 0));
+          const p = route[i].clone().lerp(route[i + 1], ease(f)).add(V(0, 0.2 + hop * 9, 0));
+          const gy = lerp(route[i].y, route[i + 1].y, ease(f)) - 0.1;
           const dir = route[i + 1].clone().sub(route[i]);
-          put({ mode: hop > 0.15 ? 'fly' : 'stand', t: u, pos: p, yaw: Math.atan2(-dir.z, dir.x), wing: hop > 0.15 ? 'blur' : 'fold' });
-          X.cam(V(-20, 150, 130), V(8, 26, 0), 34);
+          put({ mode: hop > 0.15 ? 'fly' : 'stand', plane: flat(gy), t: u, pos: p, yaw: Math.atan2(-dir.z, dir.x), wing: hop > 0.15 ? 'blur' : 'fold' });
+          flyShadow(p, gy, Math.atan2(-dir.z, dir.x));
+          X.cam(V(-12, 46, 44), V(14, 28, 2), 36);
+          Object.assign(S.look, { fg: 0.6, fgT: u, fgSeed: 4 });
           let dd = '';
           route.forEach((r, j) => { const s = O.project(r); if (s) dd += (j ? 'L' : 'M') + s[0].toFixed(1) + ',' + s[1].toFixed(1); });
           O.path('route', dd, { op: 0.8 * smooth(0.3, 1.2, lt), dash: '3 6', ink: 'uv' });
@@ -342,14 +362,17 @@ export function chapters(X) {
     yuk(u, ch, S) {
       X.useSet('meadow');
       S.look = X.tod(mixTOD(TOD.day, TOD.noon, 0.3));
+      G.uCloudSh.value = 0.55;
       const H = sets.meadow.userData.heroes;
       const f0 = H[0].position.clone();
-      const onFlower = V(f0.x + 0.1, f0.y + 0.62, f0.z);
+      const top = f0.y + 0.3;
+      const onFlower = V(f0.x + 0.1, top + 0.3, f0.z);
+      const FL = flat(top);
       seq(u, [
         [0, (lt, d, uu) => {
           // drinking: the tongue goes down into the flower
           const pr = smooth(0.2, 1.6, lt);
-          put({ mode: 'stand', t: u, pos: onFlower, yaw: 0.4, pitch: -0.22, prob: pr * 0.75, ant: 0.6, crop: smooth(cue(ch, 'crop') + 0.2, cue(ch, 'crop') + 1, uu) * (1 - smooth(cue(ch, 'flowers') - 0.4, cue(ch, 'flowers'), uu)) });
+          put({ mode: 'stand', plane: FL, t: u, pos: onFlower, yaw: 0.4, pitch: -0.12, prob: pr * 0.75, ant: 0.6, crop: smooth(cue(ch, 'crop') + 0.2, cue(ch, 'crop') + 1, uu) * (1 - smooth(cue(ch, 'flowers') - 0.4, cue(ch, 'flowers'), uu)) });
           const head = headW();
           const k = ease(lt / d);
           X.cam(head.clone().add(V(lerp(-2.4, -2.9, k), 1.1, lerp(3.6, 4.2, k))), head.clone().add(V(-0.35, -0.15, 0)), 24, 0.2);
@@ -362,9 +385,10 @@ export function chapters(X) {
           const list = sets.meadow.userData.flowers.userData.list.filter(f => f.kind === 0 && Math.hypot(f.x - 120, f.z + 60) < 160).slice(0, 12);
           const n = list.length - 1, k = clamp(lt / d) * n;
           const i = Math.min(n - 1, Math.floor(k)), f = k - i;
-          const a = V(list[i].x, list[i].y + 0.6, list[i].z), b = V(list[i + 1].x, list[i + 1].y + 0.6, list[i + 1].z);
+          const a = V(list[i].x, list[i].y + 0.3, list[i].z), b = V(list[i + 1].x, list[i + 1].y + 0.3, list[i + 1].z);
           const hop = Math.sin(Math.PI * f);
-          put({ mode: hop > 0.1 ? 'fly' : 'stand', t: u, pos: a.clone().lerp(b, ease(f)).add(V(0, hop * 12, 0)), yaw: Math.atan2(-(b.z - a.z), b.x - a.x), pollen: 0.2 + 0.3 * clamp(lt / d) });
+          const pp = a.clone().lerp(b, ease(f)).add(V(0, hop * 12, 0)); flyShadow(pp, lerp(list[i].y, list[i + 1].y, ease(f)));
+          put({ mode: hop > 0.1 ? 'fly' : 'stand', plane: flat(lerp(list[i].y, list[i + 1].y, ease(f))), t: u, pos: pp, yaw: Math.atan2(-(b.z - a.z), b.x - a.x), pollen: 0.2 + 0.3 * clamp(lt / d) });
           X.cam(V(150, 120, 60), V(120, 22, -40), 32);
           let dd = '';
           for (let j = 0; j <= Math.min(n, i + 1); j++) { const s = O.project(V(list[j].x, list[j].y, list[j].z)); if (s) dd += (dd ? 'L' : 'M') + s[0].toFixed(1) + ',' + s[1].toFixed(1); }
@@ -374,7 +398,7 @@ export function chapters(X) {
         [cue(ch, 'pollen'), (lt, d, uu) => {
           // pollen baskets on the hind legs fill
           const g = 0.25 + 0.75 * smooth(0.3, d - 0.5, lt);
-          put({ mode: 'stand', t: u, pos: onFlower, yaw: 2.2, pitch: -0.1, pollen: g, ant: 0.8 });
+          put({ mode: 'stand', plane: FL, t: u, pos: onFlower, yaw: 2.2, pitch: -0.05, pollen: g, ant: 0.8 });
           const L = bee.parts.legs.find(l => l.pollen && l.s > 0) || bee.parts.legs.find(l => l.pollen);
           const pw = L.pollen.getWorldPosition(new THREE.Vector3());
           X.cam(pw.clone().add(V(0.8, 0.6, 3.4)), pw.clone().add(V(0.3, 0.15, 0)), 26, 0.2);
@@ -384,8 +408,11 @@ export function chapters(X) {
           // heavy take-off
           const up = easeIn(clamp((lt - 0.8) / (d - 0.8)));
           const p = onFlower.clone().add(V(up * 20, up * 26, -up * 6));
-          put({ mode: up > 0 ? 'fly' : 'stand', t: u, pos: p, yaw: 0.3, pitch: 0.18 * up, pollen: 1, wing: up > 0 ? 'blur' : 'fold' });
-          X.cam(onFlower.clone().add(V(-4, 4, 16)), onFlower.clone().add(V(6, 6, -2)), 30, 0.3);
+          flyShadow(p, top, 0.3);
+          put({ mode: up > 0 ? 'fly' : 'stand', plane: FL, t: u, pos: p, yaw: 0.3, pitch: 0.18 * up, pollen: 1, wing: up > 0 ? 'blur' : 'fold' });
+          const follow = onFlower.clone().lerp(p, 0.85);
+          X.cam(follow.clone().add(V(-6, 2.5, 13)), follow.clone().add(V(1, 0.5, 0)), 28, 0.3);
+          Object.assign(S.look, { fg: 0.8, fgT: u, fgSeed: 5 });
           O.label('loadL', p.clone().add(V(0, 0.4, 0)), 'dönüş yükü', { latin: 'kendi ağırlığının yarısına yakın', dir: [-150, -80], op: env(lt, 0.8, 1.6, d - 0.5, d) });
           O.scale('sc1', onFlower, 1, '1 cm', { op: env(lt, 0.4, 1, d - 0.5, d) });
         }],
@@ -441,6 +468,7 @@ export function chapters(X) {
           const p = V(x, 60, -300);
           put({ mode: 'fly', t: u, pos: p, yaw: 0, pitch: 0.08, pollen: 1 });
           X.cam(p.clone().add(V(-3, 2.2, 13)), p.clone().add(V(1.5, -1.2, 0)), 30, 0.5);
+          G.uCloudSh.value = 0.5; flyShadow(p, 8);
           const flow = env(uu, cue(ch, 'flow') - 0.2, cue(ch, 'flow') + 0.6, ch.cues.tunnel - 0.8, ch.cues.tunnel - 0.4);
           for (let i = 0; i < 7; i++) {
             const y = O.H * (0.68 + i * 0.035), ph = ((lt * (1.2 + i * 0.25) + i * 0.37) % 1);
@@ -452,12 +480,14 @@ export function chapters(X) {
         [cue(ch, 'tunnel'), (lt, d, uu) => {
           // the corridor that fooled her
           X.useSet('tunnel');
-          S.look = X.tod({ ...TOD.noon, fogDen: 0.0004 });
+          S.look = X.tod(TOD.noon);
+          G.uCloudSh.value = 0.5;
           const T = sets.tunnel.userData;
           const x = 20 + lt / d * (T.L - 60);
-          const p = V(x, T.H / 2, 0);
+          const p = V(x, T.y0 + T.H * 0.55, 0);
           put({ mode: 'fly', t: u, pos: p, yaw: 0, pitch: 0.06 });
-          X.cam(V(x - 9, T.H * 0.62, 17), p.clone().add(V(3, 0, 0)), 40, 0.5);
+          X.cam(V(x - 20, T.y0 + T.H + 30, 16), p.clone().add(V(9, -2, 0)), 34, 0.5);
+          Object.assign(S.look, { fg: 0.7, fgT: u, fgSeed: 6 });
           const op = env(lt, 0.8, 1.5, d - 0.5, d);
           O.text('tunT', O.W * 0.06, O.H * 0.16, 'dar, desenli bir tünel', { op, size: 19 });
           const k = O.k, x0 = O.W * 0.06, y0 = O.H * 0.24;
@@ -473,7 +503,7 @@ export function chapters(X) {
           S.look = X.tod(TOD.noon);
           const k = easeOut(clamp(lt / 2.6));
           const p = holeLip(1.5).add(V((1 - k) * 22, 0.3 + (1 - k) * 12, (1 - k) * 18));
-          put({ mode: k < 1 ? 'fly' : 'walk', t: u, pos: k < 1 ? p : holeLip(1.5 - (lt - 2.6) * 1.2).add(V(0, 0.3, 0)), yaw: Math.PI, pollen: 1, stride: lt * 4, wing: k < 1 ? 'blur' : 'fold' });
+          put({ mode: k < 1 ? 'fly' : 'walk', plane: LIP, t: u, pos: k < 1 ? p : holeLip(1.5 - (lt - 2.6) * 1.2).add(V(0, 0.3, 0)), yaw: Math.PI, pollen: 1, stride: lt * 4, wing: k < 1 ? 'blur' : 'fold' });
           if (k >= 1) shadowAt(holeLip(1.5 - (lt - 2.6) * 1.2), Math.PI, 0.4);
           X.cam(V(TRUNK_R + 17, HOLE_FLOOR + 3.5, 19), V(TRUNK_R + 3, HOLE_FLOOR + 1.6, 0), 24, 0.3, 30000);
         }],
@@ -549,7 +579,7 @@ export function chapters(X) {
       const D = dz.pos;
       hv.mat.uniforms.uFocus.value.copy(DANCE_C); hv.mat.uniforms.uFocusR.value = 6; hv.mat.uniforms.uSense.value = 0.4;
       hv.crowdAt(u, { clear: { x: DANCE_C.x, y: DANCE_C.y, r: 2.4 }, extra: followers(dz, u), n: hv.maxCrowd });
-      put({ mode: 'dance', t: dT, pos: D.clone().add(V(0, 0, 0.32)), quat: new THREE.Quaternion().setFromRotationMatrix(hv.onComb(0, 0, dz.head)), wag: dz.wag, stride: dT * 9, ant: 0.7 });
+      put({ mode: 'dance', t: dT, pos: D.clone().add(V(0, 0, 0.32)), plane: COMB, quat: new THREE.Quaternion().setFromRotationMatrix(hv.onComb(0, 0, dz.head)), wag: dz.wag, stride: dT * 9, ant: 0.7 });
       hv.rings.position.set(D.x, D.y, 0.5); hv.rings.scale.setScalar(1); hv.rings.material.uniforms.uAmt.value = dz.waggle * smooth(t0, t0 + 1, u); hv.rings.material.uniforms.uPh.value = dT * (slow ? 0.35 : 1);
       seq(u, [
         [0, (lt, d) => { X.cam(V(DANCE_C.x - 2, DANCE_C.y - 3, 17), DANCE_C.clone().add(V(0, 0.3, 0)), 30, 0.3, 300); O.label('vertL', V(DANCE_C.x - 5, DANCE_C.y + 3, 0), 'dikey petek', { dir: [-90, -70], op: env(lt, 0.8, 1.6, d - 0.4, d), ink: 'wax' }); }],
@@ -611,7 +641,7 @@ export function chapters(X) {
           hv.mat.uniforms.uFocus.value.copy(dz.pos); hv.mat.uniforms.uFocusR.value = 4; hv.mat.uniforms.uSense.value = 0.45;
           const taste = env(uu, cue(ch, 'taste'), cue(ch, 'taste') + 0.5, cue(ch, 'frisch') - 0.5, cue(ch, 'frisch'));
           hv.crowdAt(u, { clear: { x: DANCE_C.x, y: DANCE_C.y, r: 2.4 }, extra: followers(dz, u), n: hv.maxCrowd });
-          put({ mode: 'dance', t: dT, pos: dz.pos.clone().add(V(0, 0, 0.32)), quat: new THREE.Quaternion().setFromRotationMatrix(hv.onComb(0, 0, dz.head)), wag: dz.wag * (1 - taste), stride: dT * 9, ant: 0.7, drop: taste * 0.8 });
+          put({ mode: 'dance', t: dT, pos: dz.pos.clone().add(V(0, 0, 0.32)), plane: COMB, quat: new THREE.Quaternion().setFromRotationMatrix(hv.onComb(0, 0, dz.head)), wag: dz.wag * (1 - taste), stride: dT * 9, ant: 0.7, drop: taste * 0.8 });
           hv.rings.position.set(dz.pos.x, dz.pos.y, 0.5); hv.rings.material.uniforms.uAmt.value = dz.waggle * (1 - taste); hv.rings.material.uniforms.uPh.value = dT;
           X.cam(dz.pos.clone().add(V(-1.5, -2.2, 5.6)), dz.pos.clone().add(V(0, 0.2, 0)), 30, 0.2, 300);
           O.label('humL', dz.pos.clone().add(V(-0.5, 0.2, 0.5)), '≈ 250 Hz vızıltı', { latin: 'antenle dokunuş · petekte titreşim', dir: [-140, -100], op: env(uu, cue(ch, 'touch') + 0.3, cue(ch, 'touch') + 1.1, cue(ch, 'taste') - 0.3, cue(ch, 'taste')), ink: 'uv' });
@@ -624,7 +654,7 @@ export function chapters(X) {
           const dz = danceAt(dT);
           hv.mat.uniforms.uFocus.value.copy(DANCE_C); hv.mat.uniforms.uFocusR.value = 7; hv.mat.uniforms.uSense.value = 0.3;
           hv.crowdAt(u, { clear: { x: DANCE_C.x, y: DANCE_C.y, r: 2.4 }, extra: followers(dz, u), n: hv.maxCrowd });
-          put({ mode: 'dance', t: dT, pos: dz.pos.clone().add(V(0, 0, 0.32)), quat: new THREE.Quaternion().setFromRotationMatrix(hv.onComb(0, 0, dz.head)), wag: dz.wag, stride: dT * 9 });
+          put({ mode: 'dance', t: dT, pos: dz.pos.clone().add(V(0, 0, 0.32)), plane: COMB, quat: new THREE.Quaternion().setFromRotationMatrix(hv.onComb(0, 0, dz.head)), wag: dz.wag, stride: dT * 9 });
           hv.rings.position.set(dz.pos.x, dz.pos.y, 0.5); hv.rings.material.uniforms.uAmt.value = dz.waggle * 0.7; hv.rings.material.uniforms.uPh.value = dT;
           X.cam(V(DANCE_C.x + 3, DANCE_C.y - 1, 20), DANCE_C.clone().add(V(2, 0, 0)), 30, 0.3, 300);
           const op = env(lt, 0.4, 1.2, d - 0.6, d);
@@ -682,7 +712,7 @@ export function chapters(X) {
           put({ mode: 'stand', t: u, pos: at.clone().add(V(-0.72, 0, 0.32)), quat: q1, ant: 0.5, drop: pass * 0.8, pollen: 1 });
           X.bee2.root.visible = true;
           const bub = smooth(cue(ch, 'bubble'), cue(ch, 'bubble') + 0.5, uu);
-          X.bee2.pose({ mode: 'stand', t: u + 3, pos: at.clone().add(V(0.72, 0, 0.32)), quat: q2, ant: 0.5, drop: bub * (0.55 + 0.45 * Math.sin(lt * 2.4)), prob: 0.25 * pass });
+          X.bee2.pose({ mode: 'stand', plane: COMB, t: u + 3, pos: at.clone().add(V(0.72, 0, 0.32)), quat: q2, ant: 0.5, drop: bub * (0.55 + 0.45 * Math.sin(lt * 2.4)), prob: 0.25 * pass });
           X.bee2.root.updateMatrixWorld(true);
           X.cam(at.clone().add(V(0.2, -1.6, 4.6)), at.clone().add(V(0, 0.1, 0)), 28, 0.2, 300);
           O.label('passL', at.clone().add(V(0, -0.2, 0.4)), 'ağızdan ağıza', { latin: 'toplayıcıdan alıcıya', dir: [-130, 90], op: env(uu, 0.6, 1.4, cue(ch, 'bubble') - 0.3, cue(ch, 'bubble')), ink: 'wax' });
@@ -706,7 +736,7 @@ export function chapters(X) {
           // fanners at the rim
           const fan = smooth(cue(ch, 'fan') - 0.2, cue(ch, 'fan') + 0.5, uu) * (1 - smooth(cue(ch, 'cap') - 0.3, cue(ch, 'cap') + 0.3, uu));
           if (fan > 0) {
-            put({ mode: 'stand', t: u, pos: V(-0.2, 1.05, 0.32), quat: new THREE.Quaternion().setFromRotationMatrix(sets.hive.userData.onComb(0, 0, -1.6)), wing: 'blur', ant: 0.3 });
+            put({ mode: 'stand', t: u, pos: V(-0.2, 1.05, 0.32), plane: COMB, quat: new THREE.Quaternion().setFromRotationMatrix(sets.hive.userData.onComb(0, 0, -1.6)), wing: 'blur', ant: 0.3 });
             for (let i = 0; i < 4; i++) {
               const s = O.project(V(-0.5 + i * 0.25, 0.9 - ((lt * 0.8 + i * 0.3) % 1) * 1.2, 0.3));
               if (s) O.path('air' + i, `M${s[0]},${s[1]} l${10 * O.k},${22 * O.k}`, { op: fan * 0.7, dash: '3 5' });
@@ -760,7 +790,7 @@ export function chapters(X) {
           hv.crowdAt(u * 0.15, { clear: { x: at.x, y: at.y, r: 1.5 }, n: 120 });
           hv.rings.material.uniforms.uAmt.value = 0; hv.heat.material.uniforms.uAmt.value = 0;
           const droop = smooth(cue(ch, 'droop'), cue(ch, 'droop') + 3, uu);
-          put({ mode: droop > 0.5 ? 'sleep' : 'stand', t: u * (1 - droop * 0.9), pos: at.clone().add(V(0, 0, 0.3)), quat: new THREE.Quaternion().setFromRotationMatrix(hv.onComb(0, 0, -2.2)), droop, ant: 1 - droop });
+          put({ mode: droop > 0.5 ? 'sleep' : 'stand', t: u * (1 - droop * 0.9), pos: at.clone().add(V(0, 0, 0.3)), plane: COMB, quat: new THREE.Quaternion().setFromRotationMatrix(hv.onComb(0, 0, -2.2)), droop, ant: 1 - droop });
           const zoom = smooth(cue(ch, 'days') - 0.5, cue(ch, 'days') + 2, uu);
           X.cam(at.clone().add(V(lerp(2, 1.2, zoom), lerp(-2.4, -1.4, zoom), lerp(5.5, 3.2, zoom))), at.clone().add(V(0, 0.1, 0)), 28, 0.2, 300);
           O.label('sleepL', headW(), 'uyku', { latin: 'antenler sarkık, kaslar gevşek', dir: [120, -90], op: env(uu, cue(ch, 'droop') + 1, cue(ch, 'droop') + 1.8, cue(ch, 'insomnia') - 0.3, cue(ch, 'insomnia')) });

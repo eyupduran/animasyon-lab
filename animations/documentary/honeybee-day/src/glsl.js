@@ -21,12 +21,13 @@ export const G = {
   uWind: { value: 1 },
   uDark: { value: 0 },                     // hive darkness: ambient falls to almost nothing
   uUV: { value: new THREE.Color('#8B5CF6') },
+  uCloudSh: { value: 0 },
 };
 
 export const COMMON = /* glsl */`
 uniform float uT; uniform vec3 uSunDir; uniform vec3 uSunCol; uniform vec3 uSkyAmb; uniform vec3 uGndAmb;
 uniform vec3 uFogCol; uniform float uFogDen; uniform float uFogStart; uniform float uBee; uniform float uSplit; uniform vec2 uRes;
-uniform vec3 uRimCol; uniform float uRim; uniform float uWind; uniform float uDark; uniform vec3 uUV;
+uniform vec3 uRimCol; uniform float uRim; uniform float uWind; uniform float uDark; uniform vec3 uUV; uniform float uCloudSh;
 float hash11(float p){ p = fract(p*.1031); p *= p+33.33; p *= p+p; return fract(p); }
 float hash21(vec2 p){ vec3 p3 = fract(vec3(p.xyx)*.1031); p3 += dot(p3, p3.yzx+33.33); return fract((p3.x+p3.y)*p3.z); }
 float vnoise(vec2 p){ vec2 i=floor(p), f=fract(p); vec2 u=f*f*(3.-2.*f);
@@ -47,9 +48,12 @@ vec3 shade(vec3 base, vec3 N, vec3 V, float ao, float rimK){
   col += uRimCol * rim * rimK * uRim * (.35 + .65*ao);
   return col;
 }
+float cloudShade(vec3 w){ if (uCloudSh <= 0.) return 1.; float n = fbm(w.xz * .00035 + vec2(uT * .018, uT * .007)); return mix(1., .62, uCloudSh * smoothstep(.45, .62, n)); }
 vec3 fogIt(vec3 col, float dist){
-  float f = 1. - exp(-max(0., dist - uFogStart) * uFogDen);
-  return mix(col, uFogCol, clamp(f, 0., 1.));
+  float f = clamp(1. - exp(-max(0., dist - uFogStart) * uFogDen), 0., 1.);
+  float l = dot(col, vec3(.3, .59, .11));
+  col = mix(col, vec3(l), f * .6);
+  return mix(col, uFogCol, f);
 }
 `;
 
@@ -115,7 +119,7 @@ export function toon(opts = {}) {
         ${opts.beeColor ? 'vec3 bc = uBeeCol * vC;' : 'vec3 bc = beeColor(base, uUVr);'}
         base = mix(base, bc, beeAmt());
         float ao = ${opts.aoByHeight ? 'mix(.45, 1., smoothstep(0., .8, vH))' : '1.'};
-        ${opts.flat ? 'vec3 col = base * mix(uGndAmb * .8, uSkyAmb * .75 + uSunCol * .12, N.y * .5 + .5) * (1. - gaps*.4);' : 'vec3 col = shade(base, N, V, ao * (1. - gaps*.5), uRimK) + uEmit;'}
+        ${opts.flat ? 'vec3 col = base * mix(uGndAmb * .8, uSkyAmb * .75 + uSunCol * .12, N.y * .5 + .5) * (1. - gaps*.4);' : 'vec3 col = (shade(base, N, V, ao * (1. - gaps*.5), uRimK) + uEmit) * cloudShade(vW);'}
         col = fogIt(col, length(cameraPosition - vW));
         gl_FragColor = vec4(col, 1.);
       }`,

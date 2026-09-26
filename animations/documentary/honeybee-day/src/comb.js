@@ -6,6 +6,7 @@
 import * as THREE from 'three';
 import { G, COMMON, toon } from './glsl.js';
 import { createCrowd } from './bee.js';
+import { createGrass, createFlowers, groundMaterial } from './meadow.js';
 import { rng } from './noise.js';
 
 export const CELL = 0.54;                        // worker cell, flat to flat (cm)
@@ -215,28 +216,42 @@ function capMaterial() {
   });
 }
 
-// the tunnel of the odometer experiments: a narrow corridor lined with a random pattern
+// the tunnel of the odometer experiments, standing in a meadow: a narrow wooden corridor whose
+// inner walls carry vertical stripes, an open roof of thin slats, a sugar dish at the far end.
 export function createTunnelSet() {
   const set = new THREE.Group();
-  const L = 600, W = 22, Hh = 22;
-  const mat = new THREE.ShaderMaterial({
+  const L = 600, W = 22, Hh = 22, T = 1.6;
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(60000, 60000), groundMaterial({ a: '#62703f', b: '#8c9a6e', c: '#6d6340' }));
+  ground.rotation.x = -Math.PI / 2; set.add(ground);
+  const grass = createGrass({ count: 26000, radius: 1400, center: [300, 0], height: [8, 30], seed: 57, avoid: (x, z) => x > -30 && x < L + 30 && Math.abs(z) < 30, color: ['#4d6232', '#8a9a58'] });
+  set.add(grass);
+  const flowers = createFlowers({ count: 1400, radius: 1300, center: [300, 0], seed: 61, heights: [14, 34], avoid: (x, z) => x > -30 && x < L + 30 && Math.abs(z) < 34 });
+  set.add(flowers);
+  // walls: stripes inside (widths vary a little, like the printed patterns), painted wood outside
+  const wallMat = new THREE.ShaderMaterial({
     uniforms: { ...G },
     vertexShader: /* glsl */`varying vec3 vW; varying vec3 vN; void main(){ vec4 w = modelMatrix*vec4(position,1.); vW = w.xyz; vN = normalize(mat3(modelMatrix)*normal); gl_Position = projectionMatrix*viewMatrix*w; }`,
     fragmentShader: /* glsl */`${COMMON} varying vec3 vW; varying vec3 vN;
-      void main(){ vec3 N = normalize(vN); vec2 p = abs(N.y) > .5 ? vW.xz : vW.xy;
-        float c = step(.5, hash21(floor(p / .7)));
-        vec3 base = mix(vec3(.3,.28,.25), vec3(.7,.68,.64), c);
-        vec3 V = normalize(cameraPosition - vW);
-        vec3 col = base * (.45 + .55 * max(0., dot(N, normalize(vec3(.2,1.,.4)))));
+      void main(){ vec3 N = normalize(vN); vec3 V = normalize(cameraPosition - vW);
+        float inside = max(step(0., -N.z * sign(vW.z)) * step(.5, abs(N.z)), step(.5, N.y) * step(vW.y, 15.) * step(abs(vW.z), 11.));           // faces that look into the corridor
+        float cell = floor(vW.x / 2.4);
+        float st = step(.5, fract(vW.x / 2.4 + hash11(cell) * .35));
+        vec3 stripes = mix(vec3(.16,.15,.12), vec3(.86,.84,.76), st);
+        vec3 wood = vec3(.72,.66,.54) * (.85 + .15 * fbm(vW.xy * vec2(.08, 1.2)));
+        vec3 base = mix(wood, stripes, inside);
+        base = mix(base, beeColor(base, 0.), beeAmt());
+        vec3 col = shade(base, N, V, mix(1., .75, inside), .4) * cloudShade(vW);
         gl_FragColor = vec4(fogIt(col, length(cameraPosition - vW)), 1.); }`,
-    side: THREE.DoubleSide,
   });
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(L, W), mat); floor.rotation.x = -Math.PI / 2; floor.position.set(L / 2, 0, 0);
-  const back = new THREE.Mesh(new THREE.PlaneGeometry(L, Hh), mat); back.position.set(L / 2, Hh / 2, -W / 2);
-  const roof = new THREE.Mesh(new THREE.PlaneGeometry(L, W), mat); roof.rotation.x = Math.PI / 2; roof.position.set(L / 2, Hh, 0);
-  set.add(floor, back, roof);
-  // the room around it
-  const room = new THREE.Mesh(new THREE.PlaneGeometry(4000, 4000), toon({ color: '#b8b2a4', rim: 0 })); room.rotation.x = -Math.PI / 2; room.position.y = -60; set.add(room);
-  set.userData = { L, W, H: Hh };
+  for (const s of [-1, 1]) { const w = new THREE.Mesh(new THREE.BoxGeometry(L, Hh, T), wallMat); w.position.set(L / 2, Hh / 2, s * (W / 2 + T / 2)); set.add(w); }
+  const floorM = new THREE.Mesh(new THREE.BoxGeometry(L, T, W + 2 * T), wallMat); floorM.position.set(L / 2, -T / 2 + 0.01, 0); set.add(floorM);
+  const slatM = toon({ color: '#c7b995', rim: 0.4 });
+  for (let x = 0; x <= L; x += 40) { const sl = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, W + 2 * T), slatM); sl.position.set(x, Hh + 0.6, 0); set.add(sl); }
+  for (const s of [-1, 1]) for (let x = 20; x < L; x += 120) { const leg = new THREE.Mesh(new THREE.BoxGeometry(2, 14, 2), slatM); leg.position.set(x, -7, s * (W / 2 + T)); set.add(leg); }
+  set.position.y = 14;                                            // raised on short legs above the grass
+  grass.position.y = flowers.position.y = ground.position.y = -14;
+  const dish = new THREE.Mesh(new THREE.CylinderGeometry(4, 3.4, 1.2, 24), toon({ color: '#d9a441', rim: 1, emit: '#2a1a04' })); dish.position.set(L - 12, 0.6, 0); set.add(dish);
+  set.userData = { L, W, H: Hh, y0: 14 };
+  set.setLOD = k => { grass.setLOD(k); flowers.setLOD(k); };
   return set;
 }
