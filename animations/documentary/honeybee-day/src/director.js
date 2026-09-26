@@ -90,12 +90,13 @@ export function createDirector({ scene, camera, overlay, tl, video }) {
     cs.wallMat.uniforms.uGlow.value = 1; cs.nectar.material.uniforms.uThick.value = 0; cs.nectar.position.set(0, 0, -cs.depth + 0.12);
     sky.u.uPol.value = 0;
     const S = { look: {} };
+    // the hour stamp and the chapter title claim their places first (layout register)
+    overlay.stamp(ch.clock, ch.place, (ch.index === 0 ? 0 : 1) * smooth(0.2, 1.0, u) * (1 - smooth(5.5, 7, u)));
+    if (ch.index > 0 && u < 5.8) { const op = smooth(0.5, 1.3, u) * (1 - smooth(4.5, 5.8, u)); overlay.title(ch.title, '', op, { band: Math.min(1, op * 1.6) }); }
     (CH[ch.id] || CH._fallback)(u, ch, S);
     const look = S.look;
     // hour stamp at the start of each chapter, and the chapter title after the first
     const hold = ch.index === 0 ? 0 : 1;
-    overlay.stamp(ch.clock, ch.place, hold * smooth(0.2, 1.0, u) * (1 - smooth(5.5, 7, u)));
-    if (ch.index > 0 && !S.noTitle) overlay.title(ch.title, '', smooth(0.5, 1.3, u) * (1 - smooth(4.5, 5.8, u)));
     overlay.end();
     return { ch, u, look };
   }

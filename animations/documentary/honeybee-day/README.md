@@ -55,20 +55,31 @@ Geliştirme testleri (`dev/`, sunucu açıkken): `perftest`, `fpstest`, `playtes
 
 Koşul: RTX 3050 Ti dizüstü, headless Chrome (`--use-angle=d3d11`), 1600×900 pencere, `dev/fpstest.mjs` 12 sn; aynı makinede başka yük altında ölçümler daha düşük çıkabilir (bağımsız denetimde auto→high 40 fps ölçülmüştü; o sürümden bu yana `high` bütçesi 27 → 22 ms senkron yapıldı).
 
-| Kademe | açılış (8 sn) | çayır (75 sn) | kovan (230 sn) | 50 ms üstü kare / 12 sn |
+| Kademe | açılış (8 sn) | İki Çayır (100 sn) | kovan (230 sn) | 50 ms üstü kare / 12 sn |
 |---|---|---|---|---|
-| auto → high | 60 | 93 | 97 | 2 |
-| high | 59 | 92 | 97 | 2–3 |
-| mid | 73 | 113 | 118 | 2–4 |
-| low | 138 | 141 | 142 | 0–2 |
-| min | 140 | 141 | 142 | 0–2 |
+| auto → high | 59 | 66 | 98 | 1–2 |
+| high | 60 | 66 | 97 | 1–2 |
+| mid | 74 | 85 | 119 | 1–2 |
+| low | 135 | 142 | 140 | 0–2 |
+| min | 141 | 142 | 139 | 0–2 |
+
+(Çayırda sis azalınca daha çok ot çiziliyor; high kademe 66 fps ile hedefin üstünde.)
 
 Kalan yavaş kare "İzle"ye basıldığı ilk yarım saniyede (ses bağlamı açılışı); bölüm geçişleri ve kayıt başlangıçları artık temiz (sonraki kayıt yüklenince bir kez sessizce çalınıp çözücüsü ısıtılıyor).
 
 - Oynatma testi (40 sn, 28 yapay takılma): geri gitme 0, kayıt ortasında sarma 0, ses–görüntü farkı ort. 19 ms; konsol hatası 0.
 - Bölüm sonları (`endtest fast`): 11 bölümde yeniden başlama 0, geri 0.
 - CC ve anlatım düğmeleri: kapalıyken altyazı 0 kez göründü, anlatımsız saat akıyor, seçim hatırlanıyor.
-- `npm run verify --n 15`: art arda 3 çalıştırma, 45/45 an saf (ilk çalıştırma dahil).
+- `npm run verify`: art arda 3 çalıştırma, 27/27 an saf (ilk çalıştırma dahil).
+- Yerleşim denetimi (`node dev/layout-check.mjs <w> <h> 0.1`, gerçek DOM kutuları, filmin her 0,1 sn'si):
+
+| Görünüm | kare | yazı kutusu | yazı × yazı | yazı × altyazı | kenar < 4 px |
+|---|---|---|---|---|---|
+| 1600×900, kayıttan önce | 3713 | 10762 | 7 | 0 | 2 |
+| 1600×900 | 3713 | 10759 | **0** | **0** | **0** |
+| 390×844 | 3713 | 6808 | **0** | **0** | **0** |
+
+- Başlık kartı kontrastı (`node dev/contrast.mjs`, başlık gizlenip arkasındaki zemin ölçülür; tebeşir yazı L = 0,83): 1. bölüm 22,3 sn'de önce 3,2:1 (şerit yazıyla birlikte yarı saydam), şimdi masaüstünde 10,5:1, telefonda 10,8:1.
 - `npm run video -- honeybee-day --from 60 --to 75`: 1920×1080, ses var, tepe −1,9 dB.
 
 ## Denetimden sonra (AUDIT.md → "Önce düzeltilecek 5 şey")
@@ -78,6 +89,12 @@ Kalan yavaş kare "İzle"ye basıldığı ilk yarım saniyede (ses bağlamı aç
 3. Okunaklılık: başlık kartına koyu yumuşak şerit ve daha erken giriş; telefonda en küçük yazı 12 px, ikincil satırlar gizli, ekrandan taşan etiketler ters yöne çevriliyor.
 4. Tünel: çayırın içinde, şeritli ahşap koridor.
 5. Saflık: her karede set durumu sıfırlanıyor, ısınma her çekimi çiziyor, `__ready` yazı tipleri ve yerleşim oturduktan sonra; `high` kademe bütçesi sıkılaştırıldı, kayıt çözücüsü önceden ısıtılıyor.
+
+## İkinci denetimden sonra
+
+1. **Başlık kartı:** koyu, yumuşak kenarlı şerit yazıdan önce ve daha koyu (%78) geliyor; kontrast 3,2:1 → 10,5:1.
+2. **Yerleşim kaydı** (`src/overlay.js`): her yazı kutusunu kayda yazıyor; altyazı bandı ve 4 px kenar korunan alan; etiket boş ilk aday konuma (`placeFree`) geçiyor, yer yoksa çizilmiyor; saat damgası ve bölüm başlığı önce yer alıyor. Kariyer altıgenlerinin adları iki sıraya ayrıldı. Denetim `dev/layout-check.mjs`: çakışma 0.
+3. **Çayır:** sis bir kademe az (sabah 0,0003 → 0,0002; gündüz 0,00026 → 0,00017), hava perspektifi önce doygunluğu ve kontrastı düşürüyor, pus en çok %78 (uzak katman silinmiyor); uzak sırtların pusu azaldı. Her geniş plan arıya odaklı: açılışta çiçeğe inen arı, "bizim gözümüz"de çiçekteki arı, çiçek sadakatinde ve zaman atlamasında arıyı izleyen kamera.
 
 ## Bilinen kısıtlar
 

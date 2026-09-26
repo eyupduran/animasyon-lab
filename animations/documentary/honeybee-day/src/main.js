@@ -291,6 +291,7 @@ function wavChunks(buf) {
 const srtTime = s => { const ms = Math.round(s * 1000); const h = Math.floor(ms / 3600000), m = Math.floor(ms / 60000) % 60, ss = Math.floor(ms / 1000) % 60; return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(ss).padStart(2, '0')},${String(ms % 1000).padStart(3, '0')}`; };
 let soundOut = [];
 window.__tl = tl;
+window.__layout = () => overlay.boxes;
 window.__probe = t => {
   const a = performance.now(); const { ch, u, look } = director.update(t); const b = performance.now();
   R.render(scene, camera, look, 0); const c = performance.now();

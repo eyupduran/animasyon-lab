@@ -51,9 +51,12 @@ vec3 shade(vec3 base, vec3 N, vec3 V, float ao, float rimK){
 float cloudShade(vec3 w){ if (uCloudSh <= 0.) return 1.; float n = fbm(w.xz * .00035 + vec2(uT * .018, uT * .007)); return mix(1., .62, uCloudSh * smoothstep(.45, .62, n)); }
 vec3 fogIt(vec3 col, float dist){
   float f = clamp(1. - exp(-max(0., dist - uFogStart) * uFogDen), 0., 1.);
+  // aerial perspective: saturation and contrast fall with distance first, then the haze;
+  // the far layer is dimmed, never erased (at most 78% haze)
   float l = dot(col, vec3(.3, .59, .11));
-  col = mix(col, vec3(l), f * .6);
-  return mix(col, uFogCol, f);
+  col = mix(col, vec3(l), f * .55);
+  col = mix(col, vec3(dot(uFogCol, vec3(.3,.59,.11))) * .5 + col * .5, f * .3);
+  return mix(col, uFogCol, f * .78);
 }
 `;
 

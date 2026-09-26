@@ -147,8 +147,8 @@ export function chapters(X) {
           X.cam(cp, V(300, 420 + k * 20, -120), 30);
         }],
       ], ch.dur);
-      const tDay = ch.cues.how + 0.6;
-      O.title('Bal Arısının Bir Günü', 'Apis mellifera', smooth(tDay, tDay + 1.2, u) * (1 - smooth(ch.dur - 0.8, ch.dur, u)), { big: true, ink: 'ink' });
+      const tDay = ch.cues.how;
+      { const out = 1 - smooth(ch.dur - 0.8, ch.dur, u); O.title('Bal Arısının Bir Günü', 'Apis mellifera', smooth(tDay + 0.35, tDay + 1.0, u) * out, { big: true, band: smooth(tDay - 0.2, tDay + 0.35, u) * out }); }
       S.noTitle = true;
     },
 
@@ -301,17 +301,18 @@ export function chapters(X) {
       seq(u, [
         [0, (lt, d) => {
           const k = ease(lt / d);
-          X.cam(V(lerp(-74, -66, k), 54, lerp(56, 50, k)), V(-3, 30, 0), 26);
+          X.cam(V(lerp(-12, -10, k), 42, lerp(32, 29, k)), V(-2, 31, 0), 30);
           const land = flowerTop(0).add(V(0, -0.1, 0));
           const a = clamp(lt / (d * 0.9));
-          const p = V(-60, 55, -45).lerp(land, easeOut(a)).add(V(0, Math.sin(a * Math.PI) * 10, 0));
+          const p = V(-40, 48, -30).lerp(land, easeOut(a)).add(V(0, Math.sin(a * Math.PI) * 10, 0));
           put({ mode: a < 1 ? 'fly' : 'stand', plane: flat(land.y - 0.3), t: u, pos: a < 1 ? p : land, yaw: 0.35, pitch: 0.1 * (1 - a) });
           flyShadow(a < 1 ? p : land, land.y - 0.3, 0.35);
           Object.assign(S.look, { fg: 1, fgT: u, fgSeed: 3 });
         }],
         [cue(ch, 'ours'), (lt, d, uu) => {
           const k = ease(clamp((uu - cue(ch, 'ours')) / (cue(ch, 'target') - cue(ch, 'ours'))));
-          X.cam(V(lerp(-70, -62, k), 40, lerp(95, 88, k)), V(4, 27, -2), 26);
+          X.cam(V(lerp(-26, -23, k), 58, lerp(46, 42, k)), V(3, 28, -3), 32);
+          { const land = flowerTop(0).add(V(0, -0.1, 0)); put({ mode: 'stand', plane: flat(land.y - 0.3), t: u, pos: land, yaw: 0.35, ant: 0.8 }); shadowAt(V(land.x, land.y - 0.28, land.z), 0.35, 0.4); }
           Object.assign(S.look, { fg: 0.7, fgT: u, fgSeed: 7 });
           const w = smooth(cue(ch, 'theirs'), cue(ch, 'theirs') + 1.3, uu);
           G.uSplit.value = lerp(1, 0.5, w); G.uBee.value = w > 0 ? 1 : 0; S.look.eye = w > 0 ? 1 : 0;
@@ -348,7 +349,7 @@ export function chapters(X) {
           const dir = route[i + 1].clone().sub(route[i]);
           put({ mode: hop > 0.15 ? 'fly' : 'stand', plane: flat(gy), t: u, pos: p, yaw: Math.atan2(-dir.z, dir.x), wing: hop > 0.15 ? 'blur' : 'fold' });
           flyShadow(p, gy, Math.atan2(-dir.z, dir.x));
-          X.cam(V(-12, 46, 44), V(14, 28, 2), 36);
+          X.cam(p.clone().add(V(-16, 12, 22)), p.clone().lerp(V(14, 28, 0), 0.35), 32, 0.5);
           Object.assign(S.look, { fg: 0.6, fgT: u, fgSeed: 4 });
           let dd = '';
           route.forEach((r, j) => { const s = O.project(r); if (s) dd += (j ? 'L' : 'M') + s[0].toFixed(1) + ',' + s[1].toFixed(1); });
@@ -389,7 +390,7 @@ export function chapters(X) {
           const hop = Math.sin(Math.PI * f);
           const pp = a.clone().lerp(b, ease(f)).add(V(0, hop * 12, 0)); flyShadow(pp, lerp(list[i].y, list[i + 1].y, ease(f)));
           put({ mode: hop > 0.1 ? 'fly' : 'stand', plane: flat(lerp(list[i].y, list[i + 1].y, ease(f))), t: u, pos: pp, yaw: Math.atan2(-(b.z - a.z), b.x - a.x), pollen: 0.2 + 0.3 * clamp(lt / d) });
-          X.cam(V(150, 120, 60), V(120, 22, -40), 32);
+          X.cam(pp.clone().add(V(-10, 26, 24)), pp.clone(), 34, 0.5);
           let dd = '';
           for (let j = 0; j <= Math.min(n, i + 1); j++) { const s = O.project(V(list[j].x, list[j].y, list[j].z)); if (s) dd += (dd ? 'L' : 'M') + s[0].toFixed(1) + ',' + s[1].toFixed(1); }
           O.path('visits', dd, { op: 0.7, dash: '2 5' });
@@ -825,7 +826,7 @@ export function chapters(X) {
           const sr = O.project(V(-4000, 0, -9000));
           const hz = O.H * 0.63;
           O.path('dawnLine', `M${O.W * 0.55},${hz} L${O.W * 0.95},${hz}`, { op: 0.5 * smooth(1, 4, lt), ink: 'uv' });
-          O.title('Bal Arısının Bir Günü', 'Apis mellifera', smooth(d - 5, d - 3.5, lt) * (1 - smooth(d - 0.8, d, lt)), { big: true });
+          { const out = 1 - smooth(d - 0.8, d, lt); O.title('Bal Arısının Bir Günü', 'Apis mellifera', smooth(d - 4.6, d - 3.6, lt) * out, { big: true, band: smooth(d - 5.2, d - 4.4, lt) * out }); }
           S.look.fade = smooth(d - 1, d, lt);
           S.noTitle = true;
         }],
