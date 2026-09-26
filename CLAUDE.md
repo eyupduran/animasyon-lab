@@ -6,6 +6,7 @@ Bu depo bir YouTube kanalının eğitim animasyonlarını üretir. Her video **k
 
 - `/animation <konu>`: anlatımlı, altyazılı eğitim animasyonu, 6–10 dakika. Süreç: `.claude/skills/animation/SKILL.md`.
 - `/short [brief]`: sözsüz sinematik kısa film, 30–90 sn. Süreç: `.claude/skills/short/SKILL.md`.
+- `/audit <slug>`: bitmiş animasyonun bağımsız denetimi (özgünlük, hikâye, metin, ses, akıcılık, teslim) → `AUDIT.md`. Süreç: `.claude/skills/audit/SKILL.md`.
 
 ## 1. Yalnızca kod
 
