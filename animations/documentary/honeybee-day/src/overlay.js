@@ -76,7 +76,7 @@ export class Overlay {
     this.used.clear(); this.claims = []; this.keeps = [];
     // the subtitle band: two lines at the highest position they take (player bar shown)
     const fsz = parseFloat(getComputedStyle(this.subsEl).fontSize) || 21;
-    const bottom = Math.min(128, Math.max(100, this.H * 0.14));
+    const bottom = this.W <= 700 ? 100 : Math.min(132, Math.max(104, this.H * 0.15));
     const bw = Math.min(this.W * 0.92, 980);
     this.keep('subtitles', { x0: (this.W - bw) / 2, x1: (this.W + bw) / 2, y0: this.H - bottom - fsz * 1.42 * 2 - 10, y1: this.H });
   }

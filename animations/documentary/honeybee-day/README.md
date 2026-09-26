@@ -96,6 +96,12 @@ Kalan yavaş kare "İzle"ye basıldığı ilk yarım saniyede (ses bağlamı aç
 2. **Yerleşim kaydı** (`src/overlay.js`): her yazı kutusunu kayda yazıyor; altyazı bandı ve 4 px kenar korunan alan; etiket boş ilk aday konuma (`placeFree`) geçiyor, yer yoksa çizilmiyor; saat damgası ve bölüm başlığı önce yer alıyor. Kariyer altıgenlerinin adları iki sıraya ayrıldı. Denetim `dev/layout-check.mjs`: çakışma 0.
 3. **Çayır:** sis bir kademe az (sabah 0,0003 → 0,0002; gündüz 0,00026 → 0,00017), hava perspektifi önce doygunluğu ve kontrastı düşürüyor, pus en çok %78 (uzak katman silinmiyor); uzak sırtların pusu azaldı. Her geniş plan arıya odaklı: açılışta çiçeğe inen arı, "bizim gözümüz"de çiçekteki arı, çiçek sadakatinde ve zaman atlamasında arıyı izleyen kamera.
 
+## Oynatıcı
+
+- Altyazının arkasındaki koyu gradyan kaldırıldı (ekranın altını karartıyordu); okunaklılığı yakın bir yazı gölgesi sağlıyor.
+- Çubuk kenarlardan içeride yüzen bir tebeşir şerit; zaman çizgisi bölüm başına bir parça (o anki bölüm mor), saat ve bölüm adı yanında; telefonda süre tek satır, hız ve altyazı boyutu gizli, dokunma alanları 42 px.
+- : her bölüm parçasına tıklama doğru bölüme gidiyor (masaüstü ve telefon 11/11).
+
 ## Bilinen kısıtlar
 
 - Stilize prosedürel arı; ağız parçaları basit, bacaklarda kıl yok.

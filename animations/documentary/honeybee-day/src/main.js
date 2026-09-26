@@ -188,9 +188,8 @@ const ICON = {
   full: '<svg viewBox="0 0 24 24"><path d="M4 9V4h5v2H6v3zm11-5h5v5h-2V6h-3zM4 15h2v3h3v2H4zm14 3v-3h2v5h-5v-2z"/></svg>',
 };
 $('bPlay').innerHTML = ICON.play; $('bVoice').innerHTML = ICON.voice; $('bPrev').innerHTML = ICON.prev; $('bNext').innerHTML = ICON.next; $('bFull').innerHTML = ICON.full;
-// progress ticks carry the hour of the bee's day
-const ticks = $('progress').querySelector('.ticks');
-for (const c of tl.chapters) { const s = document.createElement('span'); s.style.left = (c.start / tl.total * 100) + '%'; if (c.index > 0) s.innerHTML = `<b>${c.clock}</b>`; else s.style.display = 'none'; ticks.appendChild(s); }
+// the timeline is the bee's day: one segment per chapter, filled as the story passes
+const segs = tl.chapters.map(c => { const s = document.createElement('div'); s.className = 'seg'; s.style.flex = `${c.dur} 1 0`; s.title = `${c.clock} · ${c.title}`; const i = document.createElement('i'); s.appendChild(i); $('progress').querySelector('.segs').appendChild(s); return { s, i, c }; });
 $('dur').textContent = `${Math.round(tl.total / 60)} dakika`;
 
 function setPlaying(v) {
@@ -228,9 +227,9 @@ $('bSet').onclick = e => { e.stopPropagation(); $('setMenu').classList.toggle('h
 document.querySelectorAll('#setMenu button').forEach(b => b.onclick = () => { document.body.classList.remove('sub-s', 'sub-m', 'sub-l'); document.body.classList.add('sub-' + b.dataset.size); store.set('subsize', b.dataset.size); refreshToggles(); });
 $('bFull').onclick = () => { if (document.fullscreenElement) document.exitFullscreen(); else $('stage').requestFullscreen?.(); };
 const prog = $('progress');
-const posAt = e => { const r = prog.getBoundingClientRect(); return Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * tl.total; };
+const posAt = e => { for (const g of segs) { const r = g.s.getBoundingClientRect(); if (e.clientX <= r.right + 1.5) return g.c.start + Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * g.c.dur; } return tl.total; };
 prog.addEventListener('pointerdown', e => { seek(posAt(e)); const mv = ev => seek(posAt(ev)); const up = () => { removeEventListener('pointermove', mv); removeEventListener('pointerup', up); }; addEventListener('pointermove', mv); addEventListener('pointerup', up); });
-prog.addEventListener('pointermove', e => { const t = posAt(e); const h = prog.querySelector('.hover'); const c = tl.at(t).ch; h.textContent = `${fmt(t)} · ${c.clock} · ${c.title}`; h.style.left = (t / tl.total * 100) + '%'; });
+prog.addEventListener('pointermove', e => { const t = posAt(e); const h = prog.querySelector('.hover'); const c = tl.at(t).ch; h.textContent = `${fmt(t)} · ${c.clock} · ${c.title}`; const g = segs.find(x => x.c === c), rr = g.s.getBoundingClientRect(), pr = prog.getBoundingClientRect(); h.style.left = (rr.left - pr.left + rr.width * Math.min(1, (t - c.start) / c.dur)) + 'px'; });
 addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT') return;
   if (e.code === 'Space') { e.preventDefault(); if (!$('start').classList.contains('gone')) start(); else setPlaying(!playing); }
@@ -249,9 +248,9 @@ let lastBarUpdate = -1;
 function updateBar(ch) {
   const k = Math.floor(storyT * 4);
   if (k === lastBarUpdate) return; lastBarUpdate = k;
-  prog.querySelector('.fill').style.width = (storyT / tl.total * 100) + '%';
+  for (const g of segs) { const k = Math.max(0, Math.min(1, (storyT - g.c.start) / g.c.dur)); g.i.style.width = (k * 100) + '%'; g.s.classList.toggle('on', g.c === ch); }
   $('time').textContent = `${fmt(storyT)} / ${fmt(tl.total)}`;
-  $('chapName').textContent = `${ch.clock} · ${ch.title}`;
+  $('chapName').innerHTML = `<b>${ch.clock}</b>${ch.title}`;
 }
 
 function start() {
