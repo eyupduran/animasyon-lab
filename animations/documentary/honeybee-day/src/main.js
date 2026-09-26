@@ -27,7 +27,7 @@ const director = createDirector({ scene, camera, overlay, tl, video: VIDEO });
 const subsView = new SubtitleView($('subs'));
 
 function fixResolution() {
-  const w = canvas.clientWidth || innerWidth, h = canvas.clientHeight || innerHeight;
+  const st = canvas.parentElement, w = st.clientWidth || innerWidth, h = st.clientHeight || innerHeight;
   R.size(w, h);
   camera.aspect = w / h; camera.updateProjectionMatrix();
   overlay.resize(w, h);
@@ -40,6 +40,7 @@ function applyTier(name) {
 }
 applyTier(Q.get('tier') || (VIDEO ? 'ultra' : (coarse || innerWidth < 800) ? 'low' : 'high'));
 addEventListener('resize', fixResolution);
+document.addEventListener('fullscreenchange', () => requestAnimationFrame(fixResolution));
 const TIER_ORDER = ['high', 'mid', 'low', 'min'];
 
 // ---------------- state ----------------

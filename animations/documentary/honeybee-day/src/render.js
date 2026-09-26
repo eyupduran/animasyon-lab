@@ -148,7 +148,7 @@ export function createRenderer(canvas, { video }) {
     pw = Math.max(2, Math.round(pw * k)); ph = Math.max(2, Math.round(ph * k));
     renderer.setPixelRatio(1);
     renderer.setSize(pw, ph, false);
-    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+    canvas.style.width = '100%'; canvas.style.height = '100%';
     W = pw; H = ph;
     main.setSize(pw, ph);
     const bw = Math.max(2, pw >> 1), bh = Math.max(2, ph >> 1);
@@ -160,7 +160,7 @@ export function createRenderer(canvas, { video }) {
   function setTier(name) {
     tier = TIERS[name];
     if (main.samples !== tier.msaa) { main.dispose(); main = new THREE.WebGLRenderTarget(4, 4, { ...opt, samples: tier.msaa }); }
-    size(canvas.clientWidth || innerWidth, canvas.clientHeight || innerHeight);
+    { const st = canvas.parentElement; size(st.clientWidth || innerWidth, st.clientHeight || innerHeight); }
   }
 
   // look = { bloom, th, expo, eye, cell, grain, vig, lift, gain, sat, fade, fadeCol }
