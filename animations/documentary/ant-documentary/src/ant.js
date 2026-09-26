@@ -29,7 +29,7 @@ export function antMaterials(scene) {
     m.metallic = 0; m.roughness = rough;
     m.clearCoat.isEnabled = coat > 0; m.clearCoat.intensity = coat; m.clearCoat.roughness = coatRough;
     if (bump) { m.bumpTexture = nrm; m.bumpTexture.level = bump; m.bumpTexture.uScale = 3; m.bumpTexture.vScale = 3; }
-    if (translucent) {
+    if (translucent && !(window.__off || new Set()).has('sss')) {
       m.subSurface.isTranslucencyEnabled = true;
       m.subSurface.translucencyIntensity = translucent;
       m.subSurface.tintColor = new Color3(0.75, 0.35, 0.12);
@@ -62,7 +62,10 @@ export function antMaterials(scene) {
 // ---------- template: one source mesh per part ----------
 export function buildAntTemplate(scene, mats) {
   const T = {};
+  const OFF = window.__off || new Set();
   const hide = m => { m.isVisible = false; m.isPickable = false; return m; };
+  const meshFrom0 = meshFrom;
+  const meshFromF = (n, sc, parts) => meshFrom0(n, sc, OFF.has('hairs') ? parts.filter(p => p.mat !== mats.hair) : parts);
 
   // head: broad, flattened, slightly heart-shaped from above; spine along +z from neck (0) to clypeus (0.95)
   {
@@ -82,14 +85,14 @@ export function buildAntTemplate(scene, mats) {
     });
     const hr = hairs(vd, 60, { seed: 3, len: 0.09, r0: 0.0032, lean: 0.9, filter: (s, th) => Math.sin(th) > 0.1 && s > 0.1 && s < 0.9, color: HAIR });
     const clyp = hairs(vd, 16, { seed: 4, len: 0.12, r0: 0.003, lean: 0.3, filter: (s, th) => s > 0.86 && Math.sin(th) > -0.2, color: HAIR });
-    T.head = hide(meshFrom('head', scene, [{ vd, mat: mats.head }, { vd: hr, mat: mats.hair }, { vd: clyp, mat: mats.hair }]));
+    T.head = hide(meshFromF('head', scene, [{ vd, mat: mats.head }, { vd: hr, mat: mats.hair }, { vd: clyp, mat: mats.hair }]));
   }
   // compound eye: an ellipsoid dome covered with hexagonal facets
   {
     const vd = loft({ n: 24, m: 24, center: s => [0, 0, (s - 0.5) * 0.22], rx: s => Math.sin(Math.PI * s) ** 0.8 * 0.075, ry: s => Math.sin(Math.PI * s) ** 0.8 * 0.1 });
     // project uv so facets cover the dome evenly
     for (let i = 0; i < vd.uvs.length / 2; i++) { vd.uvs[i * 2] = vd.positions[i * 3 + 2] / 0.28 + 0.5; vd.uvs[i * 2 + 1] = vd.positions[i * 3 + 1] / 0.28 + 0.5; }
-    T.eye = hide(meshFrom('eye', scene, [{ vd, mat: mats.eye }]));
+    T.eye = hide(meshFromF('eye', scene, [{ vd, mat: mats.eye }]));
   }
   // mandibles: triangular blades with a toothed cutting edge; hinge at origin
   for (const side of [1, -1]) {
@@ -107,14 +110,14 @@ export function buildAntTemplate(scene, mats) {
     // curve the blade downward toward the tip
     warp(vd, (x, y, z) => [x, y - z * z * 0.35, z]);
     const hr = hairs(Object.assign(tube(s => [0, 0, 0], () => 0.001, { n: 3, m: 3 }), {}), 0, {});
-    T['mand' + (side > 0 ? 'R' : 'L')] = hide(meshFrom('mand', scene, [{ vd, mat: mats.mandible }]));
+    T['mand' + (side > 0 ? 'R' : 'L')] = hide(meshFromF('mand', scene, [{ vd, mat: mats.mandible }]));
     void hr;
   }
   // antenna scape: slender, curved, thickening toward the elbow; along +z, length 0.86
   {
     const vd = tube(s => [0, Math.sin(s * Math.PI) * 0.03, s * 0.86], s => 0.026 + 0.018 * s * s + (s < 0.06 ? 0.015 * (1 - s / 0.06) : 0), { n: 26, m: 12 });
     const hr = hairs(vd, 40, { seed: 7, len: 0.05, r0: 0.003, lean: 1.1, color: HAIR });
-    T.scape = hide(meshFrom('scape', scene, [{ vd, mat: mats.leg }, { vd: hr, mat: mats.hair }]));
+    T.scape = hide(meshFromF('scape', scene, [{ vd, mat: mats.leg }, { vd: hr, mat: mats.hair }]));
   }
   // funiculus: 11 bead-like segments, last one longest, gently curving down; length ~1.08
   {
@@ -132,7 +135,7 @@ export function buildAntTemplate(scene, mats) {
     };
     const vd = tube(s => [0, -Math.sin(s * 1.2) * 0.12 * s, s * L], r, { n: 120, m: 12 });
     const hr = hairs(vd, 150, { seed: 8, len: 0.035, r0: 0.0025, lean: 1.0, color: HAIR });
-    T.funiculus = hide(meshFrom('funiculus', scene, [{ vd, mat: mats.leg }, { vd: hr, mat: mats.hair }]));
+    T.funiculus = hide(meshFromF('funiculus', scene, [{ vd, mat: mats.leg }, { vd: hr, mat: mats.hair }]));
   }
   // mesosoma: pronotum, mesonotum, metanotal groove, rounded propodeum; spine from rear (0) to neck (1)
   {
@@ -146,7 +149,7 @@ export function buildAntTemplate(scene, mats) {
     });
     const hr = hairs(vd, 50, { seed: 9, len: 0.11, r0: 0.0035, lean: 0.7, filter: (s, th) => Math.sin(th) > 0.5, color: HAIR });
     const fine = hairs(vd, 120, { seed: 10, len: 0.04, r0: 0.003, lean: 1.3, filter: (s, th) => Math.sin(th) > -0.3, color: HAIR });
-    T.meso = hide(meshFrom('meso', scene, [{ vd, mat: mats.body }, { vd: hr, mat: mats.hair }, { vd: fine, mat: mats.hair }]));
+    T.meso = hide(meshFromF('meso', scene, [{ vd, mat: mats.body }, { vd: hr, mat: mats.hair }, { vd: fine, mat: mats.hair }]));
   }
   // petiole: a single upright scale on a short stalk (Formicinae)
   {
@@ -154,7 +157,7 @@ export function buildAntTemplate(scene, mats) {
     const th = spline([0.06, 0.06, 0.055, 0.05, 0.045, 0.04, 0.01]);
     const vd = loft({ n: 24, m: 20, up: [0, 0, 1], center: s => [0, -0.12 + s * 0.46, -s * 0.05], rx: s => w(s), ry: s => th(s) });
     const hr = hairs(vd, 10, { seed: 12, len: 0.08, r0: 0.004, lean: 0.2, filter: s => s > 0.85, color: HAIR });
-    T.petiole = hide(meshFrom('petiole', scene, [{ vd, mat: mats.body }, { vd: hr, mat: mats.hair }]));
+    T.petiole = hide(meshFromF('petiole', scene, [{ vd, mat: mats.body }, { vd: hr, mat: mats.hair }]));
   }
   // gaster: large oval with overlapping tergites (lighter hind margins); spine from petiole (0) back to acidopore (1)
   {
@@ -172,20 +175,20 @@ export function buildAntTemplate(scene, mats) {
     const erect = hairs(vd, 80, { seed: 13, len: 0.13, r0: 0.0035, lean: 0.45, filter: (s, t) => Math.sin(t) > 0.0 && s > 0.12, color: HAIR });
     const pub = hairs(vd, 380, { seed: 14, len: 0.05, r0: 0.0028, lean: 1.35, filter: (s, t) => s > 0.08, color: HAIR });
     const fringe = hairs(vd, 24, { seed: 15, len: 0.1, r0: 0.004, lean: 0.9, filter: s => s > 0.93, color: HAIR });
-    T.gaster = hide(meshFrom('gaster', scene, [{ vd, mat: mats.gaster }, { vd: erect, mat: mats.hair }, { vd: pub, mat: mats.hair }, { vd: fringe, mat: mats.hair }]));
+    T.gaster = hide(meshFromF('gaster', scene, [{ vd, mat: mats.gaster }, { vd: erect, mat: mats.hair }, { vd: pub, mat: mats.hair }, { vd: fringe, mat: mats.hair }]));
   }
   // leg segments, unit length along +z (scaled by the IK solution)
   {
     const coxa = tube(s => [0, 0, s], s => (0.085 - 0.03 * s) * Math.pow(Math.sin(Math.PI * Math.min(1, s * 1.1 + 0.08)), 0.3), { n: 14, m: 14 });
-    T.coxa = hide(meshFrom('coxa', scene, [{ vd: coxa, mat: mats.leg }]));
+    T.coxa = hide(meshFromF('coxa', scene, [{ vd: coxa, mat: mats.leg }]));
     const femur = tube(s => [0, Math.sin(s * Math.PI) * 0.03, s], s => (0.04 + 0.022 * Math.sin(Math.PI * Math.pow(s, 0.8))) * (s < 0.04 ? 0.6 + s * 10 : 1) * (s > 0.97 ? Math.sqrt((1 - s) / 0.03) * 0.6 + 0.4 : 1), { n: 24, m: 12 });
     const fh = hairs(femur, 30, { seed: 16, len: 0.04, r0: 0.003, lean: 1.1, color: HAIR });
-    T.femur = hide(meshFrom('femur', scene, [{ vd: femur, mat: mats.leg }, { vd: fh, mat: mats.hair }]));
+    T.femur = hide(meshFromF('femur', scene, [{ vd: femur, mat: mats.leg }, { vd: fh, mat: mats.hair }]));
     const tibia = tube(s => [0, 0, s], s => (0.026 + 0.018 * s) * (s > 0.97 ? Math.sqrt((1 - s) / 0.03) * 0.6 + 0.4 : 1), { n: 20, m: 10 });
     const th = hairs(tibia, 40, { seed: 17, len: 0.045, r0: 0.003, lean: 1.0, color: HAIR });
     // apical spur
     const spur = tube(s => [0.02 * s, -0.03 - 0.02 * s, 0.97 + s * 0.12], s => 0.009 * (1 - s), { n: 5, m: 5 });
-    T.tibia = hide(meshFrom('tibia', scene, [{ vd: tibia, mat: mats.leg }, { vd: spur, mat: mats.leg }, { vd: th, mat: mats.hair }]));
+    T.tibia = hide(meshFromF('tibia', scene, [{ vd: tibia, mat: mats.leg }, { vd: spur, mat: mats.leg }, { vd: th, mat: mats.hair }]));
     // tarsus: long basitarsus + 4 short segments, claws
     const cuts = [0, 0.45, 0.6, 0.72, 0.83, 1];
     const tr = s => {
@@ -196,7 +199,7 @@ export function buildAntTemplate(scene, mats) {
     const tars = tube(s => [0, 0, s], tr, { n: 60, m: 10 });
     const tah = hairs(tars, 45, { seed: 18, len: 0.035, r0: 0.0025, lean: 1.0, color: HAIR });
     const claws = [-1, 1].map(k => tube(s => [k * 0.012, -0.03 * s * s, 1 + s * 0.06], s => 0.008 * (1 - s * 0.9), { n: 6, m: 5 }));
-    T.tarsus = hide(meshFrom('tarsus', scene, [{ vd: tars, mat: mats.leg }, { vd: claws[0], mat: mats.leg }, { vd: claws[1], mat: mats.leg }, { vd: tah, mat: mats.hair }]));
+    T.tarsus = hide(meshFromF('tarsus', scene, [{ vd: tars, mat: mats.leg }, { vd: claws[0], mat: mats.leg }, { vd: claws[1], mat: mats.leg }, { vd: tah, mat: mats.hair }]));
   }
   return T;
 }

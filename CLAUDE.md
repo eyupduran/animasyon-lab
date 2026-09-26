@@ -1,19 +1,43 @@
 # Animasyon Lab — çalışma kuralları
 
-Bu depo, kullanıcının tüm eğitim animasyonlarını ve denemelerini bir arada tutan bir **koleksiyondur**. Ortak bir motoru ya da ortak bir stili yoktur. Her animasyon kendi başına tasarlanır ve yazılır.
+Bu depo, kullanıcının tüm eğitim animasyonlarını ve denemelerini bir arada tutan bir **koleksiyondur**. Ortak bir motoru ya da ortak bir stili yoktur. Her animasyon kendi başına tasarlanır ve yazılır. Hedef: bir YouTube kanalı; izleyen "bu çok iyi yapılmış" demeli.
+
+## Yalnızca kod
+
+Her şey Claude'un yazdığı kodla üretilir: sahne, karakterler, hareket, ses efektleri, müzik, altyazı. **Üretken görsel/video/ses modelleri kullanılmaz** (Veo, Sora, Kling, Runway, Midjourney, Flux, ElevenLabs, Suno vb.); ücretsiz katmanları da yok, öneri olarak da geçmez. Anlatım sesi yalnızca yerel TTS'ten (`tools/voice.mjs`). İzin verilen dış kaynaklar: ücretsiz CDN'den kütüphane ve yazı tipi, CC0 HDRI/doku gibi telifsiz veri dosyaları (kaynağı README'de yazılır).
+
+## Kalite tanımı
+
+Kullanıcı kaliteyi dört şeyle ölçer; hepsi birlikte sağlanmalı:
+1. **Görsel:** türe uygun, özenli, "ucuz" görünmeyen bir dünya (ışık, derinlik, doku, easing, ikincil hareket, kamera dili). Kodla ulaşılabilir stiller ve kuralları: `docs/cartoon-style-in-code.md` (düz vektör / çizgi film / kâğıt kesme / toon 3B), `.claude/skills/animation/documentary-tech.md` (gerçekçi belgesel), `.claude/skills/animation/craft.md`.
+2. **Hikâye:** izleyiciyi gerçekten saran bir anlatı: açılış sorusu, kahraman, gerilim, ödül. `.claude/skills/narration/` (tür dosyaları + `retention.md`).
+3. **Metin insan yazmış gibi:** yapay zekâ kokan kalıplar yok ("Gelin birlikte keşfedelim", "önemli bir rol oynar", tekrarlı üçlü listeler, her cümlede sıfat). Belgesel belgesel gibi, yazılım yazılım gibi okunur; tür dosyasındaki ses birebir uygulanır ve sesli okunup kesilir.
+4. **Ses sürekliliği ve akıcılık:** aynı anlatıcı sesi baştan sona, bölüm başına tek kayıt; Web Audio ile üretilen ince ortam sesleri ve efektler (anlatımda kısılır). Ve **hiç donmama**: aşağıdaki performans kuralı.
+
+## Performans: donma yasak
+
+İzleyicinin bilgisayarı bizimkinden zayıf olabilir. Her animasyon:
+- Zayıf bir dizüstünde de akıcı oynar: **kalite kademeleri** (ör. ultra/high/mid/low/min) çalışma anında değiştirilebilir; açılışta kısa bir ölçümle makineye uygun kademe seçilir; oynatma sırasında kareler yavaşlarsa bir kademe düşülür. Video çıktısı her zaman en yüksek kademede alınır.
+- Ölçülür: `dev/perftest.mjs` (kare maliyeti) ve `dev/fpstest.mjs` (gerçek oynatma fps'i) gibi testlerle her kademede; hedef orta makinede ≥ 50 fps, en düşük kademede zayıf makinede ≥ 30 fps, 50 ms'yi aşan kare sayısı yaklaşık sıfır.
+- Binlerce küçük nesne bölgelere ayrılır (kamera görmediğini çizmez), geometri piksel boyutuna göre kabalaştırılır, ağır efektler (SSAO, PCSS, ekran uzayı katmanları) yalnızca üst kademelerde.
+- Ağır sahneler ve shader'lar başlangıç ekranında ısıtılır; oynatma sırasında yeni doku/geometri üretilmez.
+
+## Türe göre teknik
+
+Görsel stil animasyona özeldir, ama **türün tekniği yeniden kullanılır**: belgesellerde `documentary-tech.md` (referans: `animations/documentary/ant-documentary`), öteki türlerde `docs/cartoon-style-in-code.md` seçenekleri. Yazılım animasyonu belgesel gibi görünmez; iki belgesel ise aynı kamera ve oynatıcı tekniğini paylaşabilir, dünyaları farklı olur.
 
 ## Yeni animasyon isteğinde
 
 Ayrıntılı istek şablonu ve kalite ölçütleri: `prompts/new-animation.md` (araştırma, anlatım, ses ve altyazı tekniği, özgün tasarım). Kullanıcı bu dosyaya atıf yaparsa baştan sona uygula.
 
-1. **Sıfırdan tasarla.** Başka animasyonların kodunu, motorunu, arayüzünü, renklerini ya da yazı tiplerini örnek alma; onları açıp okuma. Konunun ve hedef kitlenin ne gerektirdiğini düşün: teknik (Three.js, Babylon.js, WebGPU, Canvas 2D, SVG, CSS, Vite, React…), görsel dil, anlatım yapısı, arayüz ve ses tümüyle bu animasyon için seçilir. Kullanıcı açıkça "şu animasyon gibi" ya da "şundan başla" demedikçe önceki bir animasyonu temel alma.
+1. **Sıfırdan tasarla.** Başka animasyonların kodunu, motorunu, arayüzünü, renklerini ya da yazı tiplerini örnek alma; onları açıp okuma. Tek istisna: aynı türün **teknik** modülleri (`documentary-tech.md` tablosunda "kopyala" denenler); görsel dünya yine sıfırdan. Konunun ve hedef kitlenin ne gerektirdiğini düşün: teknik (Three.js, Babylon.js, WebGPU, Canvas 2D, SVG, CSS, Vite, React…), görsel dil, anlatım yapısı, arayüz ve ses tümüyle bu animasyon için seçilir. Kullanıcı açıkça "şu animasyon gibi" ya da "şundan başla" demedikçe önceki bir animasyonu temel alma.
 2. Animasyonlar kategori klasörlerinde durur: `animations/<kategori>/<slug>/`. Kategori adları İngilizcedir (biology, history, geography, physics, chemistry, math, space, technology, software, documentary); liste ve Türkçe karşılıkları `tools/lib/animations.mjs` içinde. Slug bütün kategorilerde tektir, site adresi değişmez (`…/animasyon-lab/<slug>/`). Araçlar animasyonu yalnızca slug ile bulur.
    `npm run new -- <kategori>/<slug> "<Başlık>"` yalnızca boş bir klasör ile `animation.json` ve `README.md` açar. Paketler, derleme düzeni ve klasör yapısı animasyonun kendi ihtiyacına göre kurulur (kendi `package.json`'ı olabilir; derlemede gereken paketler `dependencies`, yalnızca yerel araçlar `devDependencies` altına).
 3. Yalnızca `animations/<kategori>/<slug>/` içinde çalış. Başka bir animasyonun dosyalarını değiştirme.
 4. `animation.json` içindeki `slug`, `title`, `description`, `format`, `tech`, `build`, `output` alanlarını doldur (`format`: documentary, explainer, software, history, kids). Sitenin kartı bunlardan üretilir. `build` komutu animasyon klasöründe çalışır ve `output` klasörüne kendi başına açılan bir `index.html` üretmelidir.
 5. Animasyonun `README.md` dosyasını yaz: ne anlattığı, bölümleri ve komutları.
 6. Kök `README.md` içindeki "Animasyonlar" tablosuna kategorisiyle birlikte bir satır ekle.
-7. Kökte `npm run build -- <slug>` çalıştır, ardından sayfayı headless Chrome ile ekran görüntüsü alarak kontrol et (masaüstü ve telefon genişliği). Metinlerin hızlı akışta okunabildiğini de kontrol et.
+7. Kökte `npm run build -- <slug>` çalıştır, ardından sayfayı headless Chrome ile ekran görüntüsü alarak kontrol et (masaüstü ve telefon genişliği). Metinlerin hızlı akışta okunabildiğini de kontrol et. Performans testlerini her kademede çalıştır; donma varsa bitmiş sayılmaz.
 8. Kullanıcı isterse commit edip `main`'e gönder. Pages yayını otomatik.
 
 ## Anlatım türleri

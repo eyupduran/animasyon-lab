@@ -48,6 +48,10 @@ Bilgilerin kaynakları `RESEARCH.md`, tasarım kararları `DESIGN.md` dosyasınd
 - **Ses:** anlatım O33 (OmniVoice, yaşlı ve çok derin erkek sesi), bölüm başına tek kayıt; rüzgâr, kuşlar, yaylı dokusu ve efektler Web Audio ile üretilir, anlatım sırasında kısılır (`src/sound.js`).
 - **Oynatıcı:** oynat/duraklat, bölüm atlama, bölüm işaretli ilerleme çubuğu, hız, altyazı (C), anlatım (N), altyazı boyutu, tam ekran (F), klavye (boşluk, oklar). Seçimler hatırlanır.
 
+## Performans ve kalite kademeleri
+
+Görüntü kalitesi çalışma anında beş kademe arasında değişir (`src/env.js` → `setTier`): `ultra` (yalnızca video), `high`, `mid`, `low`, `min`. Sayfa açılırken üç ağır an her kademede ölçülür ve bütçenin altındaki ilk kademe seçilir; oynatma sırasında kareler 2,5 saniye boyunca yavaş kalırsa bir kademe düşülür. `?tier=high` gibi bir parametre seçimi sabitler. Bu makinede (RTX 3050 Ti, 1600×900) gerçek oynatma: high ~27 fps, mid ~39, low ~40, min ~70; otomatik seçim mid/low. Kum taneleri ve toprak topakları 6×6 bölgeye ayrılmıştır; kamera görmediği bölgeyi çizmez.
+
 ## Komutlar
 
 ```
@@ -72,6 +76,8 @@ node dev/sheet.mjs <çıktı.jpg> 1600 900 [bölüm…]   # bölümlerden karele
 node dev/playtest.mjs 40 0                         # gerçek zamanlı oynatma testi (geri gitme, sarma, ses–görüntü farkı)
 node dev/toggletest.mjs                            # CC ve anlatım düğmeleri
 node dev/endtest.mjs fast                          # her bölüm sonu: kayıt başa dönmüyor, görüntü donmuyor
+node dev/perftest.mjs 2 "tier=low"                 # kare maliyeti, bölüm bölüm (update / render / GPU / DOM)
+node dev/fpstest.mjs "tier=low" 20 30              # gerçek oynatma fps'i; boş parametre otomatik seçimi gösterir
 node dev/poster.mjs fizik sip 1.5                  # poster.jpg
 ```
 

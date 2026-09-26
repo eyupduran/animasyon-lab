@@ -163,6 +163,38 @@ export function createCinema(engine, canvas, { quality = 'high' } = {}) {
     ssao.expensiveBlur = true;
   }
 
+  // Quality tiers, switchable at run time. The page measures the machine at start and picks the
+  // highest tier that keeps a frame under budget; during playback it drops a tier if frames get slow.
+  const TIERS = {
+    ultra: { px: 2.6e6, msaa: 4, fxaa: false, dof: 2, ssao: true, pcss: true, pcf: 1, lens: true, bloomK: 96 },
+    high: { px: 1.8e6, msaa: 2, fxaa: false, dof: 1, ssao: false, pcss: false, pcf: 1, lens: true, bloomK: 64 },
+    mid: { px: 1.2e6, msaa: 1, fxaa: true, dof: 0, ssao: false, pcss: false, pcf: 0, lens: false, bloomK: 48 },
+    low: { px: 0.8e6, msaa: 1, fxaa: true, dof: 0, ssao: false, pcss: false, pcf: -1, lens: false, bloomK: 32 },
+    min: { px: 0.5e6, msaa: 1, fxaa: true, dof: -1, ssao: false, pcss: false, pcf: -1, lens: false, bloomK: 32, noShadow: true, noGrain: true },
+  };
+  let tier = null, lensPP = null;
+  const setLens = pp => { lensPP = pp; };
+  const setTier = name => {
+    const T = TIERS[name]; if (!T || name === tier) return tier;
+    tier = name;
+    pipe.samples = T.msaa; pipe.fxaaEnabled = T.fxaa;
+    pipe.depthOfFieldEnabled = T.dof >= 0;
+    if (T.dof >= 0) pipe.depthOfFieldBlurLevel = [DepthOfFieldEffectBlurLevel.Low, DepthOfFieldEffectBlurLevel.Medium, DepthOfFieldEffectBlurLevel.High][T.dof];
+    pipe.bloomKernel = T.bloomK;
+    sun.shadowEnabled = !T.noShadow; pipe.grainEnabled = !T.noGrain; pipe.chromaticAberrationEnabled = !T.noGrain;
+    if (ssao) { const m = scene.postProcessRenderPipelineManager; if (T.ssao) m.attachCamerasToRenderPipeline('ssao', camera); else m.detachCamerasFromRenderPipeline('ssao', camera); }
+    shadows.usePercentageCloserFiltering = T.pcf >= 0;
+    if (T.pcf >= 0) shadows.filteringQuality = T.pcf ? ShadowGenerator.QUALITY_MEDIUM : ShadowGenerator.QUALITY_LOW;
+    shadows.useContactHardeningShadow = T.pcss;
+    if (lensPP) { const on = camera._postProcesses.includes(lensPP); if (T.lens && !on) camera.attachPostProcess(lensPP); else if (!T.lens && on) camera.detachPostProcess(lensPP); }
+    // low tiers skip the ground litter (grains, crumbs) in the shadow pass; the terrain still shadows
+    const rl = shadows.getShadowMap().renderList;
+    if (!shadows._fullList) shadows._fullList = rl.slice();
+    rl.length = 0; for (const m of shadows._fullList) if (T.pcf >= 1 || !m.metadata?.cheapShadow) rl.push(m);
+    return tier;
+  };
+  const tierPixels = name => TIERS[name].px;
+
   // focus: distance in mm, macro: blur strength (CoC = macro·|F−P|/P)
   const setFocus = (dist, macro = 3) => {
     if (!pipe.depthOfFieldEnabled) return;
@@ -173,5 +205,5 @@ export function createCinema(engine, canvas, { quality = 'high' } = {}) {
     pipe.depthOfField.lensSize = macro;
   };
 
-  return { scene, camera, sun, sunDir, fill, shadows, fitShadow, pipe, ssao, setFocus };
+  return { scene, camera, sun, sunDir, fill, shadows, fitShadow, pipe, ssao, setFocus, setTier, tierPixels, setLens, TIERS, get tier() { return tier; } };
 }

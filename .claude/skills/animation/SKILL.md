@@ -21,13 +21,19 @@ Kullanıcının isteği:
 - **Ek istekler:** istekte başka ne varsa onlar da uygulanır.
 - **Kategori:** belgeseller her zaman `documentary` kategorisine girer (`animations/documentary/<slug>/`). Öteki türlerde konuya göre bir klasör seç: biology, history, geography, physics, chemistry, math, space, technology ya da software. Liste ve Türkçe karşılıkları `tools/lib/animations.mjs` → `CATEGORIES` içinde. Hiçbiri uymuyorsa yeni bir İngilizce ad aç ve Türkçe karşılığını listeye ekle. Klasörü `npm run new -- <kategori>/<slug> "<Başlık>"` ile aç; animasyon `animations/<kategori>/<slug>/` altında durur. Araçlara (voice, build, video, thumbnail) yalnızca slug verilir.
 
-Kullanıcı beklemeden çalışmanı istiyor. Soru sorma, mantıklı kararı kendin ver ve sonunda neyi neden seçtiğini kısaca anlat. Ücretli bir dış servise hiçbir şey gönderme.
+Kullanıcı beklemeden çalışmanı istiyor. Soru sorma, mantıklı kararı kendin ver ve sonunda neyi neden seçtiğini kısaca anlat. Her şey kodla; üretken görsel/video/ses modeli yok (`CLAUDE.md` → "Yalnızca kod").
+
+## Kalite çıtası (CLAUDE.md → "Kalite tanımı")
+
+Dört şey birlikte: (1) türe uygun, ucuz görünmeyen görsel dünya; (2) izleyiciyi saran hikâye (açılış sorusu, kahraman, gerilim, ödül); (3) insan yazmış gibi metin (yapay zekâ kalıpları yok, sesli okunup kesilmiş); (4) aynı ses baştan sona + ince ortam sesleri + **hiç donmama**. Bunlardan biri eksikse iş bitmemiştir.
 
 ## Yardımcı dosyalar (gerektiğinde oku)
 
 - [craft.md](craft.md): teknik alet çantası. Işık, derinlik, perspektif, doku ve zamanlama teknikleri, "vay" anı kalıpları. Görsel dil ve stil önermez. Sahneleri kodlamaya başlamadan önce oku.
 - [pitfalls.md](pitfalls.md): önceki oturumlarda bulunan tuzaklar ve çözümleri. Kodlamaya başlamadan önce oku. İş bitince yeni bulduklarını buraya ekle.
 - [critique.md](critique.md): sanat yönetmeni turu. Ekran görüntüsü turlarında uygula.
+- [documentary-tech.md](documentary-tech.md): belgesel türünün yeniden kullanılabilir tekniği (oynatıcı, zamanlama, sinema hattı, kalite kademeleri, kamera dili) ve referans uygulama. Belgesel yapıyorsan önce oku.
+- [../../../docs/cartoon-style-in-code.md](../../../docs/cartoon-style-in-code.md): kodla çizgi film / düz vektör / kâğıt kesme / toon 3B görünümünün kuralları, karakter animasyonu, "ucuz görünmeme" listesi. Belgesel dışı türlerde önce oku.
 - **Anlatım skilli** [../narration/SKILL.md](../narration/SKILL.md): anlatım metnini yazmadan önce oku. Seçilen türün dosyasını (`../narration/formats/<tür>.md`) ve `../narration/retention.md` dosyasını baştan sona uygula; beat sheet'i animasyon klasöründe `NARRATION.md` olarak yaz.
 
 ## Her seferinde yapılacaklar (kullanıcı ayrıca söylemese de)
@@ -40,6 +46,8 @@ Kullanıcı beklemeden çalışmanı istiyor. Soru sorma, mantıklı kararı ken
    - kod,
    - masaüstü ve telefon ekran görüntüleriyle birkaç düzeltme turu,
    - gerçek zamanlı oynatma testi: kayıt ortasında sarma 0, geri gitme 0, konsol hatası yok,
+   - **performans:** kalite kademeleri + açılışta otomatik seçim + oynatmada düşürme kurulu; `dev/perftest.mjs` ve `dev/fpstest.mjs` ile her kademede ölç (hedefler `CLAUDE.md` → "Performans"); sonuçları README'ye yaz,
+   - bölüm sonu testi (`dev/endtest.mjs fast`): kayıt başa dönmüyor, görüntü donmuyor,
    - CC ve anlatım düğmeleriyle altyazının ve sesin gerçekten kapanıp açıldığını tarayıcıda dene,
    - `critique.md` dosyasındaki eleştiri turları (en az üç tur),
    - `README.md` dosyaları, kök README tablosu ve `poster.jpg`,

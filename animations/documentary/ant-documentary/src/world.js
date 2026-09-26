@@ -39,6 +39,7 @@ function grainMesh(scene, seed, detail) {
 }
 
 export function buildSurface(scene, { quality = 'high', shadows }) {
+  const OFF = window.__off || new Set();
   const root = new TransformNode('surface', scene);
   const R = rng(5);
   const q = quality === 'high' ? 1 : quality === 'mid' ? 0.6 : 0.35;
@@ -71,15 +72,19 @@ export function buildSurface(scene, { quality = 'high', shadows }) {
   const grainMat = new PBRMaterial('grain', scene);
   grainMat.metallic = 0; grainMat.roughness = 0.62; grainMat.albedoColor = new Color3(1, 1, 1);
   grainMat.bumpTexture = organicNormal(scene, 256, 10, 3, 51); grainMat.bumpTexture.level = 0.6;
-  grainMat.clearCoat.isEnabled = true; grainMat.clearCoat.intensity = 0.15; grainMat.clearCoat.roughness = 0.4;
+  
   const palettes = [
     [0.62, 0.58, 0.52], [0.7, 0.66, 0.6], [0.5, 0.36, 0.26], [0.36, 0.26, 0.19], [0.18, 0.15, 0.13],
     [0.72, 0.52, 0.42], [0.8, 0.77, 0.7], [0.44, 0.4, 0.34], [0.58, 0.42, 0.28],
   ];
-  const grains = [grainMesh(scene, 1, 14), grainMesh(scene, 2, 12), grainMesh(scene, 3, 6), grainMesh(scene, 4, 5)];
-  const counts = [0, 0, 0, 0];
-  const buckets = grains.map(() => ({ m: [], c: [] }));
-  const N = Math.floor(16000 * q);
+  // grains live in a grid of chunks (two detail levels each); a macro shot only draws the chunks in view
+  const CH = 6, CHW = FINE / CH;
+  const chunkOf = (x, z) => Math.min(CH - 1, Math.floor((x + FINE / 2) / CHW)) + CH * Math.min(CH - 1, Math.floor((z + FINE / 2) / CHW));
+  // coarse grains keep some facets; fine sand is a few pixels on screen, a 4-segment blob is enough
+  const grainProto = [grainMesh(scene, 1, 8), grainMesh(scene, 3, 4)];
+  grainProto.forEach(g => { g.material = grainMat; g.setEnabled(false); });
+  const buckets = Array.from({ length: CH * CH * 2 }, () => ({ m: [], c: [] }));
+  const N = OFF.has('grains') ? 0 : Math.floor(16000 * q);
   const tmp = new Matrix();
   for (let i = 0; i < N; i++) {
     // denser near the centre, where the camera spends its time
@@ -91,7 +96,7 @@ export function buildSurface(scene, { quality = 'high', shadows }) {
     size = clamp(size, 0.03, 1.1);
     const dNest = Math.hypot(x, z);
     if (dNest < 1.4 && size > 0.2) continue;
-    const bi = size > 0.25 ? (i % 2) : 2 + (i % 2);
+    const bi = chunkOf(x, z) * 2 + (size > 0.25 ? 0 : 1);
     const sc = new Vector3(size * (0.8 + R() * 0.5), size * (0.6 + R() * 0.5), size * (0.8 + R() * 0.5));
     const rot = Quaternion.RotationYawPitchRoll(R() * 6.28, (R() - 0.5) * 0.6, (R() - 0.5) * 0.6);
     const y = groundH(x, z) - sc.y * 0.2;
@@ -99,22 +104,23 @@ export function buildSurface(scene, { quality = 'high', shadows }) {
     buckets[bi].m.push(...tmp.m);
     const c = R.pick(palettes); const v = 0.85 + R() * 0.3;
     buckets[bi].c.push(c[0] * v, c[1] * v, c[2] * v, 1);
-    counts[bi]++;
   }
-  grains.forEach((g, i) => {
-    g.material = grainMat; g.parent = root; g.isPickable = false;
-    g.thinInstanceSetBuffer('matrix', new Float32Array(buckets[i].m), 16, true);
-    g.thinInstanceSetBuffer('color', new Float32Array(buckets[i].c), 4, true);
-    g.receiveShadows = true;
-    if (i < 2) shadows?.addShadowCaster(g);
-    g.alwaysSelectAsActiveMesh = true;
+  const grains = [];
+  buckets.forEach((bk, i) => {
+    if (!bk.m.length) return;
+    const g = grainProto[i % 2].clone('grains' + i);
+    g.setEnabled(true); g.material = grainMat; g.parent = root; g.isPickable = false; g.receiveShadows = true;
+    g.thinInstanceSetBuffer('matrix', new Float32Array(bk.m), 16, true);
+    g.thinInstanceSetBuffer('color', new Float32Array(bk.c), 4, true);
+    if (i % 2 === 0) { shadows?.addShadowCaster(g); g.metadata = { cheapShadow: true }; }
+    grains.push(g);
   });
 
   // ---- soil crumbs (aggregates): soft, rounded lumps of the same soil ----
   const clodMat = new PBRMaterial('clod', scene);
   clodMat.albedoTexture = soil.albedo; clodMat.bumpTexture = soil.normal;
   clodMat.albedoColor = new Color3(0.62, 0.5, 0.4); clodMat.metallic = 0; clodMat.roughness = 0.95;
-  const clod = grainMesh(scene, 9, 10);
+  const clod = grainMesh(scene, 9, 6);
   {
     const p = clod.getVerticesData('position');
     for (let i = 0; i < p.length; i += 3) { const k = 1 + 0.18 * (fbm(p[i] * 3, p[i + 1] * 3 + p[i + 2] * 2, 3, 77) - 0.5); p[i] *= k; p[i + 1] *= k * 0.7; p[i + 2] *= k; }
@@ -122,18 +128,21 @@ export function buildSurface(scene, { quality = 'high', shadows }) {
     const nor = []; VertexData.ComputeNormals(p, clod.getIndices(), nor); clod.setVerticesData('normal', nor);
     const uv = clod.getVerticesData('uv'); for (let i = 0; i < uv.length; i++) uv[i] *= 0.08; clod.setVerticesData('uv', uv);
   }
-  const clodData = [];
-  for (let i = 0; i < 5000 * q; i++) {
+  const clodData = Array.from({ length: CH * CH }, () => []);
+  for (let i = 0; i < (OFF.has('clods') ? 0 : 5000 * q); i++) {
     const rr = Math.pow(R(), 0.7) * FINE * 0.5, an = R() * Math.PI * 2;
     const x = Math.cos(an) * rr, z = Math.sin(an) * rr;
     const size = clamp(Math.exp(R.gauss() * 0.5 - 1.6), 0.08, 0.7);
     Matrix.ComposeToRef(new Vector3(size * (1 + R() * 0.4), size * (0.6 + R() * 0.3), size * (1 + R() * 0.4)), Quaternion.RotationYawPitchRoll(R() * 6.28, (R() - 0.5) * 0.4, (R() - 0.5) * 0.4), new Vector3(x, groundH(x, z) - size * 0.25, z), tmp);
-    clodData.push(...tmp.m);
+    clodData[chunkOf(x, z)].push(...tmp.m);
   }
-  clod.material = clodMat; clod.parent = root; clod.isPickable = false; clod.receiveShadows = true;
-  clod.thinInstanceSetBuffer('matrix', new Float32Array(clodData), 16, true);
-  clod.alwaysSelectAsActiveMesh = true;
-  shadows?.addShadowCaster(clod);
+  clod.material = clodMat; clod.setEnabled(false);
+  clodData.forEach((d, i) => {
+    if (!d.length) return;
+    const c = clod.clone('clods' + i); c.setEnabled(true); c.parent = root; c.isPickable = false; c.receiveShadows = true;
+    c.thinInstanceSetBuffer('matrix', new Float32Array(d), 16, true);
+    shadows?.addShadowCaster(c); c.metadata = { cheapShadow: true };
+  });
 
   // ---- grass ----
   const bt = bladeTextures(scene);
@@ -143,7 +152,7 @@ export function buildSurface(scene, { quality = 'high', shadows }) {
   grassMat.bumpTexture = bt.normal; grassMat.bumpTexture.level = 0.8;
   grassMat.metallic = 0; grassMat.roughness = 0.42;
   grassMat.backFaceCulling = false; grassMat.twoSidedLighting = true;
-  grassMat.subSurface.isTranslucencyEnabled = true; grassMat.subSurface.translucencyIntensity = 0.7;
+  grassMat.subSurface.isTranslucencyEnabled = !OFF.has('sss'); grassMat.subSurface.translucencyIntensity = 0.7;
   grassMat.subSurface.tintColor = new Color3(0.5, 0.8, 0.15);
   grassMat.clearCoat.isEnabled = true; grassMat.clearCoat.intensity = 0.35; grassMat.clearCoat.roughness = 0.2;
   const blades = [0.25, 0.5, 0.8].map((bend, k) => {
@@ -182,7 +191,7 @@ export function buildSurface(scene, { quality = 'high', shadows }) {
   const bladeData = [[], [], []];
   const bladeInfo = [];
   for (const [tx, tz, n] of tufts) {
-    const cnt = Math.round(n * (0.6 + 0.4 * q));
+    const cnt = OFF.has('grass') ? 0 : Math.round(n * (0.6 + 0.4 * q));
     for (let i = 0; i < cnt; i++) {
       const r = Math.pow(R(), 0.6) * 3.5, a = R() * 6.28;
       const x = tx + Math.cos(a) * r, z = tz + Math.sin(a) * r;
@@ -225,7 +234,7 @@ export function buildSurface(scene, { quality = 'high', shadows }) {
   // ---- dew drops ----
   const dewMat = new PBRMaterial('dew', scene);
   dewMat.metallic = 0; dewMat.roughness = 0.07; dewMat.albedoColor = new Color3(0.02, 0.02, 0.02);
-  dewMat.subSurface.isRefractionEnabled = true; dewMat.subSurface.refractionIntensity = 1;
+  dewMat.subSurface.isRefractionEnabled = !OFF.has('dew'); dewMat.subSurface.refractionIntensity = 1;
   dewMat.subSurface.indexOfRefraction = 1.33; dewMat.subSurface.tintColor = new Color3(0.95, 1, 0.97);
   dewMat.environmentIntensity = 0.55; dewMat.specularIntensity = 1.5;
   const dew = MeshBuilder.CreateSphere('dew', { diameter: 1, segments: 32 }, scene);

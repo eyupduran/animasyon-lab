@@ -27,6 +27,13 @@ Amaç işi beğenmek değil, kusur bulmak. Her tur: görüntü al → kusurları
 - Beş konsept birbirinden gerçekten farklı mı? Hepsi aynı kanal kimliğini taşıyor mu (`assets/thumbnail-kit`)?
 - Görsel "yapay zekâyla üretilmiş gibi" zengin mi (ışık, derinlik, doku), yoksa düz bir çizim gibi mi duruyor?
 
+## Akıcılık ve "ucuz" görünme turu
+
+- `dev/fpstest.mjs` her kademede: fps ve 50 ms üstü kare sayısı. Zayıf makine için `tier=min` de akıcı mı?
+- Bölüm geçişlerinde ve atlamalarda takılma var mı (`dev/endtest.mjs fast`)?
+- Easing lineer mi? Her şey aynı anda mı giriyor? Durunca her şey aynı anda mı duruyor? Karakter statik mi? Metin fade ile mi geliyor? Vurguda ses var mı? (`docs/cartoon-style-in-code.md` → 7)
+- Metin yapay zekâ kokuyor mu: "Gelin birlikte…", "önemli bir rol oynar", üçlü sıfat listeleri, her cümlede bir benzetme? Sesli oku.
+
 ## Tur sonunda
 
 Bulunan ve bir sonraki oturumda da çıkabilecek hataları `pitfalls.md` dosyasına ekle.

@@ -11,6 +11,9 @@ Biçim: **belirti** → neden → çözüm. Her oturum sonunda yeni bulunanlar e
 
 - **Bölüm sonunda ses başa dönüyor, görüntü donuyor** → kayıt, görüntü bölüm sonuna varmadan birkaç yüz ms önce bitiyor; `paused` olan kayda "durmuş" diye `play()` deniyor, bitmiş kayıt baştan çalıyor, geri gitmeyen görüntü sesi bekleyip donuyor → `ended` olan (ya da sonuna gelmiş) kaydı "bitti" say, bir daha `play()` deme, hikâyeyi saatle ilerlet; yalnızca kullanıcı atlayınca yeniden konumlandır. Testte kaydı %6 hızlı çaldırıp her bölüm sonunu dene (`dev/endtest.mjs fast`).
 
+- **İzleyicinin bilgisayarında animasyon donuyor** → kalite sabit "yüksek", makine yetişmiyor; ölçümde yük tek efekte değil binlerce küçük nesneye (16 bin kum tanesi × 290 üçgen) yayılmıştı → çalışma anında değişen kalite kademeleri + açılışta otomatik seçim + oynatmada düşürme; küçük nesneleri bölgelere ayır ve geometrisini kabalaştır; düşük kademede gölge listesinden çıkar. `dev/perftest.mjs` ve `dev/fpstest.mjs` ile ölç (`craft.md` → 8).
+- **Senkron kare ölçümü gerçek fps'ten kötümser** → `readPixels` GPU boru hattını boşaltır → eşiği buna göre koy (27 ms senkron ≈ 50+ fps oynatma) ve gerçek fps'i ayrıca rAF ile ölç.
+
 ## Sahne ve kamera
 
 - **Hareket eden işaretçi (paket, nokta) kutuların içinden geçip yazıları örtüyor** → yol, istasyon kutularının ortasından çizilmiş → paketi kutuların altından ya da üstünden giden ayrı bir hat üzerinde yürüt, istasyonları hatta kısa dikey çizgilerle bağla.

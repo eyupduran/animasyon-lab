@@ -27,7 +27,7 @@ Bundan sonrası animasyonu yapacak yapay zekâya yöneliktir.
 
 Bu animasyonu izleyen bir öğrenci konuyu **gerçekten anlamalı**. Yalnızca "güzel görüntüler" yetmez. İyi bir öğretmenin karşısına oturmuş gibi hissetmeli. Animasyon ilgi çekici, bilimsel ve tarihsel olarak doğru, akıcı ve okunaklı olmalı. Sesli anlatımı ve kelime kelime açılan altyazısı olmalı. İleride YouTube videosuna çevrilebilecek biçimde kurulmalı, ama **ilk aşamada video üretilmez** (bkz. bölüm 6).
 
-Kullanıcı seni beklemeden çalışmanı ister. Soru sorma; mantıklı kararı kendin ver, sonunda neyi neden seçtiğini kısaca anlat. Dışarıya para ödenen bir servise hiçbir şey gönderme (bkz. `CLAUDE.md`).
+Kullanıcı seni beklemeden çalışmanı ister. Soru sorma; mantıklı kararı kendin ver, sonunda neyi neden seçtiğini kısaca anlat. Her şey kodla üretilir; üretken görsel/video/ses modeli ve ücretli servis yok (bkz. `CLAUDE.md` → "Yalnızca kod"). Kalite dört parçadır ve hepsi gerekir: görsel, hikâye, insan yazmış gibi metin, ses sürekliliği + hiç donmama (`CLAUDE.md` → "Kalite tanımı", "Performans").
 
 ### Çıta: yapabileceğin en iyi iş
 
@@ -147,9 +147,9 @@ Görsel stil animasyona özgüdür; aşağıdaki **teknik** ise her animasyonda 
   - Çalan kayıt, bir kare takıldı diye asla ileri geri sarılmaz. Yalnızca bölüm değişince, kullanıcı atlayınca ya da duraklatıp devam edince konumlandırılır.
   - Hız değişiminde `playbackRate` ayarlanır (`preservesPitch`).
   - Geçerli ve sonraki bölümün kayıtları önceden yüklenir; uzaktakiler bırakılır.
-- **Akıcılık:**
+- **Akıcılık (donma yasak):**
   - Ağır sahneleri ve shader'ları başlangıç ekranında önceden hazırla (ısınma çizimleri).
-  - Çözünürlüğü oynatma sırasında durmadan değiştirme; başlangıçta ölç ve sabitle.
+  - Kalite kademeleri kur; açılışta makineyi ölçüp kademe seç, oynatmada yavaşlarsa bir kademe düş; video her zaman en üst kademede. Binlerce küçük nesneyi bölgelere ayır. Her kademede fps ölç (`craft.md` → 8).
   - Tarayıcı otomatik oynatmayı engellediği için bir başlangıç ekranı ve "Başlat" düğmesi olsun.
 - **Altyazı:**
   - En çok iki satır olsun. Uzun cümleler sesle birlikte ilerleyen parçalara bölünür (parça başına ~90 karakter, satır başına ~44). Önce cümle sonundan, sonra virgülden, sonra bağlaçtan böl.

@@ -68,3 +68,28 @@ Gerçekçilik istenen 3B sahnelerde en büyük farkı yaratanlar (ayrıntı: `an
 - Kısa efektler: gürültü ve bant geçiren filtreyle hava sesi (whoosh), deklanşör, tık; sinüs ya da üçgen dalgayla ses, çan ve uyarı sesleri.
 - Anlatım sırasında efektleri kıs (ducking).
 - Aynı sentez fonksiyonu hem canlı sayfada hem `OfflineAudioContext` içinde çalışmalı; video sesi böyle üretilir.
+
+## 8. Performans (donma yasak)
+
+Ölçmeden tahmin etme. Karınca belgeselinde ölçüm şunu gösterdi: yük tek bir efektte değil, binlerce küçük nesnede toplanmıştı (16 bin kum tanesi × ~290 üçgen); son işleme efektlerini kapatmak bile kareyi 47 ms'den aşağı indirmedi.
+
+- **Kalite kademeleri:** `ultra` (yalnız video), `high`, `mid`, `low`, `min`. Kademe çalışma anında değişir: piksel bütçesi (`setHardwareScalingLevel`), MSAA/FXAA, alan derinliği düzeyi, SSAO aç/kapa, gölge filtresi (PCSS → PCF → yok), ekran uzayı katmanları, gölge listesinden ucuz nesneleri çıkarma. Örnek: `ant-documentary/src/env.js` → `setTier`.
+- **Açılışta seçim:** ısınmadan sonra ağır üç anı her kademede senkron (readPixels ile) ölç; bütçenin altındaki ilk kademeyi seç. Senkron ölçüm karamsardır: 27 ms senkron ≈ 50+ fps gerçek oynatma. Oynatma sırasında 2,5 sn boyunca kare > 45 ms ise bir kademe düş; yukarı çıkma (titreme yapar).
+- **Bölgeleme (chunking):** binlerce küçük nesneyi (taneler, topaklar, yapraklar) 6×6 gibi bir ızgarada ayrı thin-instance mesh'lere böl; Babylon görünmeyen bölgeleri çizmez. `alwaysSelectAsActiveMesh` yalnızca her kare güncellenen tamponlarda.
+- **Geometri piksel boyutuna göre:** ekranda birkaç piksel olan nesneye 4 dilimli küre yeter; 12 dilim 9 kat üçgen demektir.
+- **Gölge geçişi ikinci bir render'dır:** ucuz nesneleri (`metadata.cheapShadow`) düşük kademelerde gölge listesinden çıkar.
+- **Kaçınılacaklar:** TAA (zamanda atlamada hayalet), ekran uzayı temas gölgesi (pürüzsüz yüzeyde leke), oynatma sırasında doku/geometri üretmek, her karede DOM yeniden düzeni.
+- **Ölçüm araçları:** `dev/perftest.mjs` (kare başına update/render/GPU/DOM ms, bölüm bölüm), `dev/fpstest.mjs` (gerçek rAF fps, 50 ms'yi aşan kare sayısı, otomatik seçilen kademe). Hedefler `CLAUDE.md` → "Performans".
+- **2B'de:** SVG'de yalnızca `transform` ve `opacity` animasyonu; filtreli öğeyi animasyonla oynatma (filtre her karede yeniden hesaplanır); gren sabit ayrı katman; binlerce öğe için Canvas; tek `requestAnimationFrame`.
+
+## 9. Çizgi film ve düz vektör görünümü (belgesel dışı türler)
+
+Kurallar ve gerekçeleri `docs/cartoon-style-in-code.md` içinde; özet:
+- 5–7 renklik palet, tek vurgu rengi; düz renk yerine iki duraklı yumuşak gradyan; zemin radyal gradyan + sabit gren.
+- Dış hat ya hiç yok ya her yerde aynı kalınlıkta paletten koyu ton. Gölge bulanık değil: kaydırılmış şekil ya da kesik yarım.
+- En az üç derinlik katmanı, paralaks; 10–20 sn'de %3–5 yavaş kamera nefesi.
+- Easing asla lineer: giriş `easeOutExpo/back`, çıkış `easeIn`; 40–80 ms stagger; follow-through; squash & stretch %5–10; yay fizikli tepkiler.
+- Karakter: gruplu SVG kukla, 2 eklemli IK, göz kırpma + nefes + ağırlık aktarma idle döngüsü; ağız yok ya da 6 viseme (Whisper kelime zamanlarından).
+- Tipografi karakterdir: anahtar kelime harf/kelime stagger ile vurgu renginde gelir.
+- Her vurguya ses efekti, anlatım altında müzik (ducking). Kodla üretilen kısa efektler (`craft.md` → 7).
+- Ucuz görünme listesi (`docs/cartoon-style-in-code.md` → 7) her eleştiri turunda kontrol edilir.

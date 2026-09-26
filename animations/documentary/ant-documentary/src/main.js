@@ -22,12 +22,14 @@ const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2,
 const coarse = matchMedia('(pointer: coarse)').matches;
 const quality = Q.get('q') || (VIDEO ? 'high' : (coarse || innerWidth < 800) ? 'low' : 'high');
 
+const OFF = new Set((Q.get('off') || '').split(',').filter(Boolean));
+window.__off = OFF;
 const canvas = $('view');
 const engine = new Engine(canvas, quality !== 'low', { preserveDrawingBuffer: true, stencil: true, antialias: quality !== 'low', powerPreference: 'high-performance' }, false);
+let maxPix = VIDEO ? 4e6 : quality === 'high' ? 1.8e6 : 0.8e6;
 function fixResolution() {
   const dpr = window.devicePixelRatio || 1;
   const w = canvas.clientWidth, h = canvas.clientHeight;
-  const maxPix = VIDEO ? 4e6 : quality === 'high' ? 2.6e6 : 1.0e6;
   const level = Math.max(1 / dpr, Math.sqrt((w * h) / maxPix));
   engine.setHardwareScalingLevel(level);
   engine.resize();
@@ -41,10 +43,49 @@ createSky(scene, sunDir);
 const envReady = createEnvironment(scene, sunDir);
 const mats = antMaterials(scene);
 const T = buildAntTemplate(scene, mats);
-const world = buildSurface(scene, { quality, shadows });
+const world = buildSurface(scene, { quality, shadows: OFF.has('shadows') ? null : shadows });
+if (OFF.has('shadows')) { cinema.sun.shadowEnabled = false; }
 const nest = buildNest(scene, { quality, shadows });
 const lab = buildLab(scene, { shadows });
 const lens = quality === 'low' || Q.has('nolens') ? null : createLens(scene, camera, engine, cinema.pipe, cinema.sun);
+if (lens) cinema.setLens(lens.pp);
+// rendering tier: fixed for video; otherwise measured at start (see pickTier) and lowered during playback if needed
+function applyTier(name) {
+  cinema.setTier(name);
+  maxPix = VIDEO ? 4e6 : cinema.tierPixels(name);
+  fixResolution();
+  document.body.dataset.tier = name;
+}
+applyTier(VIDEO ? 'ultra' : Q.get('tier') || (quality === 'low' ? 'low' : 'high'));
+const TIER_ORDER = ['high', 'mid', 'low', 'min'];
+// startup: time a few heavy frames per tier (GPU-synchronous) and keep the first tier under budget
+async function pickTier() {
+  if (VIDEO || Q.has('tier')) return;
+  const probes = ['ciftlik', 'olcek', 'acilis'].map(id => { const c = tl.chapters.find(x => x.id === id); return c.start + c.dur * 0.5; });
+  const gl = engine._gl, px = new Uint8Array(4);
+  const cost = () => {
+    const ts = [];
+    for (const t of probes) { director.update(t); scene.render(); const a = performance.now(); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); director.update(t + 0.05); scene.render(); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); ts.push((performance.now() - a) / 2); }
+    ts.sort((a, b) => a - b); return ts[1];
+  };
+  for (const name of TIER_ORDER) {
+    applyTier(name);
+    await new Promise(r => setTimeout(r, 30));
+    cost();                                  // warm the shaders of this tier
+    const ms = cost();
+    console.log(`[kalite] ${name}: ${ms.toFixed(1)} ms/kare`);
+    if (ms < 27 || name === 'min') return;   // ~37 fps synchronous ≈ 50+ fps pipelined   // ~45 fps synchronous ≈ 60 fps pipelined
+  }
+}
+// playback: if frames stay slow for a while, drop one tier (never climbs back, to avoid flicker)
+let slowSince = 0;
+function watchFrame(dt) {
+  if (VIDEO || Q.has('tier') || !playing) { slowSince = 0; return; }
+  const cur = document.body.dataset.tier, i = TIER_ORDER.indexOf(cur);
+  if (i < 0 || i === TIER_ORDER.length - 1) return;
+  if (dt > 0.045) { if (!slowSince) slowSince = performance.now(); else if (performance.now() - slowSince > 2500) { applyTier(TIER_ORDER[i + 1]); slowSince = 0; console.log('[kalite] düşürüldü →', TIER_ORDER[i + 1]); } }
+  else if (dt < 0.03) slowSince = 0;
+}
 const mosaic = createMosaic(camera, engine);
 const smell = createSmell(scene);
 overlay = new Overlay(scene, camera);
@@ -113,6 +154,7 @@ function scheduleAmb(first) {
 let lastNow = performance.now();
 function tick(now) {
   const dt = Math.min(0.1, (now - lastNow) / 1000); lastNow = now;
+  watchFrame(dt);
   if (playing) {
     const { ch, u } = tl.at(storyT);
     keepClips(ch);
@@ -248,6 +290,7 @@ async function warmup() {
     await new Promise(r => setTimeout(r, 0));
   }
   await scene.whenReadyAsync();
+  await pickTier();
 }
 
 // ---------------- video interface ----------------
@@ -268,6 +311,14 @@ function wavChunks(buf) {
 const srtTime = s => { const ms = Math.round(s * 1000); const h = Math.floor(ms / 3600000), m = Math.floor(ms / 60000) % 60, ss = Math.floor(ms / 1000) % 60; return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(ss).padStart(2, '0')},${String(ms % 1000).padStart(3, '0')}`; };
 let soundOut = [];
 window.__tl = tl;
+// dev: cost of one frame at story time t (scene update, draw calls, GPU wait, DOM)
+window.__probe = t => {
+  const a = performance.now(); const { ch, u } = director.update(t); const b = performance.now();
+  scene.render(); const c = performance.now();
+  const gl = engine._gl; gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(4)); const d = performance.now();
+  subsView.render(ch, u, true); const e = performance.now();
+  return { upd: b - a, rnd: c - b, gpu: d - c, dom: e - d, draws: scene.getActiveMeshes().length };
+};
 window.__player = { get t() { return storyT; }, get playing() { return playing; }, get clip() { return activeClip; }, seek: t => seek(t) };
 window.__video = {
   duration: tl.total,

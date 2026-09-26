@@ -43,6 +43,20 @@ Bu kurallar her türde geçerlidir; tür dosyaları bunların üstüne ekler.
 13. **Konuşma dili, sohbet tonu.** "Siz"/"biz" kullanmak öğrenmeyi artırır (Mayer'in kişiselleştirme ilkesi). Yine de laubali değil; öğretmen değil, anlatıcı.
 14. **Altyazıyla yarışma.** Ekrana anlatımla aynı uzun cümleyi yazma (fazlalık ilkesi). Ekrandaki metin etiket, sayı ya da tek bir anahtar sözcük olsun.
 
+## 2b. Yapay zekâ gibi okunmamak
+
+İzleyici "bunu makine yazmış" hissederse güven biter. Kalıpları sesli okumada yakala ve sil:
+
+- **Davet kalıpları:** "Gelin birlikte keşfedelim", "Hazır mısınız?", "Bu yolculukta…", "Şimdi daha yakından bakalım". Belgeselde anlatıcı davet etmez, gösterir.
+- **Boş vurgu:** "önemli bir rol oynar", "kritik öneme sahip", "büyüleyici", "inanılmaz", "muhteşem". Etkileyici olan gerçeği söyle, sıfatı izleyici koysun.
+- **Üçlü sıralamalar ve simetrik cümleler:** "hızlı, güçlü ve dayanıklı" gibi ritmik üçlemeler her paragrafta tekrarlanınca makine sesi verir. En çok bir tane, gerekirse.
+- **Her cümlede benzetme:** "tıpkı … gibi" zinciri. Videoda tek ana benzetme, birkaç küçük.
+- **Özetleyen kapanış cümleleri:** "Kısacası…", "Sonuç olarak…", "Görüldüğü gibi…". Bölüm, bir görüntüyle ya da yeni bir soruyla biter; özet yalnızca finalde.
+- **Ders kitabı tanımları:** "X, Y'nin Z'sidir" ile başlayan cümle. Önce olay, sonra ad.
+- **Tekdüze cümle uzunluğu:** hepsi 12 kelime. Kısa–uzun–kısa; ara sıra üç kelimelik cümle.
+- **Aşırı kesinlik ya da aşırı yumuşatma:** her cümlede "olabilir" ya da her cümlede "kesinlikle" değil; bilinen düz, tartışmalı ölçülü.
+- **Ses kontrolü:** metni bir insana, sohbet ederken söyler miydin? Söylemezdin ise yeniden yaz.
+
 ## 3. Yazma süreci
 
 Adımları atlamadan, sırayla uygula.
