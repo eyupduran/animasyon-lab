@@ -47,7 +47,7 @@ Bu aşamanın sonunda kod yazılmaz. Otonom oturumda treatment kendi kendine ona
 
 Şimdi okunur: `pipeline-tech.md` (ortak teknik: zamanlama, altyazı, oynatıcı, video sözleşmesi), `craft.md` (teknik alet çantası, performans), `pitfalls.md`, ve türün teknik kartı varsa (`documentary-tech.md`: hangi modül kopyalanır). Treatment'taki kimlik kartı bağlayıcıdır; teknik dosyalar görünüme karışmaz.
 
-Sıra: dünya ve kahraman sahneler → oynatıcı ve zamanlama → altyazı → ses dünyası → kalite kademeleri → video sözleşmesi.
+Sıra: **soğuk açılışı uçtan uca kanıtla** (ilk bölüm: görüntü + ses + altyazı + video sözleşmesi çalışır durumda) → kalan kahraman sahneler (iki sahnede görünen her şey ortak modül; tutarlılık sayfası tek yerde) → oynatıcı → ses dünyası → kalite kademeleri. Yerleşim kaydı: ekran yazıları `claim/placeFree` ile, altyazı bandı korunan alan (`craft.md` → 12).
 
 ## Aşama 5: eleştiri döngüsü (en az üç tur, erken)
 
@@ -59,7 +59,8 @@ Sıra: dünya ve kahraman sahneler → oynatıcı ve zamanlama → altyazı → 
 - Bölüm sonları (`dev/endtest.mjs fast`): kayıt başa dönmüyor, görüntü donmuyor.
 - Performans: her kademede fps (`dev/fpstest.mjs`), kare maliyeti (`dev/perftest.mjs`); otomatik seçim çalışıyor.
 - CC ve anlatım düğmeleri gerçekten kapanıp açılıyor; seçim hatırlanıyor.
-- `npm run video -- <slug> --from 60 --to 75` kısa deneme.
+- `npm run verify -- <slug>`: `renderAt(t)` saflık testi geçer (aynı t aynı piksel).
+- `npm run video -- <slug> --from 60 --to 75` kısa deneme; video modunda hareketli gren kapalı.
 
 ## Aşama 7: teslim
 

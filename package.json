@@ -9,7 +9,8 @@
     "avatars": "node tools/avatars.mjs",
     "voice": "node tools/voice.mjs",
     "video": "node tools/render-video.mjs",
-    "thumbnail": "node tools/thumbnail.mjs"
+    "thumbnail": "node tools/thumbnail.mjs",
+    "verify": "node tools/verify-purity.mjs"
   },
   "engines": {
     "node": ">=20"

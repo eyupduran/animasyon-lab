@@ -29,3 +29,17 @@ Başlangıç ekranı + Başlat (otomatik oynatma engeli); oynat/duraklat, bölü
 ## Kalite kademeleri (bkz. `craft.md` → 8)
 
 `ultra` (video) / `high` / `mid` / `low` / `min`; çalışma anında değişebilir; açılışta ölçüp seç; oynatmada düş; `?tier=` ile sabitlenebilir. Testler: `dev/perftest.mjs`, `dev/fpstest.mjs`, `dev/playtest.mjs`, `dev/endtest.mjs`, `dev/toggletest.mjs`, `dev/sheet.mjs` (temas sayfası), `dev/poster.mjs`. Referans uygulama: `animations/documentary/ant-documentary/dev/`.
+
+## Ses tasarımı kuralları (kodla; kaynak `docs/code-mechanisms.md` (e))
+
+- **Tempo haritası:** bölümler tam ölçü sayısıyla; kesme, dominanttan sonra tonikte iner; **kesmenin üstüne vurgu koyma** (kesme duyulur, ürkütmez). Yeni davul/katman **yarı güçle** girer (+3,5 dB, +11 dB değil).
+- **Karışım hedefleri:** −16 LUFS bütünleşik, −1 dBTP tepe; müzik konuşmanın ~10 dB altında; anlatımda kısma (ducking) 0,4 sn zaman sabitiyle.
+- **Denetim (`sync-check` fikri):** görsel olayların ses vuruşuna uzaklığı ±100 ms içinde; olaya girişte > 6 dB sıçrama = ürkütme, hata; kesmeden sessizliğe geçiş serbest.
+- Ortam katmanı + karakter sesleri + vurgular; her bir efekt hem canlı `AudioContext` hem `OfflineAudioContext` ile aynı fonksiyondan üretilir.
+
+## Teslim ve video kalitesi (kaynak `docs/code-mechanisms.md` → delivery)
+
+- Video 30 fps, kareler kayıpsız PNG yakalanır, ffmpeg BT.709 TV aralığı etiketiyle (`scale=out_color_matrix=bt709`, `setparams`). Süper örnekleme (`--ss 2`) sunulursa PSNR ~6 dB artar.
+- **Yüklenen videoda hareketli gren yok:** YouTube yeniden kodlamada gren bit hızını yiyor ve bulanıklaşıyor (SSIM 0,94 → 0,85). Web sayfasında hareketli gren serbest; `?video=1` modunda gren sabit ya da kapalı.
+- **Saflık testi:** `npm run verify -- <slug>` — `renderAt(t)` aynı t'de ve uzaktan geri atlayınca aynı pikselleri vermeli; sayfa hatası olmamalı. Başarısızsa: `Math.random`, kare sayacı, kalıcı durum, zamanla biriken parçacık.
+- **Temas sayfası kesmeden kaçar:** her N saniyede, N/2 kaydırmayla örnekle; örnek bir kesmenin ±0,35 sn içindeyse kesme + 0,45 sn'ye kaydır; kare zamanı tarayıcıda karenin üstüne basılır. Her bölüm sınırında 1/30 sn'lik şeritler (flaş kare avı) ve yüz/el için 1:1 kırpmalar.

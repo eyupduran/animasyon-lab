@@ -14,6 +14,8 @@ Biçim: **belirti** → neden → çözüm. Her oturum sonunda yeni bulunanlar e
 - **İzleyicinin bilgisayarında animasyon donuyor** → kalite sabit "yüksek", makine yetişmiyor; ölçümde yük tek efekte değil binlerce küçük nesneye (16 bin kum tanesi × 290 üçgen) yayılmıştı → çalışma anında değişen kalite kademeleri + açılışta otomatik seçim + oynatmada düşürme; küçük nesneleri bölgelere ayır ve geometrisini kabalaştır; düşük kademede gölge listesinden çıkar. `dev/perftest.mjs` ve `dev/fpstest.mjs` ile ölç (`craft.md` → 8).
 - **Senkron kare ölçümü gerçek fps'ten kötümser** → `readPixels` GPU boru hattını boşaltır → eşiği buna göre koy (27 ms senkron ≈ 50+ fps oynatma) ve gerçek fps'i ayrıca rAF ile ölç.
 
+- **`renderAt(t)` aynı anda farklı piksel veriyor (saflık testi başarısız)** → Babylon `PostProcess` `reusable=true` ile kurulmuş; yeniden kullanılabilir katman iki dokuyu dönüşümlü kullanır, kare öncekine bağlanır → `reusable=false`; katmanı kademe değişiminde takıp çıkarırken `camera._postProcesses.includes(pp)` ile koru. `npm run verify -- <slug>` her kademede (`--query tier=…`) çalıştır.
+
 ## Sahne ve kamera
 
 - **Hareket eden işaretçi (paket, nokta) kutuların içinden geçip yazıları örtüyor** → yol, istasyon kutularının ortasından çizilmiş → paketi kutuların altından ya da üstünden giden ayrı bir hat üzerinde yürüt, istasyonları hatta kısa dikey çizgilerle bağla.

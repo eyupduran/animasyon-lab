@@ -225,7 +225,7 @@ void main(void) {
 
 export function createLens(scene, camera, engine, pipe, sun, { contact = 0, bokeh = 1.2 } = {}) {
   const depth = scene.enableDepthRenderer(camera).getDepthMap();
-  const pp = new PostProcess('lens', 'lens', ['res', 'nearZ', 'rangeZ', 'focusZ', 'macro', 'tanH', 'aspect', 'contact', 'bokeh', 'lightV'], ['depthSampler'], 1, camera, Texture.BILINEAR_SAMPLINGMODE, engine, true /* reusable: tiers attach/detach it */);
+  const pp = new PostProcess('lens', 'lens', ['res', 'nearZ', 'rangeZ', 'focusZ', 'macro', 'tanH', 'aspect', 'contact', 'bokeh', 'lightV'], ['depthSampler'], 1, camera, Texture.BILINEAR_SAMPLINGMODE, engine, false /* not reusable: a reusable post process alternates two textures and makes frames depend on the previous one */);
   const st = { contact, bokeh, pp };
   const lv = new Vector3();
   pp.onApply = e => {

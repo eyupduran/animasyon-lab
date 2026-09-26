@@ -56,7 +56,8 @@ function applyTier(name) {
   fixResolution();
   document.body.dataset.tier = name;
 }
-applyTier(VIDEO ? 'ultra' : Q.get('tier') || (quality === 'low' ? 'low' : 'high'));
+applyTier(Q.get('tier') || (VIDEO ? 'ultra' : quality === 'low' ? 'low' : 'high'));
+if (VIDEO) cinema.pipe.grain.animated = false;   // moving grain survives YouTube re-encoding badly; keep it still in the upload
 const TIER_ORDER = ['high', 'mid', 'low', 'min'];
 // startup: time a few heavy frames per tier (GPU-synchronous) and keep the first tier under budget
 async function pickTier() {

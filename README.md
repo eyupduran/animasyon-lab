@@ -76,6 +76,7 @@ Kurulum (bir kez): `C:\ProgramData	ts_lab\omni` Python ortamı (PyTorch CUDA, `o
 ```
 npm run video -- <slug>                # animations/<kategori>/<slug>/renders/<slug>.mp4 + .srt + -chapters.txt
 npm run video -- <slug> --subs burn    # altyazı görüntüye gömülü
+npm run verify -- <slug>               # renderAt(t) saflık testi: aynı an aynı piksel, sayfa hatası yok
 ```
 
 Claude Code'da `/video git hattı` komutu bütün işi yapar: videoyu, altyazıyı, bölüm listesini, kapak görsellerini ve YouTube açıklamasını `Masaüstü\YouTube\<slug>\` klasörüne çıkarır ([.claude/skills/video/SKILL.md](.claude/skills/video/SKILL.md)).

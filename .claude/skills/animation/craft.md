@@ -95,3 +95,34 @@ Kurallar ve gerekçeleri `docs/cartoon-style-in-code.md` içinde; özet:
 - Tipografi karakterdir: anahtar kelime harf/kelime stagger ile vurgu renginde gelir.
 - Her vurguya ses efekti, anlatım altında müzik (ducking). Kodla üretilen kısa efektler (`craft.md` → 7).
 - Ucuz görünme listesi (`docs/cartoon-style-in-code.md` → 7) her eleştiri turunda kontrol edilir.
+
+## 10. Zaman, vuruş ve anahtar kare araçları (açık kodlu işlerden, MIT)
+
+Kaynak: `docs/code-mechanisms.md` (a). Bunlar animasyonun kendi `src/` içinde yeniden yazılır; sayılar başlangıç değeridir.
+- **Vuruş ızgarası:** müzikli işte `beat = 60/BPM`; anlatımlı işte vuruş yerine Whisper kelime/nefes zamanları. `pulse(t, k) = exp(-frac(t/beat) * k)` (k ≈ 6–10): vuruşta sıçrayıp sönen vurgu. **Önce gör, sonra duy:** sahne olayı ilgili kelimeden 0,3–0,5 sn **önce** başlar (3b1b kuralı); ipucu zamanına bu kadar eksi ver.
+- **Anahtar kare yardımcıları:** `kf(t, [[t0,v0],[t1,v1],…], ease)` dizi değerleriyle (konum, renk) çalışır; yakınlaştırma **log uzayında** ara değerlenir (`exp(lerp(log a, log b, k))`). `env(t, a, b, c, d)`: giriş (a→b), tutma, çıkış (c→d) zarfı; görünme/kaybolma için `win` yerine bunu kullan.
+- **Easing seti tek dosyada:** smoothstep, cubic in/out, `backOut(s≈1.7–1.9)`, `elasticOut`; lineer yasak (`docs/cartoon-style-in-code.md` → 7).
+- **Boil (el çizimi titremesi):** çizgi tohumunu her 4 karede (7,5/sn) ya da 12/sn değiştir; kare kare değil (titrer), sabit değil (ölü).
+- **El titremesi:** karma (hash) tabanlı, 24 fps'e kilitli, genlik uzaklıkla orantılı (`ant-documentary` → `applyCam`).
+
+## 11. Çekim yapısı
+
+- **Bölüm = dosya, çekim = fonksiyon:** `chapter(name, start, end, [[t0, shotFn]])`; `shotFn(t, lt, dur)` **tüm kareyi** boyar (arka plan dahil); `lt` çekim içi zaman, `dur` çekim süresi. Hiçbir çekim önceki çekimin durumuna dayanmaz.
+- 3B'de çekim fonksiyonu bir **tanımlayıcı** döndürür: `{ cam, env, actors, fx, lights, finish, overlay }`; sahne bunu uygular. Çekimler anlatım ipucu kimliklerine bağlanır (`cue('n2') - 0.4`), süreleri ölçülen ses süresinden (pre/gap/tail) türetilir (bizim `manifest.json` akışı).
+- **Her çekimde tek bir odak eylemi ve büyük bir siluet.** Kare bütçesi: yüzlerce dolgu/çizgi olur, binlerce olmaz (`craft.md` → 8).
+- **Soğuk açılışı önce uçtan uca kanıtla** (görüntü + ses + altyazı), sonra kalan bölümleri paralel kur. İki sahnede görünen her şey ortak modül olur; tutarlılık sayfası (renk, ölçek, karakter oranları) tek yerde.
+
+## 12. Yerleşim kaydı: yazılar çarpışmasın
+
+Her ekran yazısı ve korunacak alan bir kayda yazılır: `claim(id, 'text' | 'keep', box)`; yeni etiket `placeFree(box, candidates)` ile boş yere konur. Otomatik denetim (`dev/layout-check.mjs` gibi): her 0,1 sn örnekle; yazı×yazı hiç kesişmesin, yazı×koruma alanı kısmen kesişebilir, kenar boşluğu ≥ 4 px. **Altyazı bandı her zaman bir `keep` alanıdır**; hiçbir etiket ve panel oraya girmez.
+
+## 13. 3B sinematik zincir (sayılarla)
+
+Kaynak: threejs-conference (MIT), claude-studio-toolkit (MIT); ayrıntı `docs/code-mechanisms.md` (d).
+- **Sıra:** sahne → (SSAO/GTAO) → **bloom yalnızca emissive kanaldan** (MRT ya da emissive maskesi; yarı çözünürlük; güç ≈ 0,06–0,4, eşik ≈ 0,62–0,65) → lens flare (varsa) → DOF → sis (sis içinde bloom ×0,25 bastırılır) → renk düzeni (ton/kaydırma, yeşil bastırma, doygunluk, kontrast) → kenar kromatik sapma (`edgeMask = 1 − 1/(1+(d·f)²)`, ofset ≤ 0,0015–0,003) → kararma → kenar yumuşatma (SMAA/FXAA) → gren **en son** (dither/gren her zaman son).
+- "Yalnızca bloom" yapay zekâ kokusudur: bloom'u emissive'e bağla, sahnedeki her parlak yüzeye değil.
+- **Kamera kuralları:** dolly > orbit > roll; tek çekimde ≤ 45° dönüş; çekimler arası %10 zaman örtüşmesi; boş yörünge dönüşü yasak.
+- **Görünüm ön ayarları** tek veri nesnesi olarak (gündüz, altın saat, gece, sis…); bölüm başına ön ayar seçilir ve aralarında geçiş yapılır.
+- **Parçacıklar:** curl-noise akış alanı (`curl(p) = ∇×noise`), GPU ping-pong ya da thin instance; sayı ekran boyutuna göre; kar/kıvılcım/polen aynı sistem farklı ön ayar.
+- **Hacimsel bulut (raymarch):** şekil fbm 3 oktav ×0,0003 − ayrıntı 5 oktav ×0,003; 80 adım kamera ışını + 6 adım ışığa; Beer-Lambert + "powder"; faz `HG(0,6)·0,7 + HG(−0,3)·0,3`; günün saatine göre palet.
+- **Ressam bitişi (Kuwahara):** 7×7 pencere, 4 çeyrek, ağırlık `1/(1+(σ·400)²)`, yarıçap 5, yarı çözünürlükte; üstüne tuval dokusu; sinema oranı için bantlar (2,35:1) isteğe bağlı. Tarih türü için doğal.

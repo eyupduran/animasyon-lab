@@ -27,6 +27,20 @@ Amaç işi beğenmek değil, kusur bulmak. Her tur: görüntü al → kusurları
 - Beş konsept birbirinden gerçekten farklı mı? Hepsi aynı kanal kimliğini taşıyor mu (`assets/thumbnail-kit`)?
 - Görsel "yapay zekâyla üretilmiş gibi" zengin mi (ışık, derinlik, doku), yoksa düz bir çizim gibi mi duruyor?
 
+## "Slop" ret listesi (her turda; kaynak claude-studio-toolkit, MIT)
+
+Şunlardan biri varsa kare geçmez: varsayılan geometri/malzeme (ayarlanmamış küre, MeshStandard gri), boş yörünge dönüşü, "yalnızca bloom" parlaklığı, her yerde aynı vurgu rengi, ortalanmış tek nesne + düz zemin, "herhangi bir sitede olabilir" hissi, fade ile gelen metin, sabit kamera + sabit ışık. Zorunlu liste: konudan çıkan görsel dil, ışık yönü, en az üç derinlik katmanı, ikincil hareket, bir "kahraman kare".
+
+## Eleştirmen ajan kalıbı
+
+Temas sayfasını inceleyen ajanın (ya da kendi ikinci geçişinin) kuralları: varsayılan karar **"DÜZELTME GEREK"**; "geçer" yalnızca kanıtla; görülemeyen şey için ayrı "GÖRSEL DOĞRULAMA GEREK" etiketi; her bulgu `dosya:satır` ile; **hayali geçer yok** (ekran görüntüsü olmadan hiçbir sahne onaylanmaz). Bulgular treatment'taki kahraman kareyle karşılaştırılır.
+
+## Öğretici mimari (3b1b kuralları, MIT)
+
+- Yanlış sezgi **önce ve ayrı renkte** gösterilir, sonra düzeltilir; düzeltmede yanlış olan sönükleşir (DIM ≈ 0,1), silinmez.
+- Her 3 sahnede bir soru karesi; bilgi yoğunluğu rampa gibi artar, tek sıçrama yok.
+- Yan öğeler sönükleşir, altta kalanlar solar; ekranda aynı anda tek yeni fikir.
+
 ## Akıcılık ve "ucuz" görünme turu
 
 - `dev/fpstest.mjs` her kademede: fps ve 50 ms üstü kare sayısı. Zayıf makine için `tier=min` de akıcı mı?
