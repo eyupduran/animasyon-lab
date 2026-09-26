@@ -1,6 +1,6 @@
 # Karıncanın Gözünde Hayat · Belgesel Sürümü
 
-`ant-eye-view` animasyonunun, iki araştırmanın sonucuyla yeniden yapılmış sürümü: anlatım `.claude/skills/narration` belgesel skilliyle yeniden yazıldı (beat sheet: `NARRATION.md`), görüntü `REALISM.md` önerileriyle gerçekçileştirildi. İki sürüm karşılaştırılabilsin diye ayrı klasörde duruyor.
+Karınca animasyonunun ilk sürümünün (`ant-eye-view`, artık kaldırıldı; git geçmişinde duruyor) iki araştırmanın sonucuyla yeniden yapılmış sürümü: anlatım `.claude/skills/narration` belgesel skilliyle yeniden yazıldı (beat sheet: `NARRATION.md`), görüntü `REALISM.md` önerileriyle gerçekçileştirildi.
 
 ## İlk sürümden farkı
 

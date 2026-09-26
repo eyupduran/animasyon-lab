@@ -22,7 +22,7 @@ Bu dosya **nasıl** yapılacağını anlatır, **neye benzeyeceğini** değil. R
 
 ## 2b. Gerçekçi 3B (makro, belgesel)
 
-Gerçekçilik istenen 3B sahnelerde en büyük farkı yaratanlar (ayrıntı: `animations/biology/ant-eye-view/REALISM.md`):
+Gerçekçilik istenen 3B sahnelerde en büyük farkı yaratanlar (ayrıntı: `animations/documentary/ant-documentary/REALISM.md`):
 - **Uzun objektif:** dar görüş açısı, kamera geride; konu aynı boyda kalır, arka plan sıkışır ve erir. Hızlı yörünge yerine yavaş kaydırma, sabit kadraj, belli belirsiz el titremesi (zamanın saf fonksiyonu olarak).
 - **Gerçek HDRI ile ortam ışığı:** Poly Haven (CC0, atıf gerekmez) bir `.hdr`, prosedürel gökyüzünden çok daha doğal yansıma ve dolgu ışığı verir. Güneşi ayrıca yönlü ışıkla ver.
 - **Yumuşak ama temasta sertleşen gölge** (Babylon: `useContactHardeningShadow`); ayağın zemine "oturması" gerçekçiliğin ilk işaretidir.
