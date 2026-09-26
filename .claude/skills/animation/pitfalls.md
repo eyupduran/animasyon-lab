@@ -23,6 +23,12 @@ Biçim: **belirti** → neden → çözüm. Her oturum sonunda yeni bulunanlar e
 - **Telefonda harita yazıları okunmuyor** → yatay görünüm için ayarlanmış kamera genişliği dikeyde de kullanılıyor → dikey ekranda görünen genişliği daralt (yaklaşık ×0,62); yan kenarlardan biraz kırpılmasına izin ver.
 - **Açılışta dosya adları üst üste biniyor** → konumlar tamamen rastgele → ızgaraya oturtulmuş, hafifçe oynatılmış rastgele konumlar kullan.
 
+- **Headless Chrome'da WebGL bağlamı düşüyor (context lost)** → Babylon `CascadedShadowGenerator` ekran kartı sürecini çökertiyor → kameranın baktığı yere oturtulan tek bir `ShadowGenerator` kullan (ışığın `ortho*` sınırlarını her karede ayarla).
+- **Rastgele dağıtılmış çimler, yapraklar, çubuklar çekimlerin önünü kapatıyor** → 3B dünyada her nesne rastgele konumda → olayların geçtiği bir "sahne alanı" tanımla, dağınık nesneleri ve uzun çimleri onun dışına koy, kenardaki çimleri dışa eğ. Temas sayfasıyla her bölümü kontrol et.
+- **Kuş bakışı çekimde kamera çimlerin içinde kalıyor** → kamera en uzun yaprak boyundan alçakta → kamerayı çok yükseğe al ve dar görüş açısı (tele) kullan.
+- **Makro ölçekte kum taneleri karıncayı yutuyor** → ikosfer yarıçapı "boyut" diye kullanılmış (çap iki katı) → gerçek boyutları mm olarak yaz, çoğunu ince kum (0,05–0,25 mm yarıçap) yap, iri taneleri seyrek tut.
+- **Telefonda (dikey) 3B sahne dar bir dilim gibi görünüyor** → düşey görüş açısı sabit → dikey ekranda `fovMode` yatay yap, yatay açıyı masaüstünün ~0,62'si al; ölçek çubuğunu da buna göre hesapla.
+
 ## Ses
 
 - **Kod terimleri (Spring, bean, @Transactional…) yanlış okunuyor** → söyleniş sözlüğü kur (`PRON`: "bean" → "bin", "@Transactional" → "et trenzekşınıl"), kesme işaretinden sonraki eki birleştir ("Tomcat'e" → "tomkete"), ek uyumuna dikkat et ("classpath'e" için "klaspet" → "klaspete"). Whisper doğru okunan İngilizce terimleri İngilizce yazdığı için yüzde 5–10 "fark" normaldir; yalnızca anlamı bozulan kelimeler için satırı yeniden kur.

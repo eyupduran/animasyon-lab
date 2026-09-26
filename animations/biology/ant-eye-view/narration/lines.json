@@ -1,0 +1,60 @@
+{
+ "voice": "omni-erkek-yasli-derin",
+ "speed": 0.9,
+ "out": "public/voice",
+ "manifest": "narration/manifest.json",
+ "lines": [
+  {
+   "id": "acilis",
+   "say": "Bir karıncanın gözünden bakınca dünya nasıl görünür? Şu dev kayalara bakın: hepsi aslında birer kum tanesi. Arkadaki yeşil kuleler ise sıradan çim yaprakları. Bu dünyanın sakini şimdi yola çıkıyor: boyu dört beş milimetre olan bir siyah bahçe karıncası. Gelin, bir gün boyunca onun peşine takılalım."
+  },
+  {
+   "id": "olcek",
+   "say": "Önce ölçeği anlayalım. Karıncamızı bir insan boyuna büyüttüğümüzü düşünelim. O zaman yedi buçuk santimlik bir çim yaprağı, otuz metreyi aşan, on katlı bir bina kadar olurdu. İri bir kum tanesi, belimize kadar gelen bir kaya. Büyükçe bir çiy damlası ise neredeyse karıncanın boyu kadar bir su küresi. Karıncamız her sabah bu dev manzaranın içinde yola çıkıyor."
+  },
+  {
+   "id": "beden",
+   "say": "Bu karınca bir işçi, yani bir dişi. Yuvadaki bütün işçiler dişidir; erkekler yalnızca çiftleşme zamanı ortaya çıkar. Okulda böceklerin baş, göğüs ve karından oluştuğunu öğreniriz. Karıncada iş biraz daha ilginç. Göğüs sandığımız parçanın arkasına karnın ilk halkası kaynaşmıştır; bu birleşik parçaya mezozoma denir. İnce bel ise aslında karnın ikinci halkasıdır. Altı bacağın hepsi mezozomaya bağlıdır. Karıncanın kemiği yoktur; bedenini dıştan, kitin denen sert bir zırh sarar. Akciğeri de yoktur: hava, yanlardaki minik deliklerden ince borucuklarla bütün bedene dağılır."
+  },
+  {
+   "id": "gozler",
+   "say": "Peki bu karınca bizi görebilir mi? Başının iki yanındaki parlak kabarcıklar bileşik gözlerdir. Her biri, bal peteği gibi dizilmiş minik merceklerden oluşur. Ama siyah bahçe karıncasının her gözünde yalnızca yüz kadar mercek vardır ve her mercek dünyadan tek bir nokta yakalar. Yani karıncamızın gördüğü dünya keskin bir fotoğraf değil, bulanık bir nokta mozaiğidir. Işığı, gölgeyi ve hareketi fark eder, ama bir yüzü asla seçemez. Bizim gördüğümüzden yüzlerce kat daha bulanık bir dünya bu."
+  },
+  {
+   "id": "koku",
+   "say": "Karıncanın dünyası gözlerle değil, antenlerle kurulur. Bu dirsekli antenler on iki halkadan oluşur ve üzerleri minik algılayıcı tüylerle kaplıdır. Karınca onlarla koklar, tadar ve dokunur; nemi, sıcaklığı, titreşimi hisseder. Karıncalarda koku alma genlerinin sayısı üç yüzü, dört yüzü bulur; bir meyve sineğinde bu sayı altmış kadardır. Bizim göremediğimiz bir koku haritası, karıncanın önünde apaçık durur."
+  },
+  {
+   "id": "kimlik",
+   "say": "İki karınca karşılaştığında önce antenlerini birbirine dokundurur. Her koloninin kendine özgü bir kokusu vardır; bu koku, karıncanın zırhını kaplayan ince, yağlı bir tabakada saklıdır. Kokusu tanıdık gelen bir yuvadaştır. Yabancıysa kavga çıkabilir. Karıncalar kimlik kartlarını üzerlerinde taşır."
+  },
+  {
+   "id": "iz",
+   "say": "Karıncamız biraz sonra yere dökülmüş tatlı bir damla buluyor. Kursağını dolduruyor ve yuvaya dönüyor. Dönerken karnının ucunu yere değdirip bağırsağından gelen bir koku bırakıyor: bir feromon izi. Yuvadaki kardeşleri bu izi antenleriyle bulup kaynağa koşuyor. Yiyecek bulan her karınca, dönüşte izi biraz daha güçlendiriyor. Kaynak bitince iz yenilenmiyor ve bir saat içinde büyük ölçüde uçup gidiyor. Böylece yol, tam gerektiği kadar yaşıyor."
+  },
+  {
+   "id": "kisayol",
+   "say": "Peki bu yolları kim planlıyor? Hiç kimse. Bilim insanları bunu bir deneyle gösterdi: yuva ile yiyeceği, biri kısa biri uzun iki köprüyle bağladılar. Başta karıncalar iki yola da dağıldı. Ama kısa yoldan gidenler daha çabuk dönüp izlerini daha sık tazeledi. Koku kısa yolda birikti ve karıncalar giderek oraya yöneldi. Bir süre sonra trafiğin neredeyse tamamı kısa yoldaydı. Kraliçe emir vermiyor, harita yok, lider yok. Binlerce küçük karardan akıllıca bir düzen doğuyor. Buna kendiliğinden örgütlenme denir."
+  },
+  {
+   "id": "guc",
+   "say": "Karıncaların gücü dillere destandır; bazı karıncalar kendi ağırlığının onlarca katını taşıyabilir. Ama bu bir süper güç değil, küçük olmanın sonucudur. Bir canlının boyunu iki katına çıkaralım: kaslarının kesiti dört kat büyür, ama ağırlığı sekiz kat artar. Boy büyüdükçe ağırlık, güçten hep daha hızlı artar. Bu yüzden insan boyunda bir karınca araba kaldıramazdı; büyük olasılıkla kendi ağırlığını bile zor taşırdı."
+  },
+  {
+   "id": "fizik",
+   "say": "Küçük olmak, fiziğin kurallarını da değiştirir. Bir çim yaprağından düşen karınca fazla hızlanamaz, çünkü hava onu frenler. Yüksek bir ağaçtan bile düşse çoğu zaman kalkıp yoluna devam eder. Bize zararsız görünen su ise onun için bir tehlikedir. İri bir yağmur damlası, bir karıncadan birkaç kat ağırdır. Suyun yüzey gerilimi küçük bir canlıyı yapışkan bir tuzak gibi tutabilir. Karıncamız bir çiy damlasından içerken bu yüzden temkinli."
+  },
+  {
+   "id": "ciftlik",
+   "say": "Siyah bahçe karıncasının en şaşırtıcı işlerinden biri çobanlık. Bu bitkinin sapında yaprak bitleri yaşar. Bitkinin özsuyunu emerler; bu su şekerce zengin ama proteince fakirdir. Bitler fazla şekeri, ballı çiy denen tatlı damlalar olarak dışarı atar. Karınca bir biti antenleriyle okşar, bit bir damla verir. Karşılığında karıncalar bitleri uğur böceği gibi avcılardan korur. İki taraf da kazançlı. Buna karşılıklı yarar, yani mutualizm denir."
+  },
+  {
+   "id": "yuva",
+   "say": "Karıncamız dolu kursağıyla yuvaya dönüyor. Toprağın altında odalardan ve tünellerden oluşan bir şehir var. Kraliçe burada; tek işi yumurta bırakmak. Laboratuvarda yaşayan bir siyah bahçe karıncası kraliçesi yirmi sekiz yılı aşarak bir rekor kırdı. Yumurtadan larva çıkar; larva ipek bir koza örüp pupa olur. Bu iri beyaz taneleri çoğu zaman karınca yumurtası sanırız, aslında onlar kozadır. Genç işçiler içeride yavrulara bakar, yaşlandıkça dışarı çıkıp yiyecek toplar. En tehlikeli iş en yaşlılara düşer. Karıncamız kursağındaki tatlıyı ağızdan ağıza kardeşleriyle paylaşıyor. Tek bir karıncanın getirdiği besin, yüz kadar yuvadaşa dağılabilir."
+  },
+  {
+   "id": "kapanis",
+   "say": "Şimdi başa dönelim. Bir karıncanın gözünden dünya nasıl görünür? Bulanık bir mozaik, ama kokularla örülmüş bir harita. Kum tanelerinin kaya, çiy damlalarının tuzak olduğu, fiziğin bile başka işlediği bir yer. Tek başına küçük bir canlı; ama birlikte, planı olmadan yolunu bulan dev bir zekâ. Bugün dünyada yaklaşık yirmi katrilyon karınca yaşıyor. Bir dahaki sefere yere baktığınızda, ayağınızın dibindeki bu dev dünyayı hatırlayın."
+  }
+ ]
+}
