@@ -19,6 +19,7 @@ Depoda görsel stil animasyondan animasyona değişir; ama **belgesel türünün
 | Prosedürel doku ve loft/kıl geometri araçları | `src/textures.js`, `src/geom.js` | Evet (araç) | Yeni canlı yeni geometri ister; araçlar aynı kalabilir. |
 | Karınca, toprak, çim, yuva, laboratuvar | `src/ant.js`, `world.js`, `nest.js`, `lab.js`, `critters.js` | **Hayır** | Yalnızca yöntem örneği olarak oku (spline loft, tripod yürüyüş, IK, yüzeye oturtma). |
 | Geliştirme testleri (temas sayfası, oynatma, bölüm sonu, kare maliyeti, gerçek fps, poster) | `dev/*.mjs` | **Evet** | Port numarasını değiştir. |
+| Yerleşim denetimi (gerçek DOM kutularından yazı×yazı, yazı×altyazı, kenar payı) ve başlık kontrast ölçümü | `honeybee-day/dev/layout-check.mjs`, `dev/contrast.mjs` | **Evet** | Etiket katmanı `claim/placeFree` kaydıyla yazılmalı (`honeybee-day/src/overlay.js` referans). |
 
 ## Yeni belgeselde sırayla
 

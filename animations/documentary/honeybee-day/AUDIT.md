@@ -69,3 +69,15 @@ Kare kare (denetimin işaret ettiği anlar):
 **Kalan üç şey (sonraki tur):** başlık kartı kontrastı; kariyer etiketlerinin çakışması (yerleşim kaydı); çayırda sis ve uzak plan kontrastı.
 
 **Kurallara işlenenler:** canlı modelleme asgarisi ve geniş plan kompozisyonu (`craft.md`), "canlıyı 1:1 kırp, ayaklar değiyor mu, etiketler çakışıyor mu" (`critique.md`), `verify` ×3 ve yerleşim kaydı zorunlu (`SKILL.md`), tür kartına geniş plan kuralı.
+
+---
+
+# Üçüncü denetim (commit 7bda04c)
+
+Bağımsız ölçüm: saflık 3×9 temiz; `layout-check` 3713 karede 10 759 yazı kutusu, çakışma 0 / altyazıya giren 0 / kenar payı ihlali 0; `contrast` başlık kartı 10,5:1; otomatik `high` 66–80 fps, 15 sn'de 1–2 yavaş kare (yalnızca başlangıç), `min` 142 fps; oynatma fark 14 ms, geri 0, sarma 0, hata 0; bölüm sonları 11/11.
+
+Kareler: başlık kartı koyu şerit üstünde net (masaüstü ve telefon); kariyer altıgenlerinin adları iki sıraya ayrılmış, çakışma yok; çayırda uzak sırtlar ve çiçekler seçiliyor, ön plan katmanı duruyor, arı kadrajın odağı. Üç kusur da kapandı.
+
+**Son puan: Görsel 4,5 · Akıcılık 5 · Özgünlük 5 · Hikâye/metin 4,5 · Ses 4 · Teslim 5 → 4,7/5.** Yayına uygun. Kalan küçük şeyler (ağız parçaları, bacak kılları, "çiçek sadakati" planında arının küçük kalması) sonraki belgesellerde `craft.md` → 14 ile kendiliğinden ele alınır.
+
+**Kurallara katkı:** `dev/layout-check.mjs` (gerçek DOM kutularından çakışma denetimi) ve `dev/contrast.mjs` (yazı arkası zemin kontrastı) sonraki animasyonlar için referans araç; `documentary-tech.md` tablosuna eklendi.
