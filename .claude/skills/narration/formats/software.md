@@ -63,13 +63,7 @@ Kurallar:
 
 ## Görsel dil
 
-Renk ve yazı tipi her animasyonun kendi kararıdır; bu yalnızca türün görsel dilidir.
-- **Senaryo ekranda somut:** bir kullanıcı, bir istek, bir hata mesajı; soyut kutulardan önce gerçek bir örnek.
-- **Durum değişimi görünür:** bir değişken, bir tablo satırı, bir paket; her adımda neyin değiştiğini vurgula, gerisini sabit tut.
-- **Aynı anda en çok üç bileşen** ekranda aktif; ötekiler sönük.
-- **Kod parçası kısa** (≤ 6 satır, ≤ 40 karakter), okunacak kadar ekranda kalır; anlatıcı kodu okumaz, ne yaptığını söyler.
-- **Zaman ekseni ve akış çizgileri** (istek → yanıt, önce → sonra) tutarlı yönde akar: soldan sağa ya da yukarıdan aşağıya.
-- Ölçek atlaması (bir sistemden bir bayta inmek) güçlü bir "vay" anıdır.
+Bu dosya yalnızca anlatım sesini tanımlar. Görsel tasarım uzayı `.claude/skills/animation/formats/software.md` içindedir; treatment aşamasında oradan bir nokta seçilir.
 
 ## Önce / sonra
 

@@ -1,5 +1,7 @@
 # Belgesel tekniği (yeniden kullanılabilir)
 
+> Üretim aşamasında okunur (SKILL.md → Aşama 4). Treatment aşamasında okunmaz: görünüm kararları oradan önce, konudan çıkarak verilir.
+
 Depoda görsel stil animasyondan animasyona değişir; ama **belgesel türünün tekniği** (kamera dili, oynatıcı, zamanlama, ses, kalite kademeleri) ortaktır ve yeni belgesellerde yeniden kullanılır. Referans uygulama: `animations/documentary/ant-documentary/`. Yeni bir belgesel yaparken bu klasörü **okumak ve teknik modüllerini kopyalamak serbesttir**; kopyalanmaması gereken şey görsel dünyanın kendisidir (karınca, toprak, renk paleti, yazı tipleri, sahne düzeni). Bu, `CLAUDE.md` "sıfırdan tasarla" kuralının belgesel türü için tanımlı istisnasıdır.
 
 ## Neyi kopyala, neyi yeniden tasarla

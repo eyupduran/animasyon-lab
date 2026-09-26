@@ -59,16 +59,9 @@ Doğa belgeselleri, hayvanları dizi karakterleri gibi anlattıkları ve olaylar
 5. **Açığa çıkış:** Görünmeyen mekanizma: neden işe yarıyor? Belgeselin "aha" anı burada.
 6. **Dönüş:** Başa dönülür; açılıştaki görüntü yeni anlamıyla. Kalıcı bir son görüntü.
 
-## Görsel dil (kamera)
+## Görsel dil
 
-Doğa belgeselinin kamerası sabırlıdır. Animasyonda bunu taklit et:
-- **Uzun odak:** Uzaktan, sıkıştırılmış perspektif, arka plan yumuşak. Hayvan kameradan habersizdir.
-- **Yavaş kaydırma:** Yavaş, düz, sürekli yatay hareket (slider). Ani zoom yok, hızlı dönüş yok.
-- **Sabit kadraj, özne geçer:** Kamera durur, kahraman kadraja girer ve çıkar. Anlatıcı çoğu zaman bu anda susar.
-- **Nadir, yavaş odak kaydırma:** Önden arkaya geçiş, bir sahnede en fazla bir kez; yeni bir bilgiyi açığa çıkarır.
-- **Ağır çekim:** Yalnızca gözün yakalayamadığı hızdaki olaylar için (bir sıçrama, bir kapanış).
-- **Makro ışık:** Yumuşak, geniş ışık; yakın plan dokular, yerden bakış.
-- **Ölçek geçişi:** Makro ile geniş plan arasında gidip gelmek, anlatımdaki ölçek cümlesinin resmidir.
+Bu dosya yalnızca anlatım sesini tanımlar. Görsel tasarım uzayı `.claude/skills/animation/formats/documentary.md` içindedir; treatment aşamasında oradan bir nokta seçilir.
 
 ## Önce / sonra
 

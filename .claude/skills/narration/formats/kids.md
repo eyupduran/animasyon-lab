@@ -48,12 +48,7 @@ Fisch'in kapasite modeli: çocuğun çalışan belleği sınırlıdır ve bu bel
 
 ## Görsel dil
 
-Renk ve yazı tipi her animasyonun kendi kararıdır; bu yalnızca türün görsel dilidir.
-- **Tek odak:** ekranda aynı anda tek bir yeni şey; göz nereye bakacağını bilir.
-- **Yeni kelime ekranda da görünür** (büyük, kısa), resmin yanında; üç kez tekrarlanır.
-- **Soru anında bekleme:** soru sorulunca ekran 2–3 saniye durur, cevap sonra gelir.
-- **Karakter ya da kahraman** (bir hayvan, bir damla) izleyiciyle konuşuyormuş gibi kameraya döner; ama bilimsel olarak yanlış davranmaz.
-- Yazılar büyük (masaüstünde ≥ 22 px), hareket yumuşak, ani ses ve parlama yok.
+Bu dosya yalnızca anlatım sesini tanımlar. Görsel tasarım uzayı `.claude/skills/animation/formats/kids.md` içindedir; treatment aşamasında oradan bir nokta seçilir.
 
 ## Önce / sonra
 

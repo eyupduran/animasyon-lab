@@ -1,5 +1,7 @@
 # Teknik alet çantası
 
+> Üretim aşamasında okunur (SKILL.md → Aşama 4). Treatment aşamasında okunmaz: görünüm kararları oradan önce, konudan çıkarak verilir.
+
 Bu dosya **nasıl** yapılacağını anlatır, **neye benzeyeceğini** değil. Renk, yazı tipi, düzen ve teknoloji seçimi her animasyonun kendi tasarım kartından gelir. Aşağıdakiler bir menü değildir; konuya hizmet eden olursa kullan.
 
 ## 1. Işık ve derinlik (Canvas 2D ile, kütüphane gerekmez)

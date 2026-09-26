@@ -1,71 +1,47 @@
-# Animasyon Lab — çalışma kuralları
+# Animasyon Lab — kesin kurallar
 
-Bu depo, kullanıcının tüm eğitim animasyonlarını ve denemelerini bir arada tutan bir **koleksiyondur**. Ortak bir motoru ya da ortak bir stili yoktur. Her animasyon kendi başına tasarlanır ve yazılır. Hedef: bir YouTube kanalı; izleyen "bu çok iyi yapılmış" demeli.
+Bu depo bir YouTube kanalının eğitim animasyonlarını üretir. Her video **kendi sanat yönüyle** yapılır; kanalın ortak kimliği yalnızca teknikte ve kapaklardadır. Bu dosya yalnızca kesin kuralları taşır; süreç ve teknik ayrıntı ilgili adımda okunan skill dosyalarındadır.
 
-## Yalnızca kod
+## Giriş kapıları
 
-Her şey Claude'un yazdığı kodla üretilir: sahne, karakterler, hareket, ses efektleri, müzik, altyazı. **Üretken görsel/video/ses modelleri kullanılmaz** (Veo, Sora, Kling, Runway, Midjourney, Flux, ElevenLabs, Suno vb.); ücretsiz katmanları da yok, öneri olarak da geçmez. Anlatım sesi yalnızca yerel TTS'ten (`tools/voice.mjs`). İzin verilen dış kaynaklar: ücretsiz CDN'den kütüphane ve yazı tipi, CC0 HDRI/doku gibi telifsiz veri dosyaları (kaynağı README'de yazılır).
+- `/animation <konu>`: anlatımlı, altyazılı eğitim animasyonu, 6–10 dakika. Süreç: `.claude/skills/animation/SKILL.md`.
+- `/short [brief]`: sözsüz sinematik kısa film, 30–90 sn. Süreç: `.claude/skills/short/SKILL.md`.
 
-## Kalite tanımı
+## 1. Yalnızca kod
 
-Kullanıcı kaliteyi dört şeyle ölçer; hepsi birlikte sağlanmalı:
-1. **Görsel:** türe uygun, özenli, "ucuz" görünmeyen bir dünya (ışık, derinlik, doku, easing, ikincil hareket, kamera dili). Kodla ulaşılabilir stiller ve kuralları: `docs/cartoon-style-in-code.md` (düz vektör / çizgi film / kâğıt kesme / toon 3B), `.claude/skills/animation/documentary-tech.md` (gerçekçi belgesel), `.claude/skills/animation/craft.md`.
-2. **Hikâye:** izleyiciyi gerçekten saran bir anlatı: açılış sorusu, kahraman, gerilim, ödül. `.claude/skills/narration/` (tür dosyaları + `retention.md`).
-3. **Metin insan yazmış gibi:** yapay zekâ kokan kalıplar yok ("Gelin birlikte keşfedelim", "önemli bir rol oynar", tekrarlı üçlü listeler, her cümlede sıfat). Belgesel belgesel gibi, yazılım yazılım gibi okunur; tür dosyasındaki ses birebir uygulanır ve sesli okunup kesilir.
-4. **Ses sürekliliği ve akıcılık:** aynı anlatıcı sesi baştan sona, bölüm başına tek kayıt; Web Audio ile üretilen ince ortam sesleri ve efektler (anlatımda kısılır). Ve **hiç donmama**: aşağıdaki performans kuralı.
+Sahne, karakter, hareket, ses efektleri, müzik ve altyazı Claude'un yazdığı kodla üretilir. Üretken görsel/video/ses modeli yok (ücretsiz katmanlar dahil; öneri olarak da geçmez). Anlatım sesi yalnızca yerel TTS (`tools/voice.mjs`). Serbest: ücretsiz CDN kütüphanesi ve yazı tipi, CC0 veri dosyası (HDRI, doku; kaynağı README'ye). Ücretli servis yok; dışarıya veri göndermeden önce sor.
 
-## Performans: donma yasak
+## 2. Her video taze bir sanat yönü
 
-İzleyicinin bilgisayarı bizimkinden zayıf olabilir. Her animasyon:
-- Zayıf bir dizüstünde de akıcı oynar: **kalite kademeleri** (ör. ultra/high/mid/low/min) çalışma anında değiştirilebilir; açılışta kısa bir ölçümle makineye uygun kademe seçilir; oynatma sırasında kareler yavaşlarsa bir kademe düşülür. Video çıktısı her zaman en yüksek kademede alınır.
-- Ölçülür: `dev/perftest.mjs` (kare maliyeti) ve `dev/fpstest.mjs` (gerçek oynatma fps'i) gibi testlerle her kademede; hedef orta makinede ≥ 50 fps, en düşük kademede zayıf makinede ≥ 30 fps, 50 ms'yi aşan kare sayısı yaklaşık sıfır.
-- Binlerce küçük nesne bölgelere ayrılır (kamera görmediğini çizmez), geometri piksel boyutuna göre kabalaştırılır, ağır efektler (SSAO, PCSS, ekran uzayı katmanları) yalnızca üst kademelerde.
-- Ağır sahneler ve shader'lar başlangıç ekranında ısıtılır; oynatma sırasında yeni doku/geometri üretilmez.
+- Kodlamadan önce bir **treatment** yazılır (`TREATMENT.md`): logline, görsel dünya, palet, doku, kamera dili, yazı, ses, 6–8 kahraman sahne. Yaratıcı kararların hepsi burada verilir; bu adımda yalnızca `CLAUDE.md`, tür kartı ve kısa zevk brief'i okunur.
+- **Başka animasyonların kodu, sahnesi, paleti, yazı tipi açılmaz, taklit edilmez.** Aynı türün **teknik** modülleri (oynatıcı, zamanlama, altyazı, ses hattı, kalite kademeleri) kopyalanabilir; görsel dünya kopyalanamaz. Ayrım: `.claude/skills/animation/documentary-tech.md` gibi teknik kartlar.
+- Aynı türde önceki videoyla en az şu üçünden ikisi farklı olmalı: palet ailesi, doku/malzeme dili, kamera ve sahne düzeni. Yayınlanan videoların kimlik özeti `docs/style-ledger.md` içindedir; yalnızca **tekrarı önlemek için** okunur, örnek almak için değil.
+- Tür kartları (`.claude/skills/animation/formats/`) bir **tasarım uzayı** tarif eder; içinden bir nokta seçilir ve gerekçelenir. Kart, tarif değil sınırdır.
 
-## İki giriş kapısı
+## 3. Kalite: dördü birden
 
-- `/animation <konu>`: anlatımlı, altyazılı eğitim animasyonu (araştırma → anlatım → sahne). Skill: `.claude/skills/animation/`.
-- `/short [brief]`: sözsüz ya da az sözlü, 30–90 saniyelik sinematik kısa film; hikâye, karakter ve görsel dili kendisi seçer; `animations/short/<slug>/`. Skill: `.claude/skills/short/`, örnek inceleme `docs/short-film-notes.md`. Serbest bir brief'in nasıl yazılacağı da orada.
+1. **Görsel:** türe uygun, özenli, ucuz görünmeyen dünya (ışık, derinlik, doku, easing, ikincil hareket, kamera dili).
+2. **Hikâye:** izleyiciyi saran anlatı: açılış sorusu, kahraman, gerilim, ödül, cevap. `.claude/skills/narration/`.
+3. **Metin insan yazmış gibi:** belgesel belgesel gibi, yazılım yazılım gibi; yapay zekâ kalıpları yok; sesli okunup kesilmiş.
+4. **Ses ve akıcılık:** aynı anlatıcı sesi baştan sona, bölüm başına tek kayıt, kodla üretilen ince ortam sesleri; ve **hiç donmama** (madde 5).
 
-## Türe göre teknik
+Bilimsel ve tarihsel doğruluk pazarlıksızdır: her sayı `RESEARCH.md`'deki bir kaynağa dayanır; emin olunmayan yuvarlak ve temkinli söylenir.
 
-Görsel stil animasyona özeldir, ama **türün tekniği yeniden kullanılır**: belgesellerde `documentary-tech.md` (referans: `animations/documentary/ant-documentary`), öteki türlerde `docs/cartoon-style-in-code.md` seçenekleri. Yazılım animasyonu belgesel gibi görünmez; iki belgesel ise aynı kamera ve oynatıcı tekniğini paylaşabilir, dünyaları farklı olur.
+## 4. Klasörler ve adlar
 
-## Yeni animasyon isteğinde
+- `animations/<kategori>/<slug>/`; kategori İngilizce (biology, history, geography, physics, chemistry, math, space, technology, software, documentary, short; liste `tools/lib/animations.mjs`). Belgeseller konusu ne olursa olsun `documentary/` altında. Slug bütün depoda tek; adres `…/animasyon-lab/<slug>/`.
+- `npm run new -- <kategori>/<slug> "<Başlık>"` boş klasör açar. `animation.json`: `slug`, `title`, `description`, `format`, `tech`, `build`, `output`. `build` klasörde çalışır ve `output`'a kendi başına açılan `index.html` üretir.
+- Yalnızca kendi klasöründe çalış; başka animasyonun dosyasına dokunma. Kök `README.md` tablosuna satır ekle.
+- Arayüz metni, README ve commit Türkçe (düzgün Türkçe karakter); kod tanımlayıcıları ve dosya adları İngilizce.
 
-Ayrıntılı istek şablonu ve kalite ölçütleri: `prompts/new-animation.md` (araştırma, anlatım, ses ve altyazı tekniği, özgün tasarım). Kullanıcı bu dosyaya atıf yaparsa baştan sona uygula.
+## 5. Donma yasak
 
-1. **Sıfırdan tasarla.** Başka animasyonların kodunu, motorunu, arayüzünü, renklerini ya da yazı tiplerini örnek alma; onları açıp okuma. Tek istisna: aynı türün **teknik** modülleri (`documentary-tech.md` tablosunda "kopyala" denenler); görsel dünya yine sıfırdan. Konunun ve hedef kitlenin ne gerektirdiğini düşün: teknik (Three.js, Babylon.js, WebGPU, Canvas 2D, SVG, CSS, Vite, React…), görsel dil, anlatım yapısı, arayüz ve ses tümüyle bu animasyon için seçilir. Kullanıcı açıkça "şu animasyon gibi" ya da "şundan başla" demedikçe önceki bir animasyonu temel alma.
-2. Animasyonlar kategori klasörlerinde durur: `animations/<kategori>/<slug>/`. Kategori adları İngilizcedir (biology, history, geography, physics, chemistry, math, space, technology, software, documentary, short); liste ve Türkçe karşılıkları `tools/lib/animations.mjs` içinde. Slug bütün kategorilerde tektir, site adresi değişmez (`…/animasyon-lab/<slug>/`). Araçlar animasyonu yalnızca slug ile bulur.
-   `npm run new -- <kategori>/<slug> "<Başlık>"` yalnızca boş bir klasör ile `animation.json` ve `README.md` açar. Paketler, derleme düzeni ve klasör yapısı animasyonun kendi ihtiyacına göre kurulur (kendi `package.json`'ı olabilir; derlemede gereken paketler `dependencies`, yalnızca yerel araçlar `devDependencies` altına).
-3. Yalnızca `animations/<kategori>/<slug>/` içinde çalış. Başka bir animasyonun dosyalarını değiştirme.
-4. `animation.json` içindeki `slug`, `title`, `description`, `format`, `tech`, `build`, `output` alanlarını doldur (`format`: documentary, explainer, software, history, kids). Sitenin kartı bunlardan üretilir. `build` komutu animasyon klasöründe çalışır ve `output` klasörüne kendi başına açılan bir `index.html` üretmelidir.
-5. Animasyonun `README.md` dosyasını yaz: ne anlattığı, bölümleri ve komutları.
-6. Kök `README.md` içindeki "Animasyonlar" tablosuna kategorisiyle birlikte bir satır ekle.
-7. Kökte `npm run build -- <slug>` çalıştır, ardından sayfayı headless Chrome ile ekran görüntüsü alarak kontrol et (masaüstü ve telefon genişliği). Metinlerin hızlı akışta okunabildiğini de kontrol et. Performans testlerini her kademede çalıştır; donma varsa bitmiş sayılmaz.
-8. Kullanıcı isterse commit edip `main`'e gönder. Pages yayını otomatik.
+İzleyicinin bilgisayarı bizimkinden zayıftır. Çalışma anında değişen kalite kademeleri, açılışta otomatik seçim, oynatmada düşürme; video her zaman en üst kademede. Her kademede fps ölçülür; hedef orta makinede ≥ 50, en düşük kademede zayıf makinede ≥ 30, 50 ms üstü kare ≈ 0. Ayrıntı: `craft.md` → Performans.
 
-## Anlatım türleri
+## 6. Ortak teknik (değişmez)
 
-Anlatım metni `.claude/skills/narration/` skilliyle yazılır. Belgeseller, konusu ne olursa olsun, kendi kategorilerinde durur: `animations/documentary/<slug>/` (konu `animation.json` açıklamasında belirtilir); öteki türler konu kategorisine girer. Her video türünün (belgesel, açıklayıcı, yazılım, tarih, çocuklar) kendi sesi, yapısı, temposu ve kamera dili `formats/<tür>.md` içindedir; izleyiciyi tutma teknikleri `retention.md` içindedir. Tür görsel stili (renk, yazı tipi, teknik) belirlemez, o her animasyonun kendi kararıdır.
+Bölüm başına tek ses kaydı; hikâye zamanı kaydı izler, geri gitmez, yüklenirken bekler; altyazı iki satır, kelime kelime, Whisper zamanlarından; CC ve anlatım ayrı ayrı kapanır, seçim hatırlanır; sahne durumu zamanın saf fonksiyonu; `?video=1` ile `window.__video` sözleşmesi. Ayrıntı: `.claude/skills/animation/pipeline-tech.md`.
 
-## Ortak kaynaklar (isteğe bağlı)
+## 7. Yerel araçlar
 
-- `assets/avatars/`: gerçekçi insan karakterleri (Avaturn GLB, 54 kemikli ortak iskelet, ARKit ve viseme yüz şekilleri). Yalnızca animasyon gerçekten bir insan karakteri gerektiriyorsa kullan. `npm run avatars -- list` ile listelenir, `use <id> <slug>` ile animasyonun kendi klasörüne kopyalanır. Modeller meshopt ile sıkıştırılmıştır; yükleyicide meshopt çözücüsü gerekir.
-- `tools/voice.mjs` (`npm run voice -- <slug> [--voice <id>]`): anlatım sesi yerelde üretilir; kullanıcının seçtiği 19 ses `assets/voices/catalog.json` içinde (OmniVoice, Supertonic 3, Chatterbox, EMA-TTS; açıklaması `assets/voices/README.md`). Yalnızca ticari kullanıma açık ve atıf istemeyen modeller kullanılır; öyle olmayanlar önerilmez, kurulmaz. OmniVoice'ta Türkçe ses doğrudan tarifle üretilmez (kalitesiz); kısa temiz bir kayıttan kopyalanır. Animasyon `narration/lines.json` yazar, süreler `narration/manifest.json`'dan okunur ve altyazı süreleri sese göre ayarlanır. Söylenecek metinde rakamları sözcüğe çevir, parantezleri ve kısaltmaları söylenişe göre düzenle (ekrandaki metin değişmesin). Aracın sonunda listelenen şüpheli cümleleri düzelt.
-- Anlatım bölüm başına tek kayıt olarak üretilir (cümle cümle değil); oynatırken hikâye zamanı kaydı izler, hiç geri gitmez, kayıt yüklenirken bekler. Altyazı ve sahne zamanları kayıttaki Whisper kelime zamanlarından çıkarılır.
-- Anlatım ve altyazı olan animasyonlarda izleyici ikisini ayrı ayrı açıp kapatabilmeli (altyazı düğmesi ve kısayolu, seçim hatırlanır). Altyazılar en çok iki satır, sesle birlikte ilerleyen parçalar hâlinde gösterilir ve kelimeler anlatıcı söyledikçe açılır (Whisper kelime zamanları `manifest.json` → `words`; `npm run voice -- <slug> --words-only` mevcut kayıtlara ekler). Stil: kutu yok, altta yumuşak karartma, gölgeli beyaz yazı, masaüstünde ~17–23 px.
-- `tools/render-video.mjs` (`npm run video -- <slug>`): YouTube için MP4 + SRT + bölüm listesi. Animasyon `?video=1` ile `window.__video` sözleşmesini sunmalı (bkz. kök README).
-- `assets/thumbnail-kit/` ve `tools/thumbnail.mjs` (`npm run thumbnail -- <slug>`): YouTube kapakları. **Tek istisna:** animasyonlar arasında ortak stil yoktur, ama kapaklar kanalın ortak kimliğini taşır. Logo ve konu etiketi, başlık düzeni, sarı vurgu, süre etiketi ve renk işleme kitten gelir. Ana görsel her animasyonda kendi konusundan kodla çizilir. Her video için 5 kapak konsepti üretilir.
-- `tools/build-site.mjs`: her animasyonu kendi `build` komutuyla derler ve siteyi toplar. `build` alanı boş olan animasyon atlanır.
-
-## Kısıtlar
-
-- Ücretli dış servis kullanma (yapay zekâ ses/görsel API'leri). Yerel ve ücretsiz araçları tercih et; dışarıya bir şey gönderilecekse önce sor. Ücretsiz CDN'lerden kütüphane ya da font yüklemek serbest.
-- Yerel araçlar: Chrome (`C:/Program Files/Google/Chrome/Application/chrome.exe`), ffmpeg (PATH'te), OmniVoice + Whisper (`C:\ProgramData\tts_lab`, RTX 3050 Ti 4 GB ekran kartıyla).
-- Animasyonlar öğrencilere gösterilir: bilimsel olarak doğru, öğretici, akıcı ve okunaklı olmalı.
-
-## Dil ve adlandırma
-
-- Arayüz metinleri, README'ler ve commit mesajları Türkçe; kod tanımlayıcıları İngilizce.
-- Klasör, dosya, kategori ve slug adları İngilizce: `biology/digestive-journey`, `software/git-version-control`. Türkçe yalnızca ekranda görünen metinlerde (başlık, alt yazı, README) kullanılır ve düzgün Türkçe olmalıdır.
+Chrome `C:/Program Files/Google/Chrome/Application/chrome.exe`; ffmpeg PATH'te; OmniVoice + Whisper `C:\ProgramData\tts_lab` (RTX 3050 Ti 4 GB). Ortak araçlar: `tools/voice.mjs`, `tools/render-video.mjs`, `tools/thumbnail.mjs` (+ `assets/thumbnail-kit`, kanal kimliği), `tools/build-site.mjs`, `assets/avatars/` (yalnızca gerçek insan karakteri gerekirse).

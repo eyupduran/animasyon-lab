@@ -57,13 +57,7 @@ Uygulama:
 
 ## Görsel dil
 
-Renk ve yazı tipi her animasyonun kendi kararıdır; bu yalnızca türün görsel dilidir.
-- **Soru ekranda başlar:** açılışta izleyicinin tahmin edeceği şey görünür (iki seçenek, bir deney düzeneği).
-- **Adım adım kurulum:** her yeni fikir ekrana tek parça olarak girer; önceki adımlar sönükleşir ama yerinde kalır.
-- **Tek ana benzetme görselleşir** ve bütün video boyunca aynı görsel olarak geri döner; benzetmenin bozulduğu yer ekranda da gösterilir.
-- **"Aha" anı sade ve sessiz kurulur:** kalabalığı kaldır, tek öğe, kısa duraklama.
-- **Yanlış model önce çizilir, sonra üstü çizilip doğrusu kurulur.**
-- Hareket ölçülü ve anlamlı: her hareket bir değişkeni ya da nedeni gösterir, süs için oynatma.
+Bu dosya yalnızca anlatım sesini tanımlar. Görsel tasarım uzayı `.claude/skills/animation/formats/explainer.md` içindedir; treatment aşamasında oradan bir nokta seçilir.
 
 ## Önce / sonra
 

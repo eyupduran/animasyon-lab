@@ -53,7 +53,7 @@ En kısa yol, Claude Code'da hazır komutu kullanmak:
 /animation telefonun içi nasıl çalışır, ortaokul için
 ```
 
-Komut ([.claude/skills/animation/SKILL.md](.claude/skills/animation/SKILL.md)) aşağıdaki şablonu uygular. Yanında sadece gerektiğinde okunan üç dosya vardır: teknik alet çantası (`craft.md`), önceki oturumlarda bulunan tuzaklar (`pitfalls.md`, her oturum sonunda büyür) ve sanat yönetmeni turu (`critique.md`). Bunlar stil önermez, yalnızca teknik ve kalite kontrolüdür. İşin başlangıç ve bitiş saatini not eder, `COST.md` dosyasını yazar, bitince commit edip `main`'e gönderir.
+Komut ([.claude/skills/animation/SKILL.md](.claude/skills/animation/SKILL.md)) aşama aşama çalışır: araştırma → **treatment** (beş görsel dünya, biri seçilir; tür kartı `formats/<tür>.md` bir tasarım uzayı verir, `docs/style-ledger.md` tekrarı önler) → anlatım (`narration` skilli) → üretim (`pipeline-tech.md`, `craft.md`, `documentary-tech.md`) → eleştiri turları (`critique.md`) → testler → teslim. Kesin kurallar `CLAUDE.md`'de: yalnızca kod, her videoya taze sanat yönü, dört parçalı kalite, donma yasak. İşin başlangıç ve bitiş saatini not eder, `COST.md` dosyasını yazar, bitince commit edip `main`'e gönderir.
 
 Ya da [prompts/new-animation.md](prompts/new-animation.md) dosyasındaki "İSTEK" bölümünü doldurup yeni bir oturumda şunu yazın: *"prompts/new-animation.md dosyasını oku ve uygula."* Şablon; konunun önce araştırılmasını, anlatımın bir insan konuşması gibi yazılmasını, ortak ses ve altyazı tekniğini ve her animasyonun diğerlerinden bağımsız, özgün bir tasarımla yapılmasını tarif eder.
 

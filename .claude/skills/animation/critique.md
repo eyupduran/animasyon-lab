@@ -1,6 +1,6 @@
 # Sanat yönetmeni turu
 
-Amaç işi beğenmek değil, kusur bulmak. Her tur: görüntü al → kusurları yaz → düzelt → yeniden görüntü al. **En az üç tur.**
+Amaç işi beğenmek değil, kusur bulmak. Her tur: görüntü al → kusurları yaz → düzelt → yeniden görüntü al. **En az üç tur; ilki ilk üç bölüm kodlanır kodlanmaz** (geç kalan eleştiri pahalıdır: "treatment'ı değiştirmek bir dakika, filmi değiştirmek bir saat"). Her turda `TREATMENT.md`'deki kahraman kareyle karşılaştır: o kare gerçekten o mu oldu?
 
 ## Nasıl bakılır
 

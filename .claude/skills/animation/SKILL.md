@@ -1,7 +1,7 @@
 ---
 name: animation
-description: Yeni eğitim animasyonu yapar (araştırma, anlatım, ses, altyazı, test, commit ve push)
-argument-hint: <konu ve istekler, ör. "telefonun içi nasıl çalışır, ortaokul, 5 dk">
+description: Yeni eğitim animasyonu yapar (araştırma, treatment, anlatım, ses, altyazı, kod, eleştiri, test, commit ve push)
+argument-hint: <konu ve istekler, ör. "bal arısının bir günü, belgesel" ya da "TCP el sıkışması, lise">
 disable-model-invocation: true
 ---
 
@@ -9,57 +9,61 @@ Kullanıcının isteği:
 
 > $ARGUMENTS
 
-İstek boşsa yalnızca "Hangi konuda animasyon yapayım?" diye sor ve dur. Doluysa aşağıdakileri uygula.
+İstek boşsa yalnızca "Hangi konuda animasyon yapayım?" diye sor ve dur. Doluysa aşağıdaki aşamaları sırayla uygula. `CLAUDE.md` kesin kurallardır. Kullanıcı beklemez: soru sorma, karar ver, sonunda gerekçeni anlat. Bir aşamada yalnızca o aşamanın dosyaları okunur; **hiçbir aşamada başka bir animasyonun klasörü açılmaz.**
 
-## Ne yapacaksın
+## Aşama 0: karar
 
-`prompts/new-animation.md` dosyasını baştan sona oku ve uygula; `CLAUDE.md` kuralları geçerlidir. İsteği o dosyadaki "İSTEK" alanlarına çevir:
+- **Tür:** belgesel / açıklayıcı / yazılım / tarih / çocuklar. İstekte yoksa konuya ve kitleye göre seç. Belgesel → `animations/documentary/`, ötekiler konu kategorisine.
+- **Kitle, süre, ses:** yoksa seç. Süre 6–10 dk; anlatıcı sesi konuya göre (`npm run voice -- voices`; belgesel için derin/yaşlı erkek O9, O10, O33; canlı anlatı için O1).
+- Klasörü aç: `npm run new -- <kategori>/<slug> "<Başlık>"`. Başlangıç saatini not et (`date "+%Y-%m-%d %H:%M:%S"`).
 
-- **Konu:** istekte ne yazıyorsa. Kısa yazılmış olabilir ("telefon simülasyonu yap" gibi). Bunu "telefonun nasıl çalıştığını anlatan eğitim animasyonu" diye anla. "Simülasyon", "oyun", "harita" gibi sözcükler tür ya da his ipucudur; anlatım, ses ve altyazılı bir animasyon yine yapılır.
-- **Video türü (format):** belgesel, açıklayıcı, yazılım, tarih ya da çocuklar için. İstekte yazmıyorsa konuya ve kitleye göre sen seç (doğa ve canlılar → belgesel; "nasıl/neden" soruları → açıklayıcı; bir teknolojinin içi → yazılım; olaylar ve dönemler → tarih; ilkokul → çocuklar). Tür, anlatımın sesini ve kamera dilini belirler; görsel stili (renk, yazı tipi, teknik) belirlemez.
-- **Hedef kitle, süre, his, anlatıcı sesi:** istekte yoksa konuya göre sen seç. Süre verilmediyse konunun gerektirdiği kadar olsun (genelde 5–7 dakika).
-- **Ek istekler:** istekte başka ne varsa onlar da uygulanır.
-- **Kategori:** belgeseller her zaman `documentary` kategorisine girer (`animations/documentary/<slug>/`). Öteki türlerde konuya göre bir klasör seç: biology, history, geography, physics, chemistry, math, space, technology ya da software. Liste ve Türkçe karşılıkları `tools/lib/animations.mjs` → `CATEGORIES` içinde. Hiçbiri uymuyorsa yeni bir İngilizce ad aç ve Türkçe karşılığını listeye ekle. Klasörü `npm run new -- <kategori>/<slug> "<Başlık>"` ile aç; animasyon `animations/<kategori>/<slug>/` altında durur. Araçlara (voice, build, video, thumbnail) yalnızca slug verilir.
+## Aşama 1: araştırma → `RESEARCH.md`
 
-Kullanıcı beklemeden çalışmanı istiyor. Soru sorma, mantıklı kararı kendin ver ve sonunda neyi neden seçtiğini kısaca anlat. Her şey kodla; üretken görsel/video/ses modeli yok (`CLAUDE.md` → "Yalnızca kod").
+Birden çok güvenilir kaynak; her sayı ve tarih iki kaynaktan; "şaşırtan şeyler" ve "yaygın yanlışlar" ayrı listeler; emin olunmayanlar temkinli ifadeyle. Kaynak adı + adres + verdiği bilgi.
 
-## Kalite çıtası (CLAUDE.md → "Kalite tanımı")
+## Aşama 2: treatment → `TREATMENT.md` (yaratıcı aşama)
 
-Dört şey birlikte: (1) türe uygun, ucuz görünmeyen görsel dünya; (2) izleyiciyi saran hikâye (açılış sorusu, kahraman, gerilim, ödül); (3) insan yazmış gibi metin (yapay zekâ kalıpları yok, sesli okunup kesilmiş); (4) aynı ses baştan sona + ince ortam sesleri + **hiç donmama**. Bunlardan biri eksikse iş bitmemiştir.
+Bu aşamada **yalnızca** şunlar okunur: `CLAUDE.md`, tür kartı `formats/<tür>.md`, `docs/style-ledger.md` (tekrarı önlemek için), `RESEARCH.md`. Teknik dosyalar (`craft.md`, `pipeline-tech.md`, `documentary-tech.md`) bu aşamada **okunmaz**.
 
-## Yardımcı dosyalar (gerektiğinde oku)
+Zevk brief'i:
 
-- [craft.md](craft.md): teknik alet çantası. Işık, derinlik, perspektif, doku ve zamanlama teknikleri, "vay" anı kalıpları. Görsel dil ve stil önermez. Sahneleri kodlamaya başlamadan önce oku.
-- [pitfalls.md](pitfalls.md): önceki oturumlarda bulunan tuzaklar ve çözümleri. Kodlamaya başlamadan önce oku. İş bitince yeni bulduklarını buraya ekle.
-- [critique.md](critique.md): sanat yönetmeni turu. Ekran görüntüsü turlarında uygula.
-- [documentary-tech.md](documentary-tech.md): belgesel türünün yeniden kullanılabilir tekniği (oynatıcı, zamanlama, sinema hattı, kalite kademeleri, kamera dili) ve referans uygulama. Belgesel yapıyorsan önce oku.
-- [../../../docs/cartoon-style-in-code.md](../../../docs/cartoon-style-in-code.md): kodla çizgi film / düz vektör / kâğıt kesme / toon 3B görünümünün kuralları, karakter animasyonu, "ucuz görünmeme" listesi. Belgesel dışı türlerde önce oku.
-- **Anlatım skilli** [../narration/SKILL.md](../narration/SKILL.md): anlatım metnini yazmadan önce oku. Seçilen türün dosyasını (`../narration/formats/<tür>.md`) ve `../narration/retention.md` dosyasını baştan sona uygula; beat sheet'i animasyon klasöründe `NARRATION.md` olarak yaz.
+> Bu konuyu bir daha görülmemiş, onu olduğundan kolay göstermeyen, sinematik ve estetik seçimleri sonuçta görülen bir eğitim filmi olarak tasarla. İlk akla gelen çözüm herkesin çözümüdür; önce beş farklı görsel dünya tart, konuyu en doğru ve en güçlü gösterecek olanı seç. Dekoratif taklit kabul edilmez: her görsel karar konudan çıkmalı. Her bölümde izleyicinin aklında kalacak tek bir kare olmalı.
 
-## Her seferinde yapılacaklar (kullanıcı ayrıca söylemese de)
+`TREATMENT.md` içeriği (tek sayfa):
+1. **Çekirdek cümle:** izleyici sonunda neyi anlamış olmalı?
+2. **Beş görsel dünya:** her biri farklı teknik ailesi, palet ailesi, kamera dili ve sahne düzeniyle; ikişer cümle. Tür kartındaki uzaydan **farklı noktalar**.
+3. **Seçim ve gerekçe:** "videoda en güçlü görünür", "konuyu en doğru anlatır", "bir günde kodla yapılır" ölçütleriyle. `style-ledger.md`'deki aynı türden önceki videolarla palet / doku / kamera-sahne düzeninden en az ikisinin farklı olduğunu yaz.
+4. **Kimlik kartı:** palet (5–7 renk, tek vurgu), doku ve malzeme dili, ışık, kamera dili, yazı tipleri (Google Fonts), hareket karakteri, ses dünyası, arayüz dili.
+5. **Kahraman sahneler:** bölüm başına bir "akılda kalacak kare" (6–12 bölüm). Her biri için: ne görünür, neden unutulmaz, teknik kısa notu.
+6. **Riskler:** en zor iki sahne ve yedek planı.
 
-1. **Başlangıç saatini not et:** ilk iş olarak `date "+%Y-%m-%d %H:%M:%S"` çalıştır.
-2. İşi `prompts/new-animation.md` dosyasındaki sırayla yap:
-   - araştırma (`RESEARCH.md`) ve tasarım kartı (`DESIGN.md`); tasarım kartına seçilen türü yaz,
-   - anlatım: `narration` skilliyle beat sheet (`NARRATION.md`) → metin → sesli okuma süresi → %20 kesme,
-   - anlatım ve ses (`npm run voice`), şüpheli satırları düzelt,
-   - kod,
-   - masaüstü ve telefon ekran görüntüleriyle birkaç düzeltme turu,
-   - gerçek zamanlı oynatma testi: kayıt ortasında sarma 0, geri gitme 0, konsol hatası yok,
-   - **performans:** kalite kademeleri + açılışta otomatik seçim + oynatmada düşürme kurulu; `dev/perftest.mjs` ve `dev/fpstest.mjs` ile her kademede ölç (hedefler `CLAUDE.md` → "Performans"); sonuçları README'ye yaz,
-   - bölüm sonu testi (`dev/endtest.mjs fast`): kayıt başa dönmüyor, görüntü donmuyor,
-   - CC ve anlatım düğmeleriyle altyazının ve sesin gerçekten kapanıp açıldığını tarayıcıda dene,
-   - `critique.md` dosyasındaki eleştiri turları (en az üç tur),
-   - `README.md` dosyaları, kök README tablosu ve `poster.jpg`,
-   - YouTube'a hazırlık: `?video=1` video arayüzünü eksiksiz kur ve kısa bir `npm run video -- <slug> --from 60 --to 75` denemesiyle doğrula. Video sözleşmesi kök README'de ve `tools/render-video.mjs` içinde. Tam videoyu kullanıcı `/video` ile ister.
-   - 5 YouTube kapağı: animasyon klasöründe `thumbnail.html`, `npm run thumbnail -- <slug>`. Kanal kimliği ortak kitten gelir (`assets/thumbnail-kit/kit.js`, `kit.brand(...)`); ana görsel animasyonun kendi konusundan kodla çizilir. Kurallar `.claude/skills/video/SKILL.md` dosyasının 3. adımında. Birkaç tur iyileştir.
-   - kökte `npm run build -- <slug>`.
-3. **Bu oturumda bulduğun yeni tuzakları** `.claude/skills/animation/pitfalls.md` dosyasına kısa maddeler olarak ekle (belirti → neden → çözüm).
-4. **Bitiş saatini not et** ve animasyon klasörüne `COST.md` yaz:
-   - başlangıç, bitiş ve süre,
-   - kullanılan model, ödeme türü (abonelik),
-   - yerel ses üretimi bilgisi.
-   
-   VS Code eklentisi abonelikte token ve dolar göstermiyor, bu yüzden tahmin yazma. Yalnızca "kullanıcı `/usage` çıktısını verirse eklenecek" diye not düş.
-5. **Commit edip `main`'e push et.** Commit mesajı Türkçe olsun; bu komutu çalıştırmak bunun için onay sayılır. `docs/` gibi bu animasyona ait olmayan değişiklikleri commit'e katma.
-6. **Son mesaj:** canlı adres (`https://eyupduran.github.io/animasyon-lab/<slug>/`), başlangıç ve bitiş saati, verilen kararların kısa özeti ve bilinen kısıtlar. Kullanıcı isterse `/usage` çıktısını yapıştırabileceğini, o zaman `COST.md`'ye ekleneceğini tek cümleyle söyle.
+Bu aşamanın sonunda kod yazılmaz. Otonom oturumda treatment kendi kendine onaylanır; kullanıcı varsa gösterilir.
+
+## Aşama 3: anlatım → `NARRATION.md`, `src/script.js`
+
+`../narration/SKILL.md` + `../narration/formats/<tür>.md` + `../narration/retention.md`. Beat sheet (resim · cümle · duygu · ipucu), metin, sesli okuma süresi, %20 kesme, "yapay zekâ gibi okunmamak" kontrolü. Sonra `npm run voice -- <slug>`; şüpheli satırları düzelt.
+
+## Aşama 4: üretim
+
+Şimdi okunur: `pipeline-tech.md` (ortak teknik: zamanlama, altyazı, oynatıcı, video sözleşmesi), `craft.md` (teknik alet çantası, performans), `pitfalls.md`, ve türün teknik kartı varsa (`documentary-tech.md`: hangi modül kopyalanır). Treatment'taki kimlik kartı bağlayıcıdır; teknik dosyalar görünüme karışmaz.
+
+Sıra: dünya ve kahraman sahneler → oynatıcı ve zamanlama → altyazı → ses dünyası → kalite kademeleri → video sözleşmesi.
+
+## Aşama 5: eleştiri döngüsü (en az üç tur, erken)
+
+İlk üç bölüm kodlanır kodlanmaz `critique.md` ile temas sayfası turu; sonra her yeni bölüm grubunda. Masaüstü (1600×900) ve telefon (390×844). Kusur listesi → düzeltme → yeniden görüntü. "Ucuz görünme" listesi ve "yapay zekâ metni" kontrolü her turda.
+
+## Aşama 6: testler (hepsi geçmeli)
+
+- Gerçek zamanlı oynatma: geri gitme 0, kayıt ortasında sarma 0, ses–görüntü farkı < 150 ms, konsol hatası 0.
+- Bölüm sonları (`dev/endtest.mjs fast`): kayıt başa dönmüyor, görüntü donmuyor.
+- Performans: her kademede fps (`dev/fpstest.mjs`), kare maliyeti (`dev/perftest.mjs`); otomatik seçim çalışıyor.
+- CC ve anlatım düğmeleri gerçekten kapanıp açılıyor; seçim hatırlanıyor.
+- `npm run video -- <slug> --from 60 --to 75` kısa deneme.
+
+## Aşama 7: teslim
+
+- `README.md` (ne anlattığı, bölümler, teknik, komutlar, performans ölçümleri), `poster.jpg`, 5 kapak (`thumbnail.html`, `npm run thumbnail -- <slug>`; kurallar `../video/SKILL.md` 3. adım), kök `README.md` tablosuna satır, `docs/style-ledger.md`'ye bu videonun beş satırlık kimlik özeti.
+- Yeni tuzakları `pitfalls.md`'ye ekle. `COST.md` (başlangıç, bitiş, model, yerel ses; token bilgisi kullanıcı `/usage` verirse).
+- Kökte `npm run build -- <slug>`; Türkçe commit; `main`'e push (bu komut onay sayılır; animasyona ait olmayan değişiklikleri katma).
+- Son mesaj: canlı adres, saatler, kararların gerekçesi, bilinen kısıtlar.

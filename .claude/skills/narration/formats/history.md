@@ -51,12 +51,7 @@ Gelenek: anlatı tarihi yazarları (Erik Larson, Jack Hart'ın "Storycraft"ı), 
 
 ## Görsel dil
 
-Renk ve yazı tipi her animasyonun kendi kararıdır; bu yalnızca türün görsel dilidir.
-- **Yer ve zaman her sahnede belli:** harita, tarih etiketi ya da dönemin bir nesnesi.
-- **İnsanlar ve kararlar ekranda:** kalabalık yerine bir kişi, bir mektup, bir emir; ardından sonucun geniş planı.
-- **Harita üzerinde hareket** zamanla bağlantılı: ordular, yollar, sınırlar anlatımdaki tarihle birlikte ilerler.
-- **Belge ve kaynak görünür:** bir alıntı ya da tartışmalı bir sayı, kaynağının adıyla ekranda.
-- Dönemin görsel dokusu (gravür, minyatür, harita, arşiv) konuya göre seçilir; ama okunaklılık önce gelir.
+Bu dosya yalnızca anlatım sesini tanımlar. Görsel tasarım uzayı `.claude/skills/animation/formats/history.md` içindedir; treatment aşamasında oradan bir nokta seçilir.
 
 ## Önce / sonra
 

@@ -17,14 +17,15 @@ Boşsa şu brief geçerlidir: *"Yapabileceğin en etkileyici kısa kod animasyon
 
 Bir **kısa film**: tek fikir, tek karakter (ya da tek nesne), tek ortam, tek dönüşüm. 30–90 saniye, 16:9. Anlatım yok ya da en çok bir iki cümle. İzleyici sözsüz şunu anlamalı: **durum → değişim → sonuç**. Doruk anı filmin %60–75'inde gelir ve görsel olarak en güçlü karedir. Referans: `docs/short-film-notes.md` (KOR incelemesi).
 
-## 1. Fikir sprinti (kodlamadan önce, `DESIGN.md`)
+## 1. Fikir sprinti ve treatment (kodlamadan önce, `TREATMENT.md`)
 
 İlk akla gelen fikir herkesin yapacağı fikirdir ("küp döner, parçacıklar uçuşur"). Bunu yap:
 1. **Beş logline** yaz, her biri farklı **mekanik** ve farklı **ortamda**: hava/ışık dönüşümü, ölçek atlaması, bir şeyin canlanması, iki kuvvetin çatışması, bir yolculuğun sonu… Her logline tek cümle: kim, ne ister, ne değişir.
 2. Her birini üç ölçütle puanla: *videoda en güçlü görünecek olan hangisi* (ışık, hareket, ölçek), *sözsüz anlaşılır mı*, *kodla 1 günde yapılır mı*.
 3. Kazananı seç, gerekçesini yaz. Diğer dördünü de `DESIGN.md`'de bırak.
-4. **Yay:** 5–8 beat'lik bir liste: açılış görüntüsü (durum) → istek → engel → dönüm → doruk → sonuç → son görüntü/başlık. Her beat için: süre, kamera, ışık durumu, ses.
-5. **Görsel kimlik:** iki durumlu palet (önce / sonra: ör. mavi-gri gece → altın şafak), yazı tipi (yalnızca başlık kartı), doku (kar, toz, yağmur, polen).
+4. **Treatment:** kazanan fikrin tek sayfası: logline, kimlik kartı, beat listesi. "Treatment'ı değiştirmek bir dakika, filmi değiştirmek bir saat": kod bundan sonra başlar.
+5. **Yay:** 5–8 beat'lik bir liste: açılış görüntüsü (durum) → istek → engel → dönüm → doruk → sonuç → son görüntü/başlık. Her beat için: süre, kamera, ışık durumu, ses.
+6. **Görsel kimlik:** iki durumlu palet (önce / sonra: ör. mavi-gri gece → altın şafak), yazı tipi (yalnızca başlık kartı), doku (kar, toz, yağmur, polen).
 
 ## 2. Karakter
 
