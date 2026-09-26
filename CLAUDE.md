@@ -7,14 +7,18 @@ Bu depo, kullanıcının tüm eğitim animasyonlarını ve denemelerini bir arad
 Ayrıntılı istek şablonu ve kalite ölçütleri: `prompts/new-animation.md` (araştırma, anlatım, ses ve altyazı tekniği, özgün tasarım). Kullanıcı bu dosyaya atıf yaparsa baştan sona uygula.
 
 1. **Sıfırdan tasarla.** Başka animasyonların kodunu, motorunu, arayüzünü, renklerini ya da yazı tiplerini örnek alma; onları açıp okuma. Konunun ve hedef kitlenin ne gerektirdiğini düşün: teknik (Three.js, Babylon.js, WebGPU, Canvas 2D, SVG, CSS, Vite, React…), görsel dil, anlatım yapısı, arayüz ve ses tümüyle bu animasyon için seçilir. Kullanıcı açıkça "şu animasyon gibi" ya da "şundan başla" demedikçe önceki bir animasyonu temel alma.
-2. Animasyonlar kategori klasörlerinde durur: `animations/<kategori>/<slug>/`. Kategori adları İngilizcedir (biology, history, geography, physics, chemistry, math, space, technology, software); liste ve Türkçe karşılıkları `tools/lib/animations.mjs` içinde. Slug bütün kategorilerde tektir, site adresi değişmez (`…/animasyon-lab/<slug>/`). Araçlar animasyonu yalnızca slug ile bulur.
+2. Animasyonlar kategori klasörlerinde durur: `animations/<kategori>/<slug>/`. Kategori adları İngilizcedir (biology, history, geography, physics, chemistry, math, space, technology, software, documentary); liste ve Türkçe karşılıkları `tools/lib/animations.mjs` içinde. Slug bütün kategorilerde tektir, site adresi değişmez (`…/animasyon-lab/<slug>/`). Araçlar animasyonu yalnızca slug ile bulur.
    `npm run new -- <kategori>/<slug> "<Başlık>"` yalnızca boş bir klasör ile `animation.json` ve `README.md` açar. Paketler, derleme düzeni ve klasör yapısı animasyonun kendi ihtiyacına göre kurulur (kendi `package.json`'ı olabilir; derlemede gereken paketler `dependencies`, yalnızca yerel araçlar `devDependencies` altına).
 3. Yalnızca `animations/<kategori>/<slug>/` içinde çalış. Başka bir animasyonun dosyalarını değiştirme.
-4. `animation.json` içindeki `slug`, `title`, `description`, `tech`, `build`, `output` alanlarını doldur. Sitenin kartı bunlardan üretilir. `build` komutu animasyon klasöründe çalışır ve `output` klasörüne kendi başına açılan bir `index.html` üretmelidir.
+4. `animation.json` içindeki `slug`, `title`, `description`, `format`, `tech`, `build`, `output` alanlarını doldur (`format`: documentary, explainer, software, history, kids). Sitenin kartı bunlardan üretilir. `build` komutu animasyon klasöründe çalışır ve `output` klasörüne kendi başına açılan bir `index.html` üretmelidir.
 5. Animasyonun `README.md` dosyasını yaz: ne anlattığı, bölümleri ve komutları.
 6. Kök `README.md` içindeki "Animasyonlar" tablosuna kategorisiyle birlikte bir satır ekle.
 7. Kökte `npm run build -- <slug>` çalıştır, ardından sayfayı headless Chrome ile ekran görüntüsü alarak kontrol et (masaüstü ve telefon genişliği). Metinlerin hızlı akışta okunabildiğini de kontrol et.
 8. Kullanıcı isterse commit edip `main`'e gönder. Pages yayını otomatik.
+
+## Anlatım türleri
+
+Anlatım metni `.claude/skills/narration/` skilliyle yazılır. Belgeseller, konusu ne olursa olsun, kendi kategorilerinde durur: `animations/documentary/<slug>/` (konu `animation.json` açıklamasında belirtilir); öteki türler konu kategorisine girer. Her video türünün (belgesel, açıklayıcı, yazılım, tarih, çocuklar) kendi sesi, yapısı, temposu ve kamera dili `formats/<tür>.md` içindedir; izleyiciyi tutma teknikleri `retention.md` içindedir. Tür görsel stili (renk, yazı tipi, teknik) belirlemez, o her animasyonun kendi kararıdır.
 
 ## Ortak kaynaklar (isteğe bağlı)
 

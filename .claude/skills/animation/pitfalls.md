@@ -9,6 +9,8 @@ Biçim: **belirti** → neden → çözüm. Her oturum sonunda yeni bulunanlar e
 - **Başlat ekranının arkası boş** → oynatma başlamadan `t = 0` çiziliyor → başlamadan önce animasyonun en güçlü karesini (ör. finali) arka planda göster.
 - **Konsolda 404 hatası** → sayfanın favicon'u yok → satır içi bir SVG favicon ekle.
 
+- **Bölüm sonunda ses başa dönüyor, görüntü donuyor** → kayıt, görüntü bölüm sonuna varmadan birkaç yüz ms önce bitiyor; `paused` olan kayda "durmuş" diye `play()` deniyor, bitmiş kayıt baştan çalıyor, geri gitmeyen görüntü sesi bekleyip donuyor → `ended` olan (ya da sonuna gelmiş) kaydı "bitti" say, bir daha `play()` deme, hikâyeyi saatle ilerlet; yalnızca kullanıcı atlayınca yeniden konumlandır. Testte kaydı %6 hızlı çaldırıp her bölüm sonunu dene (`dev/endtest.mjs fast`).
+
 ## Sahne ve kamera
 
 - **Hareket eden işaretçi (paket, nokta) kutuların içinden geçip yazıları örtüyor** → yol, istasyon kutularının ortasından çizilmiş → paketi kutuların altından ya da üstünden giden ayrı bir hat üzerinde yürüt, istasyonları hatta kısa dikey çizgilerle bağla.
@@ -25,6 +27,11 @@ Biçim: **belirti** → neden → çözüm. Her oturum sonunda yeni bulunanlar e
 
 - **Headless Chrome'da WebGL bağlamı düşüyor (context lost)** → Babylon `CascadedShadowGenerator` ekran kartı sürecini çökertiyor → kameranın baktığı yere oturtulan tek bir `ShadowGenerator` kullan (ışığın `ortho*` sınırlarını her karede ayarla).
 - **Rastgele dağıtılmış çimler, yapraklar, çubuklar çekimlerin önünü kapatıyor** → 3B dünyada her nesne rastgele konumda → olayların geçtiği bir "sahne alanı" tanımla, dağınık nesneleri ve uzun çimleri onun dışına koy, kenardaki çimleri dışa eğ. Temas sayfasıyla her bölümü kontrol et.
+- **Uzun objektife geçince kameranın önüne çim, taş ya da özel bir sahne nesnesi giriyor** → kamera konudan uzaklaşınca aradaki nesneler kadraja giriyor → yalnızca tek bölümde gereken nesneleri (özel yapraklar) o bölümde göster; sorunlu çekimi `keepLens` ile eski açıda tut.
+- **Sahneyi kıran damlanın içi basamaklı görünüyor** → yansıma sondası kenar yumuşatmasız çiziliyor → sondaya 512 çözünürlük ve `cubeTexture.samples = 4` ver, damlaya çok hafif pürüz (0,07).
+- **TAA açınca atlamalarda hayalet görüntü** → zamansal kenar yumuşatma önceki kareleri biriktiriyor; zamanda atlanan karede (bölüm atlama, video `renderAt`) üst üste biniyor → sahne durumu zamanın saf fonksiyonu olan animasyonlarda TAA kullanma; MSAA yeterli.
+- **Ekran uzayı temas gölgesi pürüzsüz yüzeylerde leke ve bant bırakıyor** → alan derinliği sonrası, düz derinlikle hesaplanıyor → kullanma ya da DOF'tan önce ve yalnızca keskin bölgede uygula; gerçek gölge haritasında `useContactHardeningShadow` daha güvenli.
+- **Bokeh katmanı büyük beyaz yüzeyleri patlatıyor** → eşik yalnızca parlaklığa bakıyor → çevresinden belirgin parlak küçük noktalarla sınırla (yerel kontrast).
 - **Kuş bakışı çekimde kamera çimlerin içinde kalıyor** → kamera en uzun yaprak boyundan alçakta → kamerayı çok yükseğe al ve dar görüş açısı (tele) kullan.
 - **Makro ölçekte kum taneleri karıncayı yutuyor** → ikosfer yarıçapı "boyut" diye kullanılmış (çap iki katı) → gerçek boyutları mm olarak yaz, çoğunu ince kum (0,05–0,25 mm yarıçap) yap, iri taneleri seyrek tut.
 - **Telefonda (dikey) 3B sahne dar bir dilim gibi görünüyor** → düşey görüş açısı sabit → dikey ekranda `fovMode` yatay yap, yatay açıyı masaüstünün ~0,62'si al; ölçek çubuğunu da buna göre hesapla.
@@ -46,6 +53,7 @@ Biçim: **belirti** → neden → çözüm. Her oturum sonunda yeni bulunanlar e
 
 ## Araçlar
 
+- **Taşıdıktan sonra "boş" sanılan eski klasörde dosya kalmış** → açık bir geliştirme sunucusu (Vite) `public/` klasörünü kilitli tuttuğu için o klasör taşınmamış; eski klasör silinince ses kayıtları gitti → taşımadan önce sunucuları kapat, sildiğin klasörün gerçekten boş olduğunu `ls -A` ile kontrol et.
 - **Klasör taşınırken "Permission denied" hatası** → Windows'ta VS Code ya da bir terminal klasörü açık tutuyor, içindeki dosyalar kilitli değil → klasörü değil içindekileri `mv` ile taşı, sonra `git add -A`. Boş kalan eski klasör zararsızdır.
 - **Animasyon bulunamıyor** → animasyonlar `animations/<kategori>/<slug>/` altında → yol yazma; araçlara slug ver (`tools/lib/animations.mjs` → `findAnimation`).
 

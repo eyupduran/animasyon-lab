@@ -19,6 +19,7 @@ export const CATEGORIES = {
   space: { tr: 'Uzay', cover: 'UZAY' },
   technology: { tr: 'Teknoloji', cover: 'TEKNOLOJİ' },
   software: { tr: 'Yazılım', cover: 'YAZILIM' },
+  documentary: { tr: 'Belgesel', cover: 'BELGESEL' },
 };
 
 // all animations: [{ slug, category, dir }] (folders starting with "_" are skipped)

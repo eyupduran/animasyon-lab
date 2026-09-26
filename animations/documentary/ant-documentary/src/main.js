@@ -6,7 +6,7 @@ import { antMaterials, buildAntTemplate } from './ant.js';
 import { buildSurface } from './world.js';
 import { buildNest } from './nest.js';
 import { buildLab } from './lab.js';
-import { createMosaic, createSmell } from './vision.js';
+import { createMosaic, createSmell, createLens } from './vision.js';
 import { Overlay } from './overlay.js';
 import { buildTimeline } from './timeline.js';
 import { buildSubs, SubtitleView } from './subs.js';
@@ -15,7 +15,7 @@ import { scoreEvents, playEvent } from './sound.js';
 
 const Q = new URLSearchParams(location.search);
 const VIDEO = Q.has('video');
-const store = { get: (k, d) => { try { const v = localStorage.getItem('antlife.' + k); return v == null ? d : JSON.parse(v); } catch { return d; } }, set: (k, v) => { try { localStorage.setItem('antlife.' + k, JSON.stringify(v)); } catch { } } };
+const store = { get: (k, d) => { try { const v = localStorage.getItem('antdoc.' + k); return v == null ? d : JSON.parse(v); } catch { return d; } }, set: (k, v) => { try { localStorage.setItem('antdoc.' + k, JSON.stringify(v)); } catch { } } };
 const $ = id => document.getElementById(id);
 const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 
@@ -44,6 +44,7 @@ const T = buildAntTemplate(scene, mats);
 const world = buildSurface(scene, { quality, shadows });
 const nest = buildNest(scene, { quality, shadows });
 const lab = buildLab(scene, { shadows });
+const lens = quality === 'low' || Q.has('nolens') ? null : createLens(scene, camera, engine, cinema.pipe, cinema.sun);
 const mosaic = createMosaic(camera, engine);
 const smell = createSmell(scene);
 overlay = new Overlay(scene, camera);

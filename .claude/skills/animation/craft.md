@@ -20,6 +20,18 @@ Bu dosya **nasıl** yapılacağını anlatır, **neye benzeyeceğini** değil. R
 - **3B'de döndürülmüş kart:** dikdörtgenin köşelerini `rx`, `ry`, `rz` açılarıyla döndür, `f/(f+Z)` ile izdüşür, sonra dörtgen eşlemesiyle doku bas.
 - Gerçek 3B gerekiyorsa (organ, makine içi, gezegen) Three.js, Babylon.js ya da WebGPU kullan. Aynı ışık kuralları geçerlidir.
 
+## 2b. Gerçekçi 3B (makro, belgesel)
+
+Gerçekçilik istenen 3B sahnelerde en büyük farkı yaratanlar (ayrıntı: `animations/biology/ant-eye-view/REALISM.md`):
+- **Uzun objektif:** dar görüş açısı, kamera geride; konu aynı boyda kalır, arka plan sıkışır ve erir. Hızlı yörünge yerine yavaş kaydırma, sabit kadraj, belli belirsiz el titremesi (zamanın saf fonksiyonu olarak).
+- **Gerçek HDRI ile ortam ışığı:** Poly Haven (CC0, atıf gerekmez) bir `.hdr`, prosedürel gökyüzünden çok daha doğal yansıma ve dolgu ışığı verir. Güneşi ayrıca yönlü ışıkla ver.
+- **Yumuşak ama temasta sertleşen gölge** (Babylon: `useContactHardeningShadow`); ayağın zemine "oturması" gerçekçiliğin ilk işaretidir.
+- **Kırılan damla:** su ya da cam, ortam küpünü değil sahnenin kendisini kırmalı. En ucuz yolu: damlanın yerine bir yansıma sondası (bir kez çizilen küp doku) koyup kırılma dokusu yapmak.
+- **Alan derinliği fiziksel ölçekte:** keskin bölge konunun gözü ve başı; odak kaydırma seyrek ve yavaş.
+- **İpeksi yüzey:** şeffaf cila katmanına çok ince bir bump, `enableSpecularAntiAliasing`; ince uzuvlarda arkadan ışıkta yarı saydamlık.
+- **Canlı hareket:** sabit hız yerine dur-kalk; antenler ve uzuvlar birbirinden bağımsız ritimde.
+- **Son işlemeyi hafif tut:** keskinleştirme kapalı, renk sapması ve kenar karartması çok az, bloom yalnızca gerçek parıltılarda.
+
 ## 3. Doku ve malzeme (prosedürel)
 
 - **Kâğıt:** açık zemin, binlerce düşük opaklıkta nokta, ince ızgara ya da lif.

@@ -1,6 +1,7 @@
 {
   "slug": "ant-eye-view",
   "title": "Karıncanın Gözünde Hayat",
+  "format": "documentary",
   "description": "Makro bir belgesel: bir siyah bahçe karıncasının bulanık mozaik gözleri, koku haritası, feromon yolları, lidersiz düzeni, küçüklerin fiziği ve yeraltı şehri.",
   "tech": "Babylon.js 9 · PBR · alan derinliği · Vite",
   "build": "npm run build",

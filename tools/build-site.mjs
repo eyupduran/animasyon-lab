@@ -28,6 +28,9 @@ for (const { slug, category, dir } of listAnimations()) {
     fs.rmSync(path.join(DIST, slug), { recursive: true, force: true });
     copyDir(path.join(dir, cfg.output || 'dist'), path.join(DIST, slug));
   }
+  // the site card shows <slug>/poster.jpg: publish the animation's poster next to its page
+  const posterSrc = path.join(dir, 'poster.jpg'), posterDst = path.join(DIST, slug, 'poster.jpg');
+  if (fs.existsSync(posterSrc) && fs.existsSync(path.join(DIST, slug)) && !fs.existsSync(posterDst)) fs.copyFileSync(posterSrc, posterDst);
   items.push({ ...cfg, slug, category, poster: fs.existsSync(path.join(dir, 'poster.jpg')) });
 }
 

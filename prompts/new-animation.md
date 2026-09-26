@@ -14,7 +14,8 @@ Dosyanın geri kalanı yapay zekâ içindir, değiştirmen gerekmez.
 - **Konu:** 
 - **Hedef kitle:** (ör. 5. sınıf, lise, üniversite, genel izleyici)
 - **Süre:** (ör. 4–6 dakika; boşsa konunun gerektirdiği kadar)
-- **Tür / his:** (ör. belgesel, oyun, hikâye, deney, harita üzerinde yolculuk; boşsa sen seç)
+- **Video türü:** (belgesel, açıklayıcı, yazılım, tarih, çocuklar için; boşsa konuya göre sen seç)
+- **His:** (ör. oyun, hikâye, deney, harita üzerinde yolculuk; boşsa sen seç)
 - **Anlatıcı sesi:** (ör. O9; boşsa konuya uygun olanı sen seç)
 - **Ek istekler:** 
 
@@ -77,6 +78,8 @@ Tek satır kod yazmadan önce konuyu internetten araştır.
 - Tarih ve coğrafyada tarihleri, sınırları ve yer adlarını dönemine uygun kullan. Tartışmalı konularda tek tarafın görüşünü gerçek gibi sunma.
 
 ## 3. Anlatım: bir insanın anlattığı gibi
+
+**Önce `.claude/skills/narration/SKILL.md` dosyasını oku.** Videonun türünü seç (belgesel, açıklayıcı, yazılım, tarih, çocuklar) ve `formats/<tür>.md` ile `retention.md` kurallarını uygula. Her türün sesi, yapısı, temposu ve kamera dili farklıdır; ders kitabı gibi okunan tek tip bir anlatım izleyiciyi sıkar. Beat sheet'i (resim · cümle · duygu · ipucu) `NARRATION.md` olarak animasyon klasörüne yaz. Aşağıdaki maddeler bütün türler için geçerli olan tabandır.
 
 Metin, animasyonun kalbidir. Görüntüden önce anlatımı yaz, sonra sahneleri anlatımın etrafında kur.
 
@@ -178,7 +181,7 @@ window.__video = {
 
 `CLAUDE.md` içindeki adımlar geçerlidir. Özetle:
 
-1. Konuya uygun kategoriyi seç (biology, history, geography, physics, chemistry, math, space, technology, software; gerekirse yeni bir İngilizce ad) ve `npm run new -- <kategori>/<slug> "<Türkçe Başlık>"` komutunu çalıştır. Slug İngilizce olmalı (küçük harf ve tire); Türkçe yalnızca ekrandaki metinde kullanılır ve düzgün olmalı (ç, ğ, ı, İ, ö, ş, ü).
+1. Kategoriyi seç: belgesel türündeyse `documentary`, değilse konuya uygun olanı (biology, history, geography, physics, chemistry, math, space, technology, software; gerekirse yeni bir İngilizce ad) ve `npm run new -- <kategori>/<slug> "<Türkçe Başlık>"` komutunu çalıştır. Slug İngilizce olmalı (küçük harf ve tire); Türkçe yalnızca ekrandaki metinde kullanılır ve düzgün olmalı (ç, ğ, ı, İ, ö, ş, ü).
 2. Yalnızca `animations/<kategori>/<slug>/` içinde çalış. `animation.json` dosyasını doldur (`slug`, `title`, `description`, `tech`, `build`, `output`). Kendi `package.json` dosyası olabilir: derleme paketleri `dependencies`, yerel araçlar `devDependencies` altına.
 3. `DESIGN.md`, `RESEARCH.md` ve `README.md` (ne anlattığı, bölümleri, komutları) dosyalarını yaz. Kök `README.md` içindeki animasyon tablosuna bir satır ekle. İstersen 16:9 bir `poster.jpg` üret.
 4. `npm run voice -- <slug>` ile sesi üret ve şüpheli satırları düzelt.

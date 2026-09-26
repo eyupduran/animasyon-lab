@@ -16,9 +16,10 @@ Kullanıcının isteği:
 `prompts/new-animation.md` dosyasını baştan sona oku ve uygula; `CLAUDE.md` kuralları geçerlidir. İsteği o dosyadaki "İSTEK" alanlarına çevir:
 
 - **Konu:** istekte ne yazıyorsa. Kısa yazılmış olabilir ("telefon simülasyonu yap" gibi). Bunu "telefonun nasıl çalıştığını anlatan eğitim animasyonu" diye anla. "Simülasyon", "oyun", "harita" gibi sözcükler tür ya da his ipucudur; anlatım, ses ve altyazılı bir animasyon yine yapılır.
-- **Hedef kitle, süre, tür ve his, anlatıcı sesi:** istekte yoksa konuya göre sen seç. Süre verilmediyse konunun gerektirdiği kadar olsun (genelde 5–7 dakika).
+- **Video türü (format):** belgesel, açıklayıcı, yazılım, tarih ya da çocuklar için. İstekte yazmıyorsa konuya ve kitleye göre sen seç (doğa ve canlılar → belgesel; "nasıl/neden" soruları → açıklayıcı; bir teknolojinin içi → yazılım; olaylar ve dönemler → tarih; ilkokul → çocuklar). Tür, anlatımın sesini ve kamera dilini belirler; görsel stili (renk, yazı tipi, teknik) belirlemez.
+- **Hedef kitle, süre, his, anlatıcı sesi:** istekte yoksa konuya göre sen seç. Süre verilmediyse konunun gerektirdiği kadar olsun (genelde 5–7 dakika).
 - **Ek istekler:** istekte başka ne varsa onlar da uygulanır.
-- **Kategori:** konuya göre bir klasör seç: biology, history, geography, physics, chemistry, math, space, technology ya da software. Liste ve Türkçe karşılıkları `tools/lib/animations.mjs` → `CATEGORIES` içinde. Hiçbiri uymuyorsa yeni bir İngilizce ad aç ve Türkçe karşılığını listeye ekle. Klasörü `npm run new -- <kategori>/<slug> "<Başlık>"` ile aç; animasyon `animations/<kategori>/<slug>/` altında durur. Araçlara (voice, build, video, thumbnail) yalnızca slug verilir.
+- **Kategori:** belgeseller her zaman `documentary` kategorisine girer (`animations/documentary/<slug>/`). Öteki türlerde konuya göre bir klasör seç: biology, history, geography, physics, chemistry, math, space, technology ya da software. Liste ve Türkçe karşılıkları `tools/lib/animations.mjs` → `CATEGORIES` içinde. Hiçbiri uymuyorsa yeni bir İngilizce ad aç ve Türkçe karşılığını listeye ekle. Klasörü `npm run new -- <kategori>/<slug> "<Başlık>"` ile aç; animasyon `animations/<kategori>/<slug>/` altında durur. Araçlara (voice, build, video, thumbnail) yalnızca slug verilir.
 
 Kullanıcı beklemeden çalışmanı istiyor. Soru sorma, mantıklı kararı kendin ver ve sonunda neyi neden seçtiğini kısaca anlat. Ücretli bir dış servise hiçbir şey gönderme.
 
@@ -27,12 +28,14 @@ Kullanıcı beklemeden çalışmanı istiyor. Soru sorma, mantıklı kararı ken
 - [craft.md](craft.md): teknik alet çantası. Işık, derinlik, perspektif, doku ve zamanlama teknikleri, "vay" anı kalıpları. Görsel dil ve stil önermez. Sahneleri kodlamaya başlamadan önce oku.
 - [pitfalls.md](pitfalls.md): önceki oturumlarda bulunan tuzaklar ve çözümleri. Kodlamaya başlamadan önce oku. İş bitince yeni bulduklarını buraya ekle.
 - [critique.md](critique.md): sanat yönetmeni turu. Ekran görüntüsü turlarında uygula.
+- **Anlatım skilli** [../narration/SKILL.md](../narration/SKILL.md): anlatım metnini yazmadan önce oku. Seçilen türün dosyasını (`../narration/formats/<tür>.md`) ve `../narration/retention.md` dosyasını baştan sona uygula; beat sheet'i animasyon klasöründe `NARRATION.md` olarak yaz.
 
 ## Her seferinde yapılacaklar (kullanıcı ayrıca söylemese de)
 
 1. **Başlangıç saatini not et:** ilk iş olarak `date "+%Y-%m-%d %H:%M:%S"` çalıştır.
 2. İşi `prompts/new-animation.md` dosyasındaki sırayla yap:
-   - araştırma (`RESEARCH.md`) ve tasarım kartı (`DESIGN.md`),
+   - araştırma (`RESEARCH.md`) ve tasarım kartı (`DESIGN.md`); tasarım kartına seçilen türü yaz,
+   - anlatım: `narration` skilliyle beat sheet (`NARRATION.md`) → metin → sesli okuma süresi → %20 kesme,
    - anlatım ve ses (`npm run voice`), şüpheli satırları düzelt,
    - kod,
    - masaüstü ve telefon ekran görüntüleriyle birkaç düzeltme turu,

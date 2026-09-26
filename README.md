@@ -10,6 +10,7 @@ Tarayıcıda çalışan eğitim animasyonlarının ve denemelerinin koleksiyonu.
 |---|---|---|---|
 | [Sindirim Yolculuğu](animations/biology/digestive-journey) · [izle](https://eyupduran.github.io/animasyon-lab/digestive-journey/) | Biyoloji | Three.js · Avaturn GLB | Bir besinin ağızdan mideye, bağırsaklara, kana ve beyne uzanan yolculuğu |
 | [Karıncanın Gözünde Hayat](animations/biology/ant-eye-view) · [izle](https://eyupduran.github.io/animasyon-lab/ant-eye-view/) | Biyoloji | Babylon.js · PBR · alan derinliği | Makro belgesel: bir siyah bahçe karıncasının mozaik gözleri, koku haritası, feromon yolları, lidersiz düzeni, küçüklerin fiziği ve yeraltı şehri |
+| [Karıncanın Gözünde Hayat · Belgesel Sürümü](animations/documentary/ant-documentary) · [izle](https://eyupduran.github.io/animasyon-lab/ant-documentary/) | Belgesel | Babylon.js · PBR · HDRI | Aynı belgesel, belgesel anlatım skilli ve gerçekçilik araştırmasıyla yeniden: uzun objektif, gerçek çayır ışığı, sahneyi kıran çiy damlaları |
 | [Yazıcının İçinde](animations/technology/laser-printer) · [izle](https://eyupduran.github.io/animasyon-lab/laser-printer/) | Teknoloji | Three.js · Vite · GPU simülasyonu | Renkli lazer yazıcı ve fotokopinin kesit hâlinde anlatımı; kopyadan kopyaya biriken kayıplar |
 | [İstanbul'un Fethi](animations/history/fall-of-constantinople) · [izle](https://eyupduran.github.io/animasyon-lab/fall-of-constantinople/) | Tarih | Canvas 2D · prosedürel minyatür harita | 1453 kuşatması canlanan bir harita üzerinde: Boğazkesen, dev top, Haliç'teki zincir, karadan yürüyen gemiler ve son saldırı |
 | [Spring Boot'un İçi](animations/software/spring-boot-internals) · [izle](https://eyupduran.github.io/animasyon-lab/spring-boot-internals/) | Yazılım | Canvas 2D · Web Audio | `SpringApplication.run()` ağır çekimde: konteyner, bean yaşam döngüsü, otomatik yapılandırma, proxy'ler ve bir HTTP isteğinin yolculuğu |
@@ -91,6 +92,7 @@ animasyon-lab/
 │  │     ├─ animation.json      her animasyon bağımsız bir proje; kimlik kartı: başlık, açıklama, teknik, derleme (zorunlu)
 │  │     ├─ README.md           bu animasyonun anlatımı ve komutları (zorunlu)
 │  │     └─ poster.jpg          sitedeki kart görseli, 16:9 (isteğe bağlı)
+│  ├─ documentary/              belgeseller (konusu ne olursa olsun)
 │  ├─ history/ · technology/ · software/ …
 ├─ assets/avatars/             isteğe bağlı avatar kütüphanesi: catalog.json, models/*.glb, thumbs/*.jpg
 ├─ assets/voices/              anlatıcı sesleri: catalog.json + her sesin kimlik kaydı
