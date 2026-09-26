@@ -20,6 +20,7 @@ export const CATEGORIES = {
   technology: { tr: 'Teknoloji', cover: 'TEKNOLOJİ' },
   software: { tr: 'Yazılım', cover: 'YAZILIM' },
   documentary: { tr: 'Belgesel', cover: 'BELGESEL' },
+  short: { tr: 'Kısa Film', cover: 'KISA FİLM' },
 };
 
 // all animations: [{ slug, category, dir }] (folders starting with "_" are skipped)

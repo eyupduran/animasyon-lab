@@ -36,6 +36,15 @@ npm run avatars -- add set-02-f03                  # ham modeli (~14 MB) küçü
 
 Ham modeller git'te tutulmaz (`catalog.json` → `source`).
 
+## Kısa film istemek
+
+```
+/short                                   # serbest brief: en etkileyici kısa filmi kendisi tasarlar
+/short kayıp bir robot gün doğumunu ilk kez görür
+```
+
+Sözsüz, 30–90 saniyelik sinematik kısa filmler `animations/short/` altında durur ([.claude/skills/short/SKILL.md](.claude/skills/short/SKILL.md)); anlatımlı eğitim animasyonları için aşağıdaki `/animation` kullanılır.
+
 ## Yeni animasyon istemek
 
 En kısa yol, Claude Code'da hazır komutu kullanmak:

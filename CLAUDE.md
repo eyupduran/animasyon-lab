@@ -22,6 +22,11 @@ Kullanıcı kaliteyi dört şeyle ölçer; hepsi birlikte sağlanmalı:
 - Binlerce küçük nesne bölgelere ayrılır (kamera görmediğini çizmez), geometri piksel boyutuna göre kabalaştırılır, ağır efektler (SSAO, PCSS, ekran uzayı katmanları) yalnızca üst kademelerde.
 - Ağır sahneler ve shader'lar başlangıç ekranında ısıtılır; oynatma sırasında yeni doku/geometri üretilmez.
 
+## İki giriş kapısı
+
+- `/animation <konu>`: anlatımlı, altyazılı eğitim animasyonu (araştırma → anlatım → sahne). Skill: `.claude/skills/animation/`.
+- `/short [brief]`: sözsüz ya da az sözlü, 30–90 saniyelik sinematik kısa film; hikâye, karakter ve görsel dili kendisi seçer; `animations/short/<slug>/`. Skill: `.claude/skills/short/`, örnek inceleme `docs/short-film-notes.md`. Serbest bir brief'in nasıl yazılacağı da orada.
+
 ## Türe göre teknik
 
 Görsel stil animasyona özeldir, ama **türün tekniği yeniden kullanılır**: belgesellerde `documentary-tech.md` (referans: `animations/documentary/ant-documentary`), öteki türlerde `docs/cartoon-style-in-code.md` seçenekleri. Yazılım animasyonu belgesel gibi görünmez; iki belgesel ise aynı kamera ve oynatıcı tekniğini paylaşabilir, dünyaları farklı olur.
@@ -31,7 +36,7 @@ Görsel stil animasyona özeldir, ama **türün tekniği yeniden kullanılır**:
 Ayrıntılı istek şablonu ve kalite ölçütleri: `prompts/new-animation.md` (araştırma, anlatım, ses ve altyazı tekniği, özgün tasarım). Kullanıcı bu dosyaya atıf yaparsa baştan sona uygula.
 
 1. **Sıfırdan tasarla.** Başka animasyonların kodunu, motorunu, arayüzünü, renklerini ya da yazı tiplerini örnek alma; onları açıp okuma. Tek istisna: aynı türün **teknik** modülleri (`documentary-tech.md` tablosunda "kopyala" denenler); görsel dünya yine sıfırdan. Konunun ve hedef kitlenin ne gerektirdiğini düşün: teknik (Three.js, Babylon.js, WebGPU, Canvas 2D, SVG, CSS, Vite, React…), görsel dil, anlatım yapısı, arayüz ve ses tümüyle bu animasyon için seçilir. Kullanıcı açıkça "şu animasyon gibi" ya da "şundan başla" demedikçe önceki bir animasyonu temel alma.
-2. Animasyonlar kategori klasörlerinde durur: `animations/<kategori>/<slug>/`. Kategori adları İngilizcedir (biology, history, geography, physics, chemistry, math, space, technology, software, documentary); liste ve Türkçe karşılıkları `tools/lib/animations.mjs` içinde. Slug bütün kategorilerde tektir, site adresi değişmez (`…/animasyon-lab/<slug>/`). Araçlar animasyonu yalnızca slug ile bulur.
+2. Animasyonlar kategori klasörlerinde durur: `animations/<kategori>/<slug>/`. Kategori adları İngilizcedir (biology, history, geography, physics, chemistry, math, space, technology, software, documentary, short); liste ve Türkçe karşılıkları `tools/lib/animations.mjs` içinde. Slug bütün kategorilerde tektir, site adresi değişmez (`…/animasyon-lab/<slug>/`). Araçlar animasyonu yalnızca slug ile bulur.
    `npm run new -- <kategori>/<slug> "<Başlık>"` yalnızca boş bir klasör ile `animation.json` ve `README.md` açar. Paketler, derleme düzeni ve klasör yapısı animasyonun kendi ihtiyacına göre kurulur (kendi `package.json`'ı olabilir; derlemede gereken paketler `dependencies`, yalnızca yerel araçlar `devDependencies` altına).
 3. Yalnızca `animations/<kategori>/<slug>/` içinde çalış. Başka bir animasyonun dosyalarını değiştirme.
 4. `animation.json` içindeki `slug`, `title`, `description`, `format`, `tech`, `build`, `output` alanlarını doldur (`format`: documentary, explainer, software, history, kids). Sitenin kartı bunlardan üretilir. `build` komutu animasyon klasöründe çalışır ve `output` klasörüne kendi başına açılan bir `index.html` üretmelidir.
