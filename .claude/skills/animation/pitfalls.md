@@ -41,6 +41,15 @@ Biçim: **belirti** → neden → çözüm. Her oturum sonunda yeni bulunanlar e
 - **Makro ölçekte kum taneleri karıncayı yutuyor** → ikosfer yarıçapı "boyut" diye kullanılmış (çap iki katı) → gerçek boyutları mm olarak yaz, çoğunu ince kum (0,05–0,25 mm yarıçap) yap, iri taneleri seyrek tut.
 - **Telefonda (dikey) 3B sahne dar bir dilim gibi görünüyor** → düşey görüş açısı sabit → dikey ekranda `fovMode` yatay yap, yatay açıyı masaüstünün ~0,62'si al; ölçek çubuğunu da buna göre hesapla.
 
+- **Three.js ShaderMaterial'da ortak GLSL parçası vertex shader'da derlenmiyor** (`gl_FragCoord` tanımsız) → ortak parçada fragment'e özel bir fonksiyon var → o ifadeyi fonksiyon yerine `#define` makrosu yap; yalnızca kullanıldığı yerde açılır.
+- **Kendi yazdığın gövde geometrisinin içi görünüyor, içindeki nesneler dışarı taşıyor** → indeks sırası ters, ön yüzler kırpılıyor → üçgen sırasını çevir; ilk ekran görüntüsünde "dışarıdaki nesne neden içeriyi gösteriyor?" diye bak.
+- **Şafakta yatay zemin öğlen gibi aydınlık** → yarım-Lambert (`N·L*0.5+0.5`) ramp alçak güneşte bile yarı ışık veriyor → ramp girdisi düz `N·L` olsun.
+- **İnce otlar kenar ışığıyla bembeyaz, çayır samana dönüyor** → her yüzeye aynı rim katsayısı → ince, çift yüzlü geometride rim'i ~0,1'e indir.
+- **Arı gözü (altıgen mozaik) içinde ince çizgiler kayboluyor** → hücre ortalaması 1–2 px çizgiyi siliyor → mozaikte gösterilecek deseni hücreden kalın çiz, kesik çizgi yerine sürekli çizgi kullan.
+- **Makro ölçekte ağaç kabuğu "karikatür tahta" gibi** → `abs(fbm-.5)` eş-yükselti çizgisi üretir → gerilmiş Voronoi levhaları (F2−F1 yarık) ve kameraya yaklaşınca devreye giren ikinci, ince Voronoi katmanı.
+- **Kovan "zifiri karanlık" diye anlatılıyor ama bej ve aydınlık görünüyor** → petek kendi ışığını, arılar genel ışığı kullanıyor, pozlama yüksek → odak dışını ~%4'e düşür, yalnız mum kenarlarına zayıf ışıma bırak; kovan ön ayarında pozlamayı indir.
+- **`node -e "…"` içindeki şablon dizgesi `${…}` ya da ters tırnak yüzünden bozuluyor** → bash çift tırnağı kaçışları yiyor → yama betiğini Write aracıyla dosyaya yaz, `node dosya.cjs` ile çalıştır.
+
 ## Ses
 
 - **Kod terimleri (Spring, bean, @Transactional…) yanlış okunuyor** → söyleniş sözlüğü kur (`PRON`: "bean" → "bin", "@Transactional" → "et trenzekşınıl"), kesme işaretinden sonraki eki birleştir ("Tomcat'e" → "tomkete"), ek uyumuna dikkat et ("classpath'e" için "klaspet" → "klaspete"). Whisper doğru okunan İngilizce terimleri İngilizce yazdığı için yüzde 5–10 "fark" normaldir; yalnızca anlamı bozulan kelimeler için satırı yeniden kur.
