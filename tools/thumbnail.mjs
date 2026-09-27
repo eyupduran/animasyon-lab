@@ -3,7 +3,8 @@
 // The animation provides animations/<kategori>/<slug>/thumbnail.html (served straight from the source folder):
 //   ?v=<n> draws cover n on a 1280×720 #root, then sets window.__thumbs = { count, list: [{ id, title }] }
 //   and window.__thumbReady = true. The channel kit (assets/thumbnail-kit/kit.js) is served at /_kit/:
-//   the animation draws its own hero picture and calls kit.brand({ title, accent, topic, minutes }).
+//   the animation draws its own hero picture (kit.hero) and calls kit.brand({ title, category, accent });
+//   the kit's header comment documents the grid, colours and every option.
 // Output: animations/<kategori>/<slug>/renders/thumbnail-<n>-<id>.jpg (1920×1080; YouTube accepts ≤ 2 MB).
 import fs from 'fs';
 import path from 'path';

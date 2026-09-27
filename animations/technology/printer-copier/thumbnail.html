@@ -7,16 +7,21 @@
 <body>
 <div id="root"></div>
 <script type="module">
-// YouTube kapakları. Ana görsel filmin kendi karelerinden (thumb/frame-<saniye>.jpg, renderAt ile alındı);
-// kanal çerçevesi assets/thumbnail-kit/kit.js'ten.
+// YouTube kapakları. Ana görsel filmin kendi karesi: thumb/hero-<saniye×10>.jpg, filmin renderAt'ı ile
+// ekrandaki yazılar kapatılarak alındı (thumb/grab.mjs). Kanal katmanı assets/thumbnail-kit/kit.js'ten.
+//   v=1 ana kapak · v=2 ve v=3 A/B denemesi için
 import * as kit from '/_kit/kit.js';
 
 const CONCEPTS = [
-  { id: 'gri-yok', img: 'frame-0215', crop: [300, 100, 1620], title: '*GRİ* YOK', accent: 'Yazıcı bir fotoğrafı nasıl basar?', tint: '#FFB347' },
-  { id: 'murekkep-yok', img: 'frame-0329', crop: [60, 40, 1500], title: 'MÜREKKEP *YOK*', accent: 'Lazer yazıcının içinde bir sayfa', tint: '#FF7A3D' },
-  { id: 'kopya-bozar', img: 'frame-0321', crop: [640, 180, 1150], title: 'KOPYA *BOZAR*', accent: 'Fotokopi fotoğrafı neden dalgalandırır?', tint: '#6FB7FF' },
-  { id: 'lazer-tambur', img: 'frame-0121', crop: [-500, -60, 2250], title: 'LAZER *TAMBURA* YAZAR', accent: 'Kâğıda hiç dokunmaz', tint: '#FF3B3B' },
-  { id: 'kopyanin-kopyasi', img: 'frame-0369', crop: [100, 100, 1350], title: 'KOPYANIN *KOPYASI*', accent: 'Her kuşakta biraz daha kayıp', tint: '#FFD23F' },
+  // yarım ton portre: fotoğrafta tek gri nokta yok
+  { id: 'gri-yok', img: 'hero-0195', title: '*GRİ* YOK', accent: 'Yazıcı bir fotoğrafı nasıl basar?',
+    hero: { focus: [0.54, 0.46], at: [0.68, 0.47], zoom: 1.1 }, scrim: 0.9 },
+  // lazer, dönen ayna ve tambur: sayfa ışıkla yazılır
+  { id: 'murekkep-yok', img: 'hero-1270', title: 'MÜREKKEP *YOK*', accent: 'Lazer yazıcı sayfayı ışıkla yazar',
+    hero: { focus: [0.55, 0.44], at: [0.73, 0.47], zoom: 1.5 }, scrim: 0.75 },
+  // kaynaştırıcı silindir: sayfanın sıcaklığı buradan
+  { id: 'sayfa-sicak', img: 'hero-1785', title: 'SAYFA NEDEN *SICAK?*', accent: 'Lazer yazıcının içinde bir sayfa',
+    hero: { focus: [0.48, 0.4], at: [0.7, 0.42], zoom: 1.2 }, scrim: 0.75 },
 ];
 
 const v = Math.max(1, Math.min(CONCEPTS.length, Number(new URLSearchParams(location.search).get('v')) || 1));
@@ -25,17 +30,9 @@ const c = CONCEPTS[v - 1];
 const img = new Image();
 img.src = `thumb/${c.img}.jpg`;
 await img.decode();
+kit.hero(kit.layer(1), img, c.hero);
 
-const g = kit.layer(1);
-// kadrajın dışında kalan yeri karenin kendi zemin rengiyle doldur
-const probe = kit.off(4, 4); probe.drawImage(img, 0, 0, 4, 4, 0, 0, 4, 4);
-const [r, gg, b] = probe.getImageData(0, 0, 1, 1).data;
-g.fillStyle = `rgb(${r},${gg},${b})`; g.fillRect(0, 0, kit.W, kit.H);
-const [sx, sy, sw] = c.crop, k = kit.W / sw;
-g.imageSmoothingQuality = 'high';
-g.drawImage(img, -sx * k, -sy * k, img.width * k, img.height * k);
-
-kit.brand({ title: c.title, accent: c.accent, topic: 'TEKNOLOJİ', minutes: 7, tint: c.tint });
+kit.brand({ title: c.title, accent: c.accent, category: 'technology', scrim: c.scrim });
 await kit.ready();
 window.__thumbs = { count: CONCEPTS.length, list: CONCEPTS.map(x => ({ id: x.id, title: x.title.replace(/\*/g, '') })) };
 window.__thumbReady = true;

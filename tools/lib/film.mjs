@@ -30,19 +30,13 @@ function ratioToTime(words, dur) {
   };
 }
 
-function splitLong(s, max = 84) {
+function splitLong(s, max = 84, min = 18) {
   if (s.length <= max) return [s];
   const mid = s.length / 2;
-  const cut = re => { const c = []; let m; while ((m = re.exec(s))) c.push(m.index + m[0].length); const ok = c.filter(i => i > 18 && s.length - i > 18); return ok.sort((a, b) => Math.abs(a - mid) - Math.abs(b - mid))[0]; };
-  const k = cut(/[;:]\s/g) ?? cut(/,\s/g) ?? cut(/\s(?=(ve|ama|çünkü|ise|yani)\s)/g) ?? cut(/\s/g);
-  return k ? [...splitLong(s.slice(0, k).trim(), max), ...splitLong(s.slice(k).trim(), max)] : [s];
+  const cut = re => { const c = []; let m; while ((m = re.exec(s))) c.push(m.index + m[0].length); const ok = c.filter(i => i > min && s.length - i > min); return ok.sort((a, b) => Math.abs(a - mid) - Math.abs(b - mid))[0]; };
+  const k = cut(/[;:]\s/g) ?? cut(/,\s/g) ?? cut(/\s(?=(ve|ama|çünkü|ise|yani|ya da|diye)\s)/g) ?? cut(/\s/g);
+  return k ? [...splitLong(s.slice(0, k).trim(), max, min), ...splitLong(s.slice(k).trim(), max, min)] : [s];
 }
-const twoLines = s => {
-  if (s.length <= 44) return s;
-  const w = s.split(' '); let best = 1, d = 1e9, acc = 0;
-  for (let i = 0; i < w.length - 1; i++) { acc += w[i].length + 1; const x = Math.abs(acc - (s.length - acc)); if (x < d) { d = x; best = i + 1; } }
-  return w.slice(0, best).join(' ') + '\n' + w.slice(best).join(' ');
-};
 const stamp = s => { const ms = Math.max(0, Math.round(s * 1000)); const p = (n, l = 2) => String(n).padStart(l, '0'); return `${p(Math.floor(ms / 3600000))}:${p(Math.floor(ms / 60000) % 60)}:${p(Math.floor(ms / 1000) % 60)},${p(ms % 1000, 3)}`; };
 
 // narration files of an animation: lines.json (say, optional text shown in subtitles) + manifest.json
@@ -58,25 +52,86 @@ export function readNarration(dir) {
   return out;
 }
 
-// subtitles from the written text, timed by the recognised words; placed: [{ id, at }]
-export function makeSrt(narr, placed, from = 0, to = Infinity) {
-  const cues = [];
-  for (const p of placed) {
-    const n = narr[p.id]; if (!n) continue;
-    const map = ratioToTime(n.words, n.dur), total = letters(n.text).length || 1;
-    const sentences = n.text.match(/[^.!?]+[.!?…]+/g) || [n.text];
-    let pos = 0;
-    for (const sen of sentences) for (const part of splitLong(sen.trim())) {
-      const i = n.text.indexOf(part, pos); pos = i + part.length;
+// Subtitles come in short one-line pieces that follow the voice ("parça parça"): each sentence is cut at
+// punctuation or natural breaks into pieces of at most ~42 letters, timed by the recognised words.
+// The same cues feed the .srt, the burned-in video (.ass) and the site player, so all three look alike.
+export const CUE = { max: 42, min: 10, lead: 0.05, tail: 0.2, minDur: 0.9, join: 0.35 };
+
+// cues of one clip in clip time: [{ a, b, text }]
+export function clipCues(n) {
+  const map = ratioToTime(n.words, n.dur), total = letters(n.text).length || 1;
+  const sentences = n.text.match(/[^.!?…]+(?:[.!?…]+|$)/g) || [n.text];
+  const out = []; let pos = 0;
+  for (const sen of sentences) {
+    if (!sen.trim()) continue;
+    const parts = splitLong(sen.trim(), CUE.max, CUE.min);
+    for (const part of parts) {
+      const i = n.text.indexOf(part, pos); if (i < 0) continue; pos = i + part.length;
       const t0 = map(letters(n.text.slice(0, i)).length / total), t1 = map(letters(n.text.slice(0, pos)).length / total);
-      cues.push({ a: p.at + t0 - 0.08, b: p.at + Math.max(t1, t0 + 0.8) + 0.25, text: twoLines(part) });
+      const prev = out[out.length - 1];
+      // a piece spoken too fast to read joins the one before it (same sentence, still short enough)
+      if (prev && prev.sen === sen && (t1 - t0 < 0.6 || prev.b - prev.a < 0.6) && prev.text.length + part.length < CUE.max + 12) { prev.text += ' ' + part; prev.b = t1; continue; }
+      out.push({ a: t0, b: t1, text: part, sen });
     }
   }
+  return out.map(({ a, b, text }) => ({ a: +a.toFixed(3), b: +b.toFixed(3), text }));
+}
+
+// clip cues laid on the film's timeline; placed: [{ id, at }]
+export function placeCues(clips, placed) {
+  const cues = [];
+  for (const p of placed) for (const c of clips[p.id] || []) cues.push({ a: p.at + c.a - CUE.lead, b: p.at + Math.max(c.b, c.a + CUE.minDur) + CUE.tail, text: c.text });
   cues.sort((x, y) => x.a - y.a);
-  for (let i = 0; i < cues.length - 1; i++) cues[i].b = Math.min(cues[i].b, cues[i + 1].a - 0.04);
+  for (let i = 0; i < cues.length - 1; i++) {
+    const nx = cues[i + 1].a;
+    cues[i].b = cues[i].b > nx - CUE.join ? nx - 0.02 : cues[i].b; // close gaps shorter than `join`: no flicker
+  }
+  return cues;
+}
+
+export function makeCues(narr, placed) {
+  const clips = {}; for (const id in narr) clips[id] = clipCues(narr[id]);
+  return placeCues(clips, placed);
+}
+
+
+export function cuesToSrt(cues, from = 0, to = Infinity) {
   let k = 1, s = '';
   for (const c of cues) { if (c.b < from || c.a > to) continue; s += `${k++}\n${stamp(Math.max(from, c.a) - from)} --> ${stamp(Math.min(to, c.b) - from)}\n${c.text}\n\n`; }
   return s;
+}
+
+export function srtToCues(srt) {
+  const t = x => { const [h, m, r] = x.trim().split(':'); return +h * 3600 + +m * 60 + parseFloat(r.replace(',', '.')); };
+  return srt.replace(/\r/g, '').split(/\n\n+/).map(b => b.split('\n')).filter(l => l.length >= 3 && l[1].includes('-->'))
+    .map(l => { const [a, b] = l[1].split('-->'); return { a: t(a), b: t(b), text: l.slice(2).join(' ') }; });
+}
+
+export function makeSrt(narr, placed, from = 0, to = Infinity) { return cuesToSrt(makeCues(narr, placed), from, to); }
+
+// Subtitle look, shared by the video (.ass) and the site player (tools/player): Inter Medium, white on a
+// soft dark band, bottom centre. Sizes are for a 1920×1080 frame.
+export const SUB_STYLE = { font: 'Inter Medium', size: 44, bottom: 64, pad: 12, band: 0.5, fadeIn: 0.12, fadeOut: 0.08 };
+
+export function cuesToAss(cues) {
+  const S = SUB_STYLE, alpha = Math.round((1 - S.band) * 255).toString(16).padStart(2, '0').toUpperCase();
+  const ts = s => { const cs = Math.max(0, Math.round(s * 100)); return `${Math.floor(cs / 360000)}:${String(Math.floor(cs / 6000) % 60).padStart(2, '0')}:${String(Math.floor(cs / 100) % 60).padStart(2, '0')}.${String(cs % 100).padStart(2, '0')}`; };
+  const esc = x => x.replace(/[{}]/g, '').replace(/\\/g, '/').replace(/\n/g, ' ');
+  return `[Script Info]
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Sub,${S.font},${S.size},&H00FFFFFF,&H00FFFFFF,&H${alpha}0C0A0A,&H${alpha}0C0A0A,0,0,0,0,100,100,0,0,3,${S.pad},0,2,160,160,${S.bottom},1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+${cues.map(c => `Dialogue: 0,${ts(c.a)},${ts(c.b)},Sub,,0,0,0,,{\\fad(${Math.round(S.fadeIn * 1000)},${Math.round(S.fadeOut * 1000)})}${esc(c.text)}`).join('\n')}
+`;
 }
 
 // ffmpeg arguments that lay the narration clips over the film's own sound (or silence)

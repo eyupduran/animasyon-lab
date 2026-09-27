@@ -18,7 +18,7 @@ Bir YouTube kanalı için kodla üretilen filmler: belgesel, tarih, coğrafya, b
      sound(from, to),           // varsa: filmin kendi sesi (müzik, efekt), OfflineAudioContext ile AudioBuffer
    };
    ```
-   Altyazıyı, anlatımın sese karıştırılmasını, bölüm listesini ve MP4'ü araçlar yapar (`npm run video -- <slug>`). Filmden oynatıcı, altyazı, zaman çubuğu, kalite ayarı, test ya da kapak **istenmez**. Video kare kare alınır; gerçek zamanlı akıcılık şart değildir, görsel zenginlikten kısma.
+   Oynatıcıyı, altyazıyı, anlatımın sese karıştırılmasını, bölüm listesini ve MP4'ü araçlar yapar. Sitede film, araçların oynatıcısının içinde video gibi oynar (`npm run build`, `npm run soundtrack`). MP4 kare kare alınır (`npm run video`). Filmden oynatıcı, altyazı, zaman çubuğu, kalite ayarı, test ya da kapak **istenmez**. Görsel zenginlikten kısma. Sitede oynatıcı `renderAt`'ı gerçek zamanlı çağırır: hızlı çizilen kare sitede akıcı görünür, ağır kare MP4'ü etkilemez, sitede yalnızca kare atlatır.
 
 ## Klasör ve adlar
 
@@ -30,8 +30,10 @@ Bir YouTube kanalı için kodla üretilen filmler: belgesel, tarih, coğrafya, b
 
 ## Tek istek, ayrı aşamalar
 
-Kullanıcı tek istek verir (`/animation <konu>` ya da `/short [fikir]`) ve yayınlanmış filmi alır. Komut işi aşamalara böler; her aşama temiz bir yardımcı ajanda çalışır ve yalnızca kendi işini bilir:
+Kullanıcı tek istek verir (`/animation <konu>` ya da `/short [fikir]`) ve sitede yayınlanmış filmi alır. Komut işi aşamalara böler; her aşama temiz bir yardımcı ajanda çalışır ve yalnızca kendi işini bilir:
 
 - **Metin** (yalnızca anlatımlı filmde): araştırma, anlatım metni, Türkçe ses. Görüntü hakkında karar verilmez.
 - **Film:** yalnızca film. Anlatım varsa görüntü onun zamanlarına göre yapılır. Paket işleri yapılmaz.
-- **Paket:** video, kapaklar, README, YouTube klasörü, commit, push.
+- **Yayın:** saflık denetimi, ses dosyası, poster, README, site, commit ve push.
+
+YouTube paketini kullanıcı ayrıca ister: `/youtube <slug>`. Altyazılı ve altyazısız MP4, .srt, bölümler, kanalın seri kimliğinde kapaklar, başlık, açıklama ve etiketler masaüstündeki YouTube klasörüne gider.

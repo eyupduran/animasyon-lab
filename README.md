@@ -43,13 +43,24 @@ Ham modeller git'te tutulmaz (`catalog.json` → `source`).
 ## Film istemek
 
 ```
-/animation bal arısının bir günü, belgesel     # anlatımlı film: metin ve ses → film → paket, tek istekle
+/animation bal arısının bir günü, belgesel     # anlatımlı film: metin ve ses → film → sitede yayın, tek istekle
 /short                                         # sözsüz kısa film (fikir verilebilir)
-/package <slug>                                # yalnızca paketi yeniden çalıştırmak için
+/youtube <slug>                                # istendiğinde: altyazılı MP4, kapaklar, başlık ve açıklama → Masaüstü\YouTube\<slug>\
 /audit <slug>                                  # bağımsız denetim raporu
 ```
 
-**Filmi nasıl yapacağı modele bırakılmıştır.** Bir kıyas deneyinde aynı hikâye hem depo kurallarıyla hem de boş bir klasörde tek prompt'la üretildi; kuralsız olan açıkça daha iyi çıktı (`animations/short/cloudburst`; kurallarla üretilen sürüm kaldırıldı, git geçmişinde duruyor). Anlatımlı filmlerde görüntü sese bağlı olduğu için önce metin ve ses hazırlanır, film onun üzerine yapılır. Komut her aşamayı temiz bir yardımcı ajana verir; kullanıcı tek istek yazar. Film aşamasında yalnızca beş şart var ([CLAUDE.md](CLAUDE.md)): yalnızca kod, doğru bilgi, türüne uygun anlatım ([.claude/skills/narration](.claude/skills/narration/SKILL.md)), önceki filmlere bakmamak ve videoya çevirmek için tek küçük söz (`window.__film`). Oynatıcı, altyazı, test, kapak, README gibi işler filmden ayrıldı: altyazıyı ve ses karışımını araçlar yapar, gerisi ayrı bir paketleme oturumudur.
+**Filmi nasıl yapacağı modele bırakılmıştır.** Bir kıyas deneyinde aynı hikâye hem depo kurallarıyla hem de boş bir klasörde tek prompt'la üretildi; kuralsız olan açıkça daha iyi çıktı (`animations/short/cloudburst`; kurallarla üretilen sürüm kaldırıldı, git geçmişinde duruyor). Anlatımlı filmlerde görüntü sese bağlı olduğu için önce metin ve ses hazırlanır, film onun üzerine yapılır. Komut her aşamayı temiz bir yardımcı ajana verir; kullanıcı tek istek yazar. Film aşamasında yalnızca beş şart var ([CLAUDE.md](CLAUDE.md)): yalnızca kod, doğru bilgi, türüne uygun anlatım ([.claude/skills/narration](.claude/skills/narration/SKILL.md)), önceki filmlere bakmamak ve videoya çevirmek için tek küçük söz (`window.__film`). Oynatıcı, altyazı, test, kapak, README gibi işler filmden ayrıldı: oynatıcıyı, altyazıyı ve ses karışımını araçlar yapar; yayın ayrı bir aşamadır, YouTube paketi ayrı bir komuttur.
+
+## Sitede oynatma
+
+Site filmi video gibi oynatır ama MP4 yüklemez: film tarayıcıda canlı çizilir. `tools/build-site.mjs`, `window.__film` sunan her filmi `tools/player` oynatıcısının içine koyar (`dist/<slug>/index.html`, film `dist/<slug>/film/` altında). Oynatıcı saatini ses dosyasından alır, filmin o anki karesini çizdirir ve altyazıyı videodakiyle aynı görünüşte gösterir. Oynat/duraklat, zaman çubuğu, bölüm işaretleri, altyazı aç/kapa, ses ve tam ekran düğmeleri vardır; klavye (boşluk, oklar, F, C, M) ve dokunmatik ekran desteklenir.
+
+```
+npm run soundtrack -- <slug>          # anlatım + filmin sesi tek dosyada → animations/<kategori>/<slug>/soundtrack.m4a (~6 MB / 7 dk, git'e girer)
+npm run poster -- <slug> --pick 10    # aday kareler; sonra --t <saniye> → poster.jpg
+```
+
+`soundtrack.m4a` yoksa oynatıcı anlatım kayıtlarını ve filmin sesini tarayıcıda kendisi karıştırır (sesini yavaş üreten filmlerde müziğin gelmesi gecikebilir).
 
 ## Seslendirme (yerel, ücretsiz)
 
@@ -68,20 +79,22 @@ Kurulum (bir kez): `C:\ProgramData	ts_lab\omni` Python ortamı (PyTorch CUDA, `o
 ## YouTube videosu
 
 ```
-npm run video -- <slug>                # animations/<kategori>/<slug>/renders/<slug>.mp4 + .srt + -chapters.txt
-npm run video -- <slug> --subs burn    # altyazı görüntüye gömülü (yalnızca eski window.__video animasyonlarında)
+npm run video -- <slug>                # renders/<slug>.mp4 (temiz) + <slug>-altyazili.mp4 + .srt + -chapters.txt
+npm run subs -- <slug> [--srt]         # yalnızca altyazılı sürümü yeniden basar (--srt: altyazıyı filmden yeniden üretir)
 npm run verify -- <slug>               # renderAt(t) saflık testi: aynı an aynı piksel, sayfa hatası yok
 ```
 
-Claude Code'da `/package <slug>` komutu bütün işi yapar: videoyu, altyazıyı, bölüm listesini, kapak görsellerini ve YouTube açıklamasını `Masaüstü\YouTube\<slug>\` klasörüne çıkarır ([.claude/skills/video/SKILL.md](.claude/skills/video/SKILL.md)).
+Altyazı kısa, tek satırlık parçalar hâlinde sesi izleyerek akar ve sade bir bantla alt ortada durur (Inter Medium, `assets/fonts/`). Kurallar ve görünüş `tools/lib/film.mjs` içinde (`CUE`, `SUB_STYLE`); `.srt`, altyazılı video ve site oynatıcısı aynı kaynaktan beslenir.
+
+Claude Code'da `/youtube <slug>` komutu bütün işi yapar: iki videoyu, altyazıyı, bölüm listesini, kapakları ve YouTube metnini `Masaüstü\YouTube\<slug>\` klasörüne çıkarır ([.claude/skills/youtube/SKILL.md](.claude/skills/youtube/SKILL.md)).
 
 Kapak görselleri de kodla çizilir:
 
 ```
-npm run thumbnail -- <slug>            # animations/<kategori>/<slug>/renders/thumbnail-<n>-<ad>.jpg (5 kapak, 1920×1080)
+npm run thumbnail -- <slug>            # animations/<kategori>/<slug>/renders/thumbnail-<n>-<ad>.jpg (ana kapak + 2 alternatif, 1920×1080)
 ```
 
-Animasyon `thumbnail.html` sayfasını sunar (`?v=<n>` bir konsept çizer; sözleşme `tools/thumbnail.mjs` içinde). Kapaklar kanalın ortak kimliğini [assets/thumbnail-kit/kit.js](assets/thumbnail-kit/kit.js) kitinden alır: "ANİMASYON LAB" işareti, konu etiketi, sarı vurgulu büyük başlık, süre etiketi, renk işleme. Ana görsel her videoda kendi konusundan çizilir; her video için 5 konsept üretilir.
+Animasyon `thumbnail.html` sayfasını sunar (`?v=<n>` bir konsept çizer; sözleşme `tools/thumbnail.mjs` içinde). Kapaklar kanalın seri kimliğini [assets/thumbnail-kit/kit.js](assets/thumbnail-kit/kit.js) kitinden alır: "ANİMASYON LAB" işareti, kategori renginde kenar şeridi ve etiket, ızgaraya oturan büyük başlık, ortak renk işleme. Sağ alt köşe YouTube'un süre rozeti için boş kalır. Ana görsel her videoda filmin kendi karesinden ya da kodundan gelir: `?v=1` ana kapak, `?v=2` ve `?v=3` A/B alternatifleri.
 
 Film `?video=1` adresinde `window.__film` nesnesini sunar: `duration`, `renderAt(t)`; varsa `narration: [{ id, at }]`, `chapters: [{ t, title }]`, `sound(from, to)`. Araç kareleri headless Chrome'da tek tek çizer, altyazıyı anlatım metninden ve kelime zamanlarından üretir, anlatım kayıtlarını filmin kendi sesinin üstüne karıştırır ve ffmpeg ile birleştirir (`tools/lib/film.mjs`). Eski animasyonların `window.__video` sözleşmesi de desteklenir. `.srt` dosyası YouTube'a ayrıca yüklenir, izleyici altyazıyı açıp kapatabilir.
 
@@ -100,13 +113,18 @@ animasyon-lab/
 ├─ assets/avatars/             isteğe bağlı avatar kütüphanesi: catalog.json, models/*.glb, thumbs/*.jpg
 ├─ assets/voices/              anlatıcı sesleri: catalog.json + her sesin kimlik kaydı
 ├─ assets/thumbnail-kit/       YouTube kapaklarının ortak kanal kimliği
+├─ assets/fonts/               altyazı yazı tipi (Inter, SIL OFL)
 ├─ tools/
 │  ├─ lib/animations.mjs        kategori listesi; araçlar animasyonu slug ile bulur
 │  ├─ new-animation.mjs         boş bir animasyon klasörü açar (<kategori>/<slug>)
 │  ├─ avatars.mjs               avatar kütüphanesi: list, add, use, thumbs
 │  ├─ voice.mjs                 yerel seslendirme (OmniVoice, Piper) + Whisper denetimi
 │  ├─ tts/                      motor çalışanları: OmniVoice, Supertonic, Chatterbox, EMA-TTS (+ Whisper denetimi)
-│  ├─ render-video.mjs          YouTube için MP4 + SRT + bölüm listesi
+│  ├─ render-video.mjs          YouTube için MP4 (temiz + altyazılı) + SRT + bölüm listesi
+│  ├─ burn-subs.mjs             altyazıyı görüntüye basar (npm run subs)
+│  ├─ soundtrack.mjs            site oynatıcısının ses dosyası (npm run soundtrack)
+│  ├─ poster.mjs                site kartı ve oynatıcı açılışı için kare (npm run poster)
+│  ├─ player/                   sitedeki video oynatıcı: filmi iframe'de canlı çizdirir
 │  └─ build-site.mjs            her animasyonu kendi komutuyla derler, siteyi dist/ altında toplar
 ├─ .github/workflows/pages.yml  her gönderimde siteyi derleyip GitHub Pages'e yayınlar
 └─ CLAUDE.md                    yapay zekâ oturumları için depo kuralları

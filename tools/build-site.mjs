@@ -4,11 +4,16 @@
 // Animations live in animations/<category>/<slug>/; the site keeps flat addresses (dist/<slug>/) and groups
 // the cards by category on the front page. Each animation declares in its animation.json how it is built
 // ("build") and where the output lands ("output"). Folders starting with "_" (templates) are skipped.
+// A film that answers the minimal contract (window.__film) is published inside the site player
+// (tools/player): dist/<slug>/index.html plays dist/<slug>/film/ like a video, with the narration clips
+// and the film's own sound (soundtrack.m4a from npm run soundtrack; without it the narration clips go to
+// dist/<slug>/voice/ and the player mixes live) and the subtitles. Older pages with their own player stay as they are.
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { listAnimations, CATEGORIES } from './lib/animations.mjs';
+import { readNarration, clipCues, CUE, SUB_STYLE } from './lib/film.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -26,13 +31,79 @@ for (const { slug, category, dir } of listAnimations()) {
     if (pkg && pkg.dependencies && Object.keys(pkg.dependencies).length && !fs.existsSync(path.join(dir, 'node_modules'))) execSync('npm install --omit=dev', { cwd: dir, stdio: 'inherit' });
     execSync(cfg.build || 'node build.mjs', { cwd: dir, stdio: 'inherit' });
     fs.rmSync(path.join(DIST, slug), { recursive: true, force: true });
-    copyDir(path.join(dir, cfg.output || 'dist'), path.join(DIST, slug));
+    const built = path.join(dir, cfg.output || 'dist');
+    if (usesFilm(built)) { copyDir(built, path.join(DIST, slug, 'film')); writePlayer(slug, dir, cfg); }
+    else copyDir(built, path.join(DIST, slug));
   }
   // the site card shows <slug>/poster.jpg: publish the animation's poster next to its page
   const posterSrc = path.join(dir, 'poster.jpg'), posterDst = path.join(DIST, slug, 'poster.jpg');
   if (fs.existsSync(posterSrc) && fs.existsSync(path.join(DIST, slug)) && !fs.existsSync(posterDst)) fs.copyFileSync(posterSrc, posterDst);
   items.push({ ...cfg, slug, category, poster: fs.existsSync(path.join(dir, 'poster.jpg')) });
 }
+
+// ---- site player ----------------------------------------------------------------------------------------
+function usesFilm(out) {
+  const walk = d => fs.readdirSync(d, { withFileTypes: true }).some(e => e.isDirectory() ? walk(path.join(d, e.name)) : /\.(html|js|mjs)$/.test(e.name) && fs.readFileSync(path.join(d, e.name), 'utf8').includes('__film'));
+  return fs.existsSync(out) && walk(out);
+}
+function copyPlayerAssets() {
+  const to = path.join(DIST, '_player'); fs.mkdirSync(to, { recursive: true });
+  for (const f of ['player.js', 'player.css']) fs.copyFileSync(path.join(ROOT, 'tools', 'player', f), path.join(to, f));
+  fs.copyFileSync(path.join(ROOT, 'assets', 'fonts', 'Inter-Medium.ttf'), path.join(to, 'Inter-Medium.ttf'));
+}
+function writePlayer(slug, dir, cfg) {
+  const narr = readNarration(dir) || {}, clips = {};
+  const soundtrack = fs.existsSync(path.join(dir, 'soundtrack.m4a'));
+  if (soundtrack) fs.copyFileSync(path.join(dir, 'soundtrack.m4a'), path.join(DIST, slug, 'soundtrack.m4a'));
+  else console.log(`${slug}: soundtrack.m4a yok (npm run soundtrack -- ${slug}); oynatıcı sesi tarayıcıda karıştıracak`);
+  for (const [id, n] of Object.entries(narr)) {
+    if (!fs.existsSync(n.file)) continue;
+    clips[id] = { cues: clipCues(n) };
+    if (soundtrack) continue;
+    const name = path.basename(n.file);
+    fs.mkdirSync(path.join(DIST, slug, 'voice'), { recursive: true });
+    fs.copyFileSync(n.file, path.join(DIST, slug, 'voice', name));
+    clips[id].file = `voice/${encodeURIComponent(name)}`;
+  }
+  const data = { title: cfg.title, soundtrack: soundtrack ? 'soundtrack.m4a' : undefined, musicDb: -8, cue: { lead: CUE.lead, tail: CUE.tail, minDur: CUE.minDur, join: CUE.join }, fade: [SUB_STYLE.fadeIn, SUB_STYLE.fadeOut], clips };
+  const hasPoster = fs.existsSync(path.join(dir, 'poster.jpg'));
+  fs.writeFileSync(path.join(DIST, slug, 'index.html'), `<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>${esc(cfg.title)} · Animasyon Lab</title>
+<meta name="description" content="${esc(cfg.description)}">
+<meta property="og:title" content="${esc(cfg.title)}"><meta property="og:description" content="${esc(cfg.description)}">${hasPoster ? '<meta property="og:image" content="poster.jpg">' : ''}
+<meta name="theme-color" content="#000000"><link rel="icon" href="data:,">
+<link rel="stylesheet" href="../_player/player.css">
+</head><body>
+<div class="pl" id="pl">
+  <div class="pl-video">
+    <iframe class="pl-film" src="film/index.html?video=1" title="${esc(cfg.title)}" scrolling="no" tabindex="-1" allow="autoplay"></iframe>
+    ${hasPoster ? '<img class="pl-poster" src="poster.jpg" alt="">' : ''}
+    <div class="pl-sub" aria-live="off"><span></span></div>
+  </div>
+  <div class="pl-hit"></div>
+  <div class="pl-top"><a href="../">← Animasyon Lab</a><b>${esc(cfg.title)}</b></div>
+  <button class="pl-big" aria-label="Oynat"></button>
+  <div class="pl-hint">Sesi açık izleyin</div>
+  <div class="pl-load"></div>
+  <div class="pl-bar">
+    <div class="pl-track" role="slider" aria-label="Zaman"><div class="pl-rail"><div class="pl-fill"></div></div><div class="pl-knob"></div><div class="pl-tip"></div></div>
+    <div class="pl-row">
+      <button class="pl-btn pl-play" aria-label="Oynat"></button>
+      <button class="pl-btn pl-mute" aria-label="Sesi kapat"></button>
+      <div class="pl-time"></div>
+      <div class="pl-sp"></div>
+      <button class="pl-btn pl-cc" aria-label="Altyazı"><span>CC</span></button>
+      <button class="pl-btn pl-fs" aria-label="Tam ekran"></button>
+    </div>
+  </div>
+</div>
+<script>window.__PLAYER = ${JSON.stringify(data).replace(/</g, '\\u003c')};</script>
+<script src="../_player/player.js"></script>
+</body></html>
+`);
+}
+copyPlayerAssets();
 
 const card = a =>`<a class="card" data-c="${a.category}" href="./${a.slug}/">${a.poster ? `<img src="./${a.slug}/poster.jpg" alt="" loading="lazy">` : '<div class="ph"></div>'}<div class="txt"><em>${esc(label(a.category))}</em><b>${esc(a.title)}</b><span>${esc(a.description)}</span>${a.tech ? `<i>${esc(a.tech)}</i>` : ''}</div></a>`;
 // one grid with every card; the chips filter it by category (order of CATEGORIES, new categories last)

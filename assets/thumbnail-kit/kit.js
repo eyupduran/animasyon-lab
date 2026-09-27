@@ -1,40 +1,92 @@
-// Channel thumbnail kit: the shared YouTube identity of every video on the channel.
-// An animation draws its own hero picture (full bleed, 1280×720, weight on the right side);
-// brand() then adds what stays the same on every cover: the dark left panel, the channel mark and
-// topic chip, the big title with its yellow accent line, the duration sticker, grading and grain.
-//   import * as kit from '/_kit/kit.js';
-//   const ctx = kit.layer(); ...draw...; kit.brand({ title: 'ÇAKIŞMA!', accent: 'Git neden durur?', topic: 'YAZILIM', minutes: 6 });
+// Animasyon Lab kapak kiti: kanalın bütün YouTube kapaklarında aynı kalan kimlik.
+//
+// DÜZEN
+//   Film kendi thumbnail.html'inde ana görseli çizer (1280×720 #root, tam kadraj), sonra kit.brand() kanal
+//   katmanını ekler, en sonda await kit.ready() yazılar yüklenip yerine oturana kadar bekler.
+//   Araç: npm run thumbnail -- <slug>  (tools/thumbnail.mjs; kit /_kit/kit.js adresinden gelir).
+//
+//     import * as kit from '/_kit/kit.js';
+//     const g = kit.layer(1);
+//     kit.hero(g, img, { focus: [0.62, 0.45], zoom: 1.1 });        // ya da kendi çiziminiz
+//     kit.brand({ title: '*GRİ* YOK', category: 'technology', accent: 'Yazıcı bir fotoğrafı nasıl basar?' });
+//     await kit.ready();
+//     window.__thumbs = { count, list: [{ id, title }] }; window.__thumbReady = true;
+//
+// SERİ SİSTEMİ (brand() hepsini kendisi uygular, film yalnızca görseli ve başlığı verir)
+//   • Izgara: 1280×720, kenar payı 56 px. Yazı bloğu sol altta, genişliği en çok 660 px (sol yarı).
+//     Sağ alt köşe BOŞ kalır (YouTube'un süre rozeti orada), sağ üst de boş (izle-sonra düğmeleri).
+//     Ana görselin odağını sağ yarıya koyun; sol yarı koyulaştırılır.
+//   • Kanal işareti: sol üstte "ANİMASYON [LAB]" yazı işareti. Her kapakta aynı yer, aynı boy.
+//   • Kategori sırtı: sol kenarda tam boy, kategori renginde ince şerit + başlığın üstünde kategori adı.
+//     Renkler CATEGORIES tablosunda (anahtarlar tools/lib/animations.mjs → CATEGORIES ile aynı).
+//   • Başlık: Archivo 800, büyük harf, 2–4 kelime, en çok 2 satır. *kelime* kategori renginde yazılır.
+//     Boyut kendiliğinden ayarlanır (148 → 92 px; sığmazsa harfler daraltılır). 168×94 mobil önizlemede
+//     de okunacak kadar büyük kalır; uzun cümle yazmayın, onu accent satırına koyun.
+//   • Işık ve renk: solda koyu perde, altta hafif karartma, kenar kararması, başlığın arkasında kategori
+//     renginde çok hafif bir ışık, hafif kontrast ve ince gren. Her kapak aynı işlemden geçer.
+//
+// brand(seçenekler)
+//   title     (şart) büyük harfle yazılmış başlık; *...* vurgulanır. Türkçe İ/I'yı çağıran doğru yazar.
+//   category  'technology' | 'software' | 'history' | … (renk ve etiket buradan). Verilmezse topic'ten bulunur.
+//   topic     etiket metni (eski sayfalar 'TEKNOLOJİ' gibi verir); category varsa onun etiketi kullanılır.
+//   accent    başlığın altındaki kısa açıklama satırı (isteğe bağlı; mobilde okunmaz, süs değil bilgi olsun).
+//   color     kategori rengini elle ezmek için (#rrggbb).
+//   tint      başlık arkasındaki ışığın rengi (varsayılan: kategori rengi).
+//   scrim     sol perdenin koyuluğu 0–1 (varsayılan 0.86). Görsel zaten koyuysa düşürün.
+//   size      başlığın en büyük punto değeri (varsayılan 148).
+//   width     yazı bloğunun en büyük genişliği (varsayılan 660).
+//   valign    'bottom' (varsayılan) | 'middle': blok sol altta ya da sol ortada.
+//   grade     false: hafif kontrast işlemini kapatır.
+//   minutes   eski sürümden kaldı; YOK SAYILIR (süre çıkartması artık yok).
+//
+// Diğer araçlar: layer(z), off(w,h), hero(ctx,img,o), html(s,css,z), bloom, depthOfField, bokeh,
+// homography, drawQuad, rand(seed), lerp. W/H 1280×720, DPR 2 (araç ?dpr=2 ile açar, çıktı 1920×1080).
 export const W = 1280, H = 720;
 export const DPR = Math.min(2, Number(new URLSearchParams(location.search).get('dpr')) || 2);
-export const BRAND = { yellow: '#FFD23F', ink: '#0B0D14', white: '#FFFFFF', name: 'ANİMASYON LAB' };
+
+export const CATEGORIES = {
+  technology: { label: 'TEKNOLOJİ', color: '#FF5A36' },
+  software: { label: 'YAZILIM', color: '#4FD8F0' },
+  history: { label: 'TARİH', color: '#E0A956' },
+  geography: { label: 'COĞRAFYA', color: '#3CC7A0' },
+  biology: { label: 'BİYOLOJİ', color: '#A5DB4F' },
+  physics: { label: 'FİZİK', color: '#5B8CFF' },
+  chemistry: { label: 'KİMYA', color: '#E774D8' },
+  math: { label: 'MATEMATİK', color: '#FFD04A' },
+  space: { label: 'UZAY', color: '#A48BFF' },
+  documentary: { label: 'BELGESEL', color: '#E9DCC4' },
+  short: { label: 'KISA FİLM', color: '#FF6F8E' },
+};
+export const BRAND = { ink: '#07080B', white: '#FFFFFF', name: 'ANİMASYON LAB', yellow: '#FFD04A' };
 
 const css = document.createElement('link');
 css.rel = 'stylesheet';
-css.href = 'https://fonts.googleapis.com/css2?family=Anton&family=Barlow:ital,wght@0,600;0,700;0,800;0,900;1,800&family=Barlow+Condensed:wght@700;800;900&family=JetBrains+Mono:wght@700;800&display=swap';
+css.href = 'https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@600;700&display=swap';
 const cssLoaded = new Promise(r => { css.onload = r; css.onerror = r; });
 document.head.appendChild(css);
 const style = document.createElement('style');
 style.textContent = `
 html,body{margin:0;background:#000;overflow:hidden}
-#root{position:relative;width:${W}px;height:${H}px;overflow:hidden;font-family:Barlow,sans-serif}
+#root{position:relative;width:${W}px;height:${H}px;overflow:hidden;font-family:Archivo,'Segoe UI',sans-serif;background:${BRAND.ink}}
 #root canvas{position:absolute;inset:0;width:${W}px;height:${H}px}
+#root.kit-graded canvas{filter:contrast(1.06) saturate(1.05)}
 #root .t{position:absolute;white-space:nowrap}
-.kit-grain{position:absolute;inset:0;pointer-events:none;opacity:.12;mix-blend-mode:overlay;z-index:90;
- background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 .kit-fx{position:absolute;inset:0;pointer-events:none}
-.kit-mark{position:absolute;left:34px;top:30px;display:flex;align-items:center;gap:12px;z-index:95}
-.kit-logo{width:44px;height:44px;border-radius:50%;background:${BRAND.yellow};position:relative;box-shadow:0 4px 18px rgba(0,0,0,.5)}
-.kit-logo::before{content:'';position:absolute;left:17px;top:12px;border-left:15px solid ${BRAND.ink};border-top:10px solid transparent;border-bottom:10px solid transparent}
-.kit-logo::after{content:'';position:absolute;inset:-6px;border-radius:50%;border:3px solid rgba(255,210,63,.55)}
-.kit-name{font:900 22px/1 Barlow;letter-spacing:.14em;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.8)}
-.kit-topic{font:800 16px/1 Barlow;letter-spacing:.16em;color:${BRAND.ink};background:${BRAND.yellow};padding:7px 11px 6px;border-radius:5px}
-.kit-title{position:absolute;left:44px;bottom:118px;z-index:95;font-family:Anton,'Barlow Condensed',sans-serif;color:#fff;line-height:.92;
- letter-spacing:.5px;text-shadow:0 6px 0 rgba(0,0,0,.55),0 12px 40px rgba(0,0,0,.7);max-width:720px;white-space:normal}
-.kit-title em{font-style:normal;color:${BRAND.yellow}}
-.kit-bar{position:absolute;left:46px;bottom:98px;height:9px;width:150px;background:${BRAND.yellow};z-index:95;box-shadow:0 4px 14px rgba(0,0,0,.5)}
-.kit-accent{position:absolute;left:46px;bottom:42px;z-index:95;font:800 34px/1 Barlow;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.9)}
-.kit-min{position:absolute;right:30px;bottom:28px;z-index:95;font:900 26px/1 Barlow;color:${BRAND.ink};background:${BRAND.yellow};padding:10px 14px;border-radius:8px;
- transform:rotate(-3deg);box-shadow:0 8px 22px rgba(0,0,0,.55)}
+.kit-grain{position:absolute;inset:0;pointer-events:none;opacity:.09;mix-blend-mode:overlay;z-index:90;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.kit-spine{position:absolute;left:0;top:0;bottom:0;width:10px;z-index:96}
+.kit-mark{position:absolute;left:56px;top:44px;z-index:96;display:flex;align-items:center;gap:9px;
+ font:800 17px/1 Archivo,sans-serif;letter-spacing:.24em;color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+.kit-mark b{font-weight:800;color:${BRAND.ink};background:#fff;padding:5px 3px 4px 7px;letter-spacing:.2em;text-shadow:none}
+.kit-block{position:absolute;left:56px;z-index:96;display:flex;flex-direction:column;align-items:flex-start}
+.kit-cat{display:flex;align-items:center;gap:12px;font:700 17px/1 'JetBrains Mono',monospace;letter-spacing:.2em;margin-bottom:20px;
+ text-shadow:0 1px 10px rgba(0,0,0,.7)}
+.kit-cat i{display:block;width:34px;height:4px}
+.kit-title{font-family:Archivo,sans-serif;font-weight:800;color:#fff;line-height:.9;letter-spacing:-.012em;white-space:normal;
+ text-shadow:0 4px 30px rgba(0,0,0,.45)}
+.kit-title em{font-style:normal}
+.kit-accent{margin-top:22px;font:600 27px/1.15 Archivo,sans-serif;color:rgba(255,255,255,.82);white-space:nowrap;
+ text-shadow:0 2px 14px rgba(0,0,0,.8)}
 `;
 document.head.appendChild(style);
 
@@ -42,7 +94,7 @@ export const root = document.getElementById('root');
 export const rand = seed => { let x = seed >>> 0 || 1; return () => ((x = (x * 1664525 + 1013904223) >>> 0) / 4294967296); };
 export const lerp = (a, b, u) => a + (b - a) * u;
 
-// a full-size drawing layer (hi-dpi) / an offscreen one
+// tam boy çizim katmanı (yüksek çözünürlük) / ekran dışı tuval
 export function layer(z = 1) {
   const c = document.createElement('canvas');
   c.width = W * DPR; c.height = H * DPR; c.style.zIndex = z;
@@ -58,12 +110,24 @@ export function html(s, css2, z = 60) {
   const d = document.createElement('div'); d.className = 't'; d.innerHTML = s; Object.assign(d.style, { zIndex: z }, css2); root.appendChild(d); return d;
 }
 
-// light: blurred copy added on top
+// Bir kareyi/görseli kadraja yerleştirir (cover). focus: görseldeki odak noktası (0–1), kadrajın
+// at noktasına (varsayılan [0.66, 0.5]: sağ yarı) gelir; zoom > 1 yaklaştırır. Boş kalan yer fill ile dolar
+// (varsayılan: görselin sol üst köşesinin rengi).
+export function hero(ctx, img, { focus = [0.5, 0.5], at = [0.66, 0.5], zoom = 1, fill = null } = {}) {
+  const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
+  const k = Math.max(W / iw, H / ih) * zoom;
+  if (!fill) { const p = off(2, 2); p.drawImage(img, 0, 0, 8, 8, 0, 0, 2, 2); const d = p.getImageData(0, 0, 1, 1).data; fill = `rgb(${d[0]},${d[1]},${d[2]})`; }
+  ctx.fillStyle = fill; ctx.fillRect(0, 0, W, H);
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img, at[0] * W - focus[0] * iw * k, at[1] * H - focus[1] * ih * k, iw * k, ih * k);
+}
+
+// ışık: bulanık kopya üste eklenir
 export function bloom(dst, src, blur, alpha = 1) {
   dst.save(); dst.setTransform(1, 0, 0, 1, 0, 0); dst.globalCompositeOperation = 'lighter'; dst.globalAlpha = alpha;
   dst.filter = `blur(${blur * DPR}px)`; dst.drawImage(src.canvas, 0, 0); dst.restore();
 }
-// depth of field: a blurred copy covers the upper (far) part, fading out between y=from and y=to
+// alan derinliği: üst (uzak) kısım bulanık, y=from ile y=to arasında netleşir
 export function depthOfField(ctx, from, to, blur) {
   const b = off();
   b.filter = `blur(${blur}px)`; b.drawImage(ctx.canvas, 0, 0, W, H); b.filter = 'none';
@@ -86,7 +150,7 @@ export function bokeh(ctx, n, seed, colors, yMin, yMax, rMin, rMax, alpha) {
   ctx.restore();
 }
 
-// perspective texture mapping: draw an image onto any quad (tl, tr, br, bl); returns the (u,v) → screen map
+// perspektifli doku: bir görseli herhangi bir dörtgene çizer (tl, tr, br, bl); (u,v) → ekran eşlemesini döndürür
 export function homography(q) {
   const [[x0, y0], [x1, y1], [x2, y2], [x3, y3]] = q;
   const dx1 = x1 - x2, dx2 = x3 - x2, dy1 = y1 - y2, dy2 = y3 - y2, sx = x0 - x1 + x2 - x3, sy = y0 - y1 + y2 - y3;
@@ -121,39 +185,72 @@ export function drawQuad(ctx, img, iw, ih, q, n = 22) {
   return Hm;
 }
 
-// the channel frame
-//   title: 'ÇAKIŞMA!' — written in capitals by the caller (Turkish İ/I and brand names like GIT stay right);
-//          *word* is drawn in the channel yellow; keep it to 1–4 words
-//   accent: one short line under the bar; topic: 'YAZILIM' / 'TARİH' / 'BİYOLOJİ' …; minutes: sticker (optional)
-//   tint: colour of the light leak that matches the picture
-export function brand({ title, accent = '', topic = '', minutes = null, tint = '#FF7A3D', size = null }) {
-  const fx = (bg, z) => { const d = document.createElement('div'); d.className = 'kit-fx'; d.style.background = bg; d.style.zIndex = z; root.appendChild(d); };
-  // the dark side the text stands on, a light leak on the other side, cinematic vignette
-  fx('linear-gradient(90deg, rgba(5,6,12,.86) 0%, rgba(5,6,12,.62) 30%, rgba(5,6,12,0) 58%)', 80);
-  fx('linear-gradient(0deg, rgba(5,6,12,.7) 0%, rgba(5,6,12,0) 38%)', 80);
-  fx(`radial-gradient(ellipse at 100% 0%, ${tint}55 0%, ${tint}00 45%)`, 81);
-  fx('radial-gradient(ellipse at 55% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%)', 82);
-  const g = document.createElement('div'); g.className = 'kit-grain'; root.appendChild(g);
+// ---- kanal katmanı ----
+const fitters = [];
+const hexA = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; };
+function findCategory(category, topic) {
+  if (category && CATEGORIES[category]) return CATEGORIES[category];
+  const t = (topic || '').toLocaleUpperCase('tr');
+  return Object.values(CATEGORIES).find(c => c.label === t) || { label: t, color: CATEGORIES.technology.color };
+}
+
+export function brand({ title, accent = '', topic = '', category = null, color = null, tint = null, scrim = 0.86,
+  size = null, width = 660, valign = 'bottom', grade = true, minutes = null } = {}) {
+  void minutes; // süre çıkartması kaldırıldı: YouTube kendi rozetini sağ alta koyar
+  const cat = findCategory(category, topic);
+  const col = color || cat.color;
+  const label = category && CATEGORIES[category] ? CATEGORIES[category].label : (topic || cat.label);
+  const glow = tint || col;
+  if (grade) root.classList.add('kit-graded');
+  const fx = (bg, z, extra = {}) => { const d = document.createElement('div'); d.className = 'kit-fx'; d.style.background = bg; d.style.zIndex = z; Object.assign(d.style, extra); root.appendChild(d); return d; };
+  const s = Math.max(0, Math.min(1, scrim));
+  // sol perde: yazının durduğu koyu taraf
+  fx(`linear-gradient(90deg, rgba(7,8,11,${s}) 0%, rgba(7,8,11,${s * 0.78}) 30%, rgba(7,8,11,${s * 0.3}) 50%, rgba(7,8,11,0) 66%)`, 80);
+  // alt karartma ve kenar kararması
+  fx(`linear-gradient(0deg, rgba(7,8,11,${0.55 * s + 0.1}) 0%, rgba(7,8,11,0) 42%)`, 80);
+  fx('radial-gradient(ellipse 75% 85% at 58% 48%, rgba(0,0,0,0) 55%, rgba(0,0,0,.5) 100%)', 81);
+  // başlığın arkasında kategori renginde çok hafif ışık
+  fx(`radial-gradient(ellipse 46% 52% at 12% ${valign === 'middle' ? 52 : 78}%, ${hexA(glow, 0.16)} 0%, ${hexA(glow, 0)} 100%)`, 82, { mixBlendMode: 'screen' });
+  const grain = document.createElement('div'); grain.className = 'kit-grain'; root.appendChild(grain);
+
+  const spine = document.createElement('div'); spine.className = 'kit-spine'; spine.style.background = col; root.appendChild(spine);
   const mark = document.createElement('div'); mark.className = 'kit-mark';
-  mark.innerHTML = `<div class="kit-logo"></div><div class="kit-name">${BRAND.name}</div>${topic ? `<div class="kit-topic">${topic}</div>` : ''}`;
+  mark.innerHTML = '<span>ANİMASYON</span><b>LAB</b>';
   root.appendChild(mark);
+
+  const block = document.createElement('div'); block.className = 'kit-block';
+  if (valign === 'middle') { block.style.top = '50%'; block.style.transform = 'translateY(-46%)'; } else block.style.bottom = '58px';
+  const catEl = document.createElement('div'); catEl.className = 'kit-cat'; catEl.style.color = col;
+  catEl.innerHTML = `<i style="background:${col}"></i><span>${label}</span>`;
   const t = document.createElement('div'); t.className = 'kit-title';
-  t.innerHTML = title.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-  root.appendChild(t);
-  // biggest size that keeps the title within 2 lines and 700 px
-  let fs = size || 150;
-  t.style.fontSize = fs + 'px';
-  while (fs > 60 && (t.scrollWidth > 700 || t.getBoundingClientRect().height > fs * 0.92 * 2.05)) { fs -= 4; t.style.fontSize = fs + 'px'; }
-  const bar = document.createElement('div'); bar.className = 'kit-bar'; root.appendChild(bar);
-  if (accent) { const a = document.createElement('div'); a.className = 'kit-accent'; a.textContent = accent; root.appendChild(a); }
-  else { t.style.bottom = '60px'; bar.style.bottom = '40px'; }
-  if (minutes) { const m = document.createElement('div'); m.className = 'kit-min'; m.textContent = `${minutes} DK`; root.appendChild(m); }
+  t.innerHTML = title.replace(/\*([^*]+)\*/g, `<em style="color:${col}">$1</em>`);
+  block.append(catEl, t);
+  let a = null;
+  if (accent) { a = document.createElement('div'); a.className = 'kit-accent'; a.textContent = accent; block.appendChild(a); }
+  root.appendChild(block);
+
+  // en büyük punto: en çok 2 satır ve width içinde; 92'ye inip hâlâ sığmıyorsa harfleri daralt
+  const fit = () => {
+    const max = size || 148;
+    let fs = max, stretch = 100;
+    const apply = () => { t.style.fontSize = fs + 'px'; t.style.fontStretch = stretch + '%'; t.style.maxWidth = width + 'px'; };
+    const over = () => t.scrollWidth > width + 1 || t.getBoundingClientRect().height > fs * 0.9 * 2 + 4;
+    apply();
+    while (over() && fs > 92) { fs -= 2; apply(); }
+    while (over() && stretch > 70) { stretch -= 3; apply(); }
+    if (a) { let as = 27; a.style.fontSize = as + 'px'; while (a.scrollWidth > width && as > 18) { as -= 1; a.style.fontSize = as + 'px'; } }
+  };
+  fit();
+  fitters.push(fit);
+  return { block, title: t, color: col };
 }
 
 export async function ready(fontsExtra = []) {
   await Promise.race([cssLoaded, new Promise(r => setTimeout(r, 4000))]);
   await Promise.race([
-    Promise.all(['400 100px Anton', '900 22px Barlow', '800 34px Barlow', ...fontsExtra].map(f => document.fonts.load(f))),
+    Promise.all(['800 100px Archivo', '600 27px Archivo', '700 17px "JetBrains Mono"', ...fontsExtra].map(f => document.fonts.load(f))),
     new Promise(r => setTimeout(r, 6000)),
   ]);
+  await document.fonts.ready;
+  fitters.forEach(f => f());
 }
