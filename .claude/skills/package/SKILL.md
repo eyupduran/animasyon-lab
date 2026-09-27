@@ -1,13 +1,13 @@
 ---
 name: package
-description: Bitmiş ve kullanıcının izleyip onayladığı bir filmi yayına hazırlar (video, altyazı, bölüm listesi, kapaklar, YouTube metni ve masaüstü klasörü, README, site, commit ve push). Film oturumundan ayrı çalışır; filmin görüntüsüne dokunmaz.
+description: Bitmiş bir filmi yayına hazırlar (video, altyazı, bölüm listesi, kapaklar, YouTube metni ve masaüstü klasörü, README, site, commit ve push). Filmin görüntüsüne dokunmaz.
 argument-hint: <slug>
 disable-model-invocation: true
 ---
 
 Paketlenecek film: **$ARGUMENTS**
 
-Bu iş filmin **görünümünü değiştirmez.** Kusur görürsen düzeltme; listele ve kullanıcıya sor. Amaç, serbestçe yapılmış filmi kanala hazır hâle getirmek.
+Bu iş filmin **görünümünü değiştirmez.** Kusur görürsen düzeltme; son mesajında listele. Amaç, serbestçe yapılmış filmi kanala hazır hâle getirmek. Yalnızca bu dosyayı, filmin kendi klasörünü ve adı geçen araçları kullan; başka filmleri, `docs/` klasörünü ya da eski notları açma.
 
 ## Adımlar
 
@@ -16,14 +16,9 @@ Bu iş filmin **görünümünü değiştirmez.** Kusur görürsen düzeltme; lis
 3. **Video:** `npm run video -- <slug>` → `renders/<slug>.mp4`, `.srt`, `-chapters.txt`. Videoyu izle (kareler çıkar): siyah kare, kayık ses, taşan yazı var mı? Ses düzeyi: tepe ≈ −1 dB, anlatım müziğin belirgin üstünde (`--music -8` ayarı).
 4. **Doğruluk:** anlatımdaki her sayı `RESEARCH.md`'de mi? Bulunamayanları listele.
 5. **Kapaklar:** `thumbnail.html` + `npm run thumbnail -- <slug>` (5 konsept; kanal kimliği `assets/thumbnail-kit`; ana görsel filmin kendi karesinden ya da koduyla). `poster.jpg` (16:9, filmin en güçlü karesi).
-6. **Belgeler:** filmin `README.md` (ne anlattığı, bölümler, nasıl çalıştırılır, kaynak özeti), kök `README.md` tablosuna satır, `ref/style-ledger.md`'ye beş satırlık kimlik özeti (yalnızca kayıt için; film oturumlarında okunmaz), `COST.md`.
+6. **Belgeler:** filmin `README.md` (ne anlattığı, bölümler, nasıl çalıştırılır, kaynak özeti), kök `README.md` tablosuna satır, `COST.md`.
 7. **YouTube paketi:** `youtube.txt` (70 karakterden kısa 2–3 başlık önerisi; 2–3 cümlelik açıklama, bölüm listesi, `RESEARCH.md`'den kısa kaynak listesi, canlı sayfa bağlantısı; 10–15 etiket). Masaüstüne kopyala: `C:\Users\Eyüp\Desktop\YouTube\<slug>\` → `<slug>.mp4`, `<slug>.srt`, `bolumler.txt`, `kapak-1…5.jpg`, `youtube.txt`. Son MP4'ü `ffprobe` ile denetle (süre, ses akışı).
 8. **Site ve yayın:** kökte `npm run build -- <slug>`; Türkçe commit; `main`'e push; canlı adresi doğrula (`https://eyupduran.github.io/animasyon-lab/<slug>/`).
-9. **Web sürümü (isteğe bağlı):** kullanıcı filmi sitede de izletmek isterse ve film zayıf makinede ağır kalıyorsa, görünümü bozmadan çözünürlük düşürme gibi hafifletmeler; ayrıntı `ref/craft.md` → Performans.
-
-## Başvuru dosyaları (`ref/`, yalnızca gerektiğinde)
-
-Önceki çalışmalardan birikmiş teknik notlar: `craft.md` (teknikler, performans), `pitfalls.md` (tuzaklar), `critique.md` (kusur listeleri), `pipeline-tech.md`, `documentary-tech.md`, `formats/` (tür kartları), `style-ledger.md`. Bunlar **film oturumlarında okunmaz**; paketleme ve denetimde başvuru içindir. Yeni tuzakları `pitfalls.md`'ye ekle.
 
 ## Son mesaj
 

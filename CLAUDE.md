@@ -7,7 +7,7 @@ Bir YouTube kanalı için kodla üretilen filmler: belgesel, tarih, coğrafya, b
 1. **Yalnızca kod.** Görüntü, hareket, müzik ve efekt sesleri senin yazdığın kodla üretilir. Üretken görsel/video/ses modeli ve ücretli servis yok. Anlatım sesi yalnızca yerel araçla: `npm run voice -- <slug>`.
 2. **Doğru bilgi.** Her sayı, tarih ve ad güvenilir kaynağa dayanır (`RESEARCH.md`); emin olunmayan yuvarlak ve temkinli söylenir. Ekrana yazılan bilgi de buna dahildir.
 3. **Türüne uygun anlatım.** Anlatım metni türünün diliyle yazılır: belgesel belgesel gibi, tarih tarih gibi, yazılım yazılımcıya anlatır gibi; doğal Türkçe, insan yazmış gibi. Yazım kuralları yalnızca metin aşamasında okunur.
-4. **Önceki filmlere ve depodaki notlara bakma.** `animations/` altındaki başka klasörleri, `docs/`'u ve `.claude/skills/package/`'ı açma; kod, görünüm ya da teknik örneği alma. Her film sıfırdan.
+4. **Önceki filmlere ve depodaki notlara bakma.** `animations/` altındaki başka klasörleri ve `docs/` klasörünü açma; kod, görünüm ya da teknik örneği alma. Her film sıfırdan.
 5. **Tek teknik söz** (videoya çevirebilmek için): sayfa `?video=1` ile açıldığında şunu sunar:
    ```js
    window.__film = {
@@ -33,5 +33,5 @@ Bir YouTube kanalı için kodla üretilen filmler: belgesel, tarih, coğrafya, b
 Kullanıcı tek istek verir (`/animation <konu>` ya da `/short [fikir]`) ve yayınlanmış filmi alır. Komut işi aşamalara böler; her aşama temiz bir yardımcı ajanda çalışır ve yalnızca kendi işini bilir:
 
 - **Metin** (yalnızca anlatımlı filmde): araştırma, anlatım metni, Türkçe ses. Görüntü hakkında karar verilmez.
-- **Film:** yalnızca film. Anlatım varsa görüntü onun zamanlarına göre yapılır. Paket işleri yapılmaz, `.claude/skills/package/` okunmaz.
+- **Film:** yalnızca film. Anlatım varsa görüntü onun zamanlarına göre yapılır. Paket işleri yapılmaz.
 - **Paket:** video, kapaklar, README, YouTube klasörü, commit, push.
