@@ -1,12 +1,10 @@
 # Yeni film isteği
 
-En kısa yol, Claude Code'da:
+Tek istek, tek oturum; film yayınlanmış olarak gelir:
 
 ```
-/script <konu>             # 1. oturum: araştırma, anlatım metni, Türkçe ses
-/animation <slug>          # 2. oturum (yeni): film; görüntü tamamen modele ait
-/short [fikir]             # sözsüz kısa film
-/package <slug>            # film bittikten sonra: video, kapaklar, README, yayın
+/animation <konu ve istek>   # anlatımlı film (belgesel, tarih, coğrafya, bilim, teknoloji, yazılım…)
+/short [fikir]               # sözsüz kısa film
 ```
 
-Filmi nasıl yapacağı modele bırakılmıştır. Şart olanlar yalnızca `CLAUDE.md`'dekiler: yalnızca kod, doğru bilgi, türüne uygun anlatım, önceki filmlere bakmamak ve `window.__film`.
+Komut işi aşamalara böler (metin ve ses → film → paket) ve her aşamayı temiz bir yardımcı ajana verir. Filmi nasıl yapacağı modele bırakılmıştır; şart olanlar yalnızca `CLAUDE.md`'dekilerdir.

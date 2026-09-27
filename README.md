@@ -42,14 +42,13 @@ Ham modeller git'te tutulmaz (`catalog.json` → `source`).
 ## Film istemek
 
 ```
-/script bal arısının bir günü, belgesel        # 1. oturum: araştırma, anlatım metni, Türkçe ses
-/animation <slug>                              # 2. oturum (yeni): film; görüntü tamamen modele ait
+/animation bal arısının bir günü, belgesel     # anlatımlı film: metin ve ses → film → paket, tek istekle
 /short                                         # sözsüz kısa film (fikir verilebilir)
-/package <slug>                                # film bittikten sonra: video, kapaklar, README, yayın
+/package <slug>                                # yalnızca paketi yeniden çalıştırmak için
 /audit <slug>                                  # bağımsız denetim raporu
 ```
 
-**Filmi nasıl yapacağı modele bırakılmıştır.** Bir kıyas deneyinde aynı hikâye hem depo kurallarıyla hem de boş bir klasörde tek prompt'la üretildi; kuralsız olan açıkça daha iyi çıktı (`animations/short/cloudburst`; kurallarla üretilen sürüm kaldırıldı, git geçmişinde duruyor). Anlatımlı filmlerde görüntü sese bağlı olduğu için önce metin ve ses hazırlanır, film ayrı ve temiz bir oturumda onun üzerine yapılır. Film oturumunda yalnızca beş şart var ([CLAUDE.md](CLAUDE.md)): yalnızca kod, doğru bilgi, türüne uygun anlatım ([.claude/skills/narration](.claude/skills/narration/SKILL.md)), önceki filmlere bakmamak ve videoya çevirmek için tek küçük söz (`window.__film`). Oynatıcı, altyazı, test, kapak, README gibi işler filmden ayrıldı: altyazıyı ve ses karışımını araçlar yapar, gerisi ayrı bir paketleme oturumudur.
+**Filmi nasıl yapacağı modele bırakılmıştır.** Bir kıyas deneyinde aynı hikâye hem depo kurallarıyla hem de boş bir klasörde tek prompt'la üretildi; kuralsız olan açıkça daha iyi çıktı (`animations/short/cloudburst`; kurallarla üretilen sürüm kaldırıldı, git geçmişinde duruyor). Anlatımlı filmlerde görüntü sese bağlı olduğu için önce metin ve ses hazırlanır, film onun üzerine yapılır. Komut her aşamayı temiz bir yardımcı ajana verir; kullanıcı tek istek yazar. Film aşamasında yalnızca beş şart var ([CLAUDE.md](CLAUDE.md)): yalnızca kod, doğru bilgi, türüne uygun anlatım ([.claude/skills/narration](.claude/skills/narration/SKILL.md)), önceki filmlere bakmamak ve videoya çevirmek için tek küçük söz (`window.__film`). Oynatıcı, altyazı, test, kapak, README gibi işler filmden ayrıldı: altyazıyı ve ses karışımını araçlar yapar, gerisi ayrı bir paketleme oturumudur.
 
 ## Seslendirme (yerel, ücretsiz)
 
