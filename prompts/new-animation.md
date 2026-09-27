@@ -3,7 +3,8 @@
 En kısa yol, Claude Code'da:
 
 ```
-/animation <konu>          # anlatımlı film (belgesel, tarih, coğrafya, bilim, yazılım…)
+/script <konu>             # 1. oturum: araştırma, anlatım metni, Türkçe ses
+/animation <slug>          # 2. oturum (yeni): film; görüntü tamamen modele ait
 /short [fikir]             # sözsüz kısa film
 /package <slug>            # film bittikten sonra: video, kapaklar, README, yayın
 ```

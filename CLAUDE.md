@@ -5,9 +5,9 @@ Bir YouTube kanalı için kodla üretilen filmler: belgesel, tarih, coğrafya, b
 ## Yalnızca şunlar şart
 
 1. **Yalnızca kod.** Görüntü, hareket, müzik ve efekt sesleri senin yazdığın kodla üretilir. Üretken görsel/video/ses modeli ve ücretli servis yok. Anlatım sesi yalnızca yerel araçla: `npm run voice -- <slug>`.
-2. **Doğru bilgi.** Konuyu internetten araştır; her sayı, tarih ve ad güvenilir kaynağa dayansın; emin olmadığını yuvarlak ve temkinli söyle. Kaynakları filmin klasöründe `RESEARCH.md`'ye yaz.
-3. **Türüne uygun anlatım.** Anlatım metni, türünün diliyle yazılır: belgesel belgesel gibi, tarih tarih gibi, yazılım yazılımcıya anlatır gibi; doğal Türkçe, insan yazmış gibi. Metni yazmadan önce `.claude/skills/narration/SKILL.md` ve ilgili tür dosyasını oku. Bu, depodaki tek yazım kuralıdır.
-4. **Önceki filmlere bakma.** `animations/` altındaki başka klasörleri açma, kodunu ya da görünümünü örnek alma. Her film sıfırdan.
+2. **Doğru bilgi.** Her sayı, tarih ve ad güvenilir kaynağa dayanır (`RESEARCH.md`); emin olunmayan yuvarlak ve temkinli söylenir. Ekrana yazılan bilgi de buna dahildir.
+3. **Türüne uygun anlatım.** Anlatım metni türünün diliyle yazılır: belgesel belgesel gibi, tarih tarih gibi, yazılım yazılımcıya anlatır gibi; doğal Türkçe, insan yazmış gibi. Yazım kuralları yalnızca metin oturumunda okunur (`/script`).
+4. **Önceki filmlere ve depodaki notlara bakma.** `animations/` altındaki başka klasörleri, `docs/`'u ve `.claude/skills/package/`'ı açma; kod, görünüm ya da teknik örneği alma. Her film sıfırdan.
 5. **Tek teknik söz** (videoya çevirebilmek için): sayfa `?video=1` ile açıldığında şunu sunar:
    ```js
    window.__film = {
@@ -28,7 +28,8 @@ Bir YouTube kanalı için kodla üretilen filmler: belgesel, tarih, coğrafya, b
 
 `narration/lines.json`: `{ "voice", "speed", "out": "public/voice", "manifest": "narration/manifest.json", "lines": [{ "id", "say", "text" }] }`. Bir satır bir bölümün bütün anlatımıdır (tek kayıt). `say` söylendiği gibi yazılır (rakamlar sözcükle, kısaltmalar okunuşuyla, parantez yok); `text` altyazıda görünecek yazılı hâlidir. `npm run voice -- <slug>` kayıtları ve `manifest.json`'ı (süre ve kelime zamanları) üretir; filmdeki olayları bu zamanlara bağla. Sesler: `npm run voice -- voices`.
 
-## İki ayrı iş
+## Üç ayrı oturum
 
-- **Film** (`/animation <konu>`, `/short [fikir]`): araştırma, anlatım, film. Başka hiçbir şey.
+- **Metin** (`/script <konu>`): araştırma, anlatım metni, Türkçe ses. Görüntü hakkında karar verilmez.
+- **Film** (`/animation <slug>`, sözsüz kısa film için `/short [fikir]`): yalnızca film. Anlatım hazırdır; görüntü onun zamanlarına göre yapılır.
 - **Paket** (`/package <slug>`): film bittikten ve kullanıcı izledikten sonra, ayrı oturumda: video, kapaklar, README, yayın. Film oturumunda paket işleri yapılmaz, `.claude/skills/package/` okunmaz.

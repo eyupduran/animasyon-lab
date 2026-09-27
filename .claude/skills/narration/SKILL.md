@@ -1,5 +1,6 @@
 ---
 name: narration
+disable-model-invocation: true
 description: Video türüne göre anlatım metni yazar (belgesel, açıklayıcı, yazılım, tarih, çocuklar için); yeni bir animasyonun anlatımı yazılırken ya da "ders kitabı okunuyor gibi" duran bir metin elden geçirilirken kullanılır.
 ---
 
@@ -69,7 +70,7 @@ Adımları atlamadan, sırayla uygula.
 4. **Taslak.** Türün dosyasındaki sesle yaz. `retention.md` içindeki kanca ve açık döngüleri yerleştir.
 5. **Sesli oku ve süre ölç.** Metni yüksek sesle oku ya da TTS'e okut. Depodaki kayıtlardan ölçülen gerçek hız (Whisper kelime sayısı / süre): O33 hız 0,9 → dakikada ~135 kelime; O9 0,88–0,95 → ~135–145; O1 0,92 → ~140–150. Süreyi buna göre tahmin et (ör. 25 saniyelik bölüm ≈ 55–60 kelime), ama resmin nefes alacağı sessizlikleri ayrıca ekle: belgeselde bölümün %15–25'i konuşmasız geçebilir. Gerçek süreyi `narration/manifest.json`'dan oku.
 6. **Yüzde 20 kes.** İlk taslak her zaman uzundur. Aynı şeyi iki kez söyleyen cümleleri, resmin zaten gösterdiğini anlatan cümleleri, "aslında", "oldukça", "çok önemli bir" gibi dolguları sil. Kestikten sonra bir kez daha sesli oku.
-7. **Sahne ipuçlarını işaretle.** Sahne olayları Whisper kelime zamanlarına bağlanır. Animasyonun metin dosyasında her bölümün `cues` alanı olay adını, yazılı metindeki bir ifadenin başlangıcına bağlar: `cues: { queen: 'Kraliçe burada' }`. İfade bölümde **bir kez geçmeli ve belirgin olmalı**; olay, anlatıcı o ifadeye geldiği anda başlar. Olayı cümlenin sonuna değil, ilgili kelimeye bağla. "Bu", "şimdi", "burada" gibi sık kelimelerle başlayan kısa ifadeleri ipucu yapma. Beat sheet'te `⟨ipucu: Kraliçe burada → kraliçe görünür⟩` diye işaretle.
+7. **Sahne ipuçlarını işaretle.** Görüntüde bir olayın bir kelimeye denk gelmesi gerekiyorsa o kelimeyi not et (bölümde bir kez geçen bir kelime seç). `npm run voice` her kelimenin zamanını `manifest.json`'a yazar; olayları bu zamanlara nasıl bağlayacağın filmi yapanın kararıdır.
 8. **TTS kontrolü.** `npm run voice -- <slug>` sonunda listelenen şüpheli cümleleri düzelt: genelde bir kısaltma, yabancı kelime ya da okunamayan bir sayıdır.
 
 ### Beat sheet örneği

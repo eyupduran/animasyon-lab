@@ -1,6 +1,6 @@
 ---
 name: package
-description: Bitmiş ve kullanıcının izleyip onayladığı bir filmi yayına hazırlar (video, altyazı, bölüm listesi, kapaklar, README, site, commit ve push). Film oturumundan ayrı çalışır; filmin görüntüsüne dokunmaz.
+description: Bitmiş ve kullanıcının izleyip onayladığı bir filmi yayına hazırlar (video, altyazı, bölüm listesi, kapaklar, YouTube metni ve masaüstü klasörü, README, site, commit ve push). Film oturumundan ayrı çalışır; filmin görüntüsüne dokunmaz.
 argument-hint: <slug>
 disable-model-invocation: true
 ---
@@ -17,8 +17,9 @@ Bu iş filmin **görünümünü değiştirmez.** Kusur görürsen düzeltme; lis
 4. **Doğruluk:** anlatımdaki her sayı `RESEARCH.md`'de mi? Bulunamayanları listele.
 5. **Kapaklar:** `thumbnail.html` + `npm run thumbnail -- <slug>` (5 konsept; kanal kimliği `assets/thumbnail-kit`; ana görsel filmin kendi karesinden ya da koduyla). `poster.jpg` (16:9, filmin en güçlü karesi).
 6. **Belgeler:** filmin `README.md` (ne anlattığı, bölümler, nasıl çalıştırılır, kaynak özeti), kök `README.md` tablosuna satır, `ref/style-ledger.md`'ye beş satırlık kimlik özeti (yalnızca kayıt için; film oturumlarında okunmaz), `COST.md`.
-7. **Site ve yayın:** kökte `npm run build -- <slug>`; Türkçe commit; `main`'e push; canlı adresi doğrula (`https://eyupduran.github.io/animasyon-lab/<slug>/`).
-8. **Web sürümü (isteğe bağlı):** kullanıcı filmi sitede de izletmek isterse ve film zayıf makinede ağır kalıyorsa, görünümü bozmadan çözünürlük düşürme gibi hafifletmeler; ayrıntı `ref/craft.md` → Performans.
+7. **YouTube paketi:** `youtube.txt` (70 karakterden kısa 2–3 başlık önerisi; 2–3 cümlelik açıklama, bölüm listesi, `RESEARCH.md`'den kısa kaynak listesi, canlı sayfa bağlantısı; 10–15 etiket). Masaüstüne kopyala: `C:\Users\Eyüp\Desktop\YouTube\<slug>\` → `<slug>.mp4`, `<slug>.srt`, `bolumler.txt`, `kapak-1…5.jpg`, `youtube.txt`. Son MP4'ü `ffprobe` ile denetle (süre, ses akışı).
+8. **Site ve yayın:** kökte `npm run build -- <slug>`; Türkçe commit; `main`'e push; canlı adresi doğrula (`https://eyupduran.github.io/animasyon-lab/<slug>/`).
+9. **Web sürümü (isteğe bağlı):** kullanıcı filmi sitede de izletmek isterse ve film zayıf makinede ağır kalıyorsa, görünümü bozmadan çözünürlük düşürme gibi hafifletmeler; ayrıntı `ref/craft.md` → Performans.
 
 ## Başvuru dosyaları (`ref/`, yalnızca gerektiğinde)
 
@@ -26,4 +27,4 @@ Bu iş filmin **görünümünü değiştirmez.** Kusur görürsen düzeltme; lis
 
 ## Son mesaj
 
-Canlı adres, video dosyasının yeri, süre, bulunan kusurlar (düzeltilen ve kullanıcıya bırakılan), doğruluk listesi.
+Canlı adres, masaüstü klasörü ve dosyaları, süre, bulunan kusurlar (düzeltilen ve kullanıcıya bırakılan), doğruluk listesi.

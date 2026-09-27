@@ -42,13 +42,14 @@ Ham modeller git'te tutulmaz (`catalog.json` → `source`).
 ## Film istemek
 
 ```
-/animation bal arısının bir günü, belgesel     # anlatımlı film: araştırma, anlatım, ses, film
+/script bal arısının bir günü, belgesel        # 1. oturum: araştırma, anlatım metni, Türkçe ses
+/animation <slug>                              # 2. oturum (yeni): film; görüntü tamamen modele ait
 /short                                         # sözsüz kısa film (fikir verilebilir)
 /package <slug>                                # film bittikten sonra: video, kapaklar, README, yayın
 /audit <slug>                                  # bağımsız denetim raporu
 ```
 
-**Filmi nasıl yapacağı modele bırakılmıştır.** Bir kıyas deneyinde aynı hikâye hem depo kurallarıyla hem de boş bir klasörde tek prompt'la üretildi; kuralsız olan açıkça daha iyi çıktı (`animations/short/cloudburst`; kurallarla üretilen sürüm kaldırıldı, git geçmişinde duruyor). Bu yüzden film oturumunda yalnızca beş şart var ([CLAUDE.md](CLAUDE.md)): yalnızca kod, doğru bilgi, türüne uygun anlatım ([.claude/skills/narration](.claude/skills/narration/SKILL.md)), önceki filmlere bakmamak ve videoya çevirmek için tek küçük söz (`window.__film`). Oynatıcı, altyazı, test, kapak, README gibi işler filmden ayrıldı: altyazıyı ve ses karışımını araçlar yapar, gerisi ayrı bir paketleme oturumudur.
+**Filmi nasıl yapacağı modele bırakılmıştır.** Bir kıyas deneyinde aynı hikâye hem depo kurallarıyla hem de boş bir klasörde tek prompt'la üretildi; kuralsız olan açıkça daha iyi çıktı (`animations/short/cloudburst`; kurallarla üretilen sürüm kaldırıldı, git geçmişinde duruyor). Anlatımlı filmlerde görüntü sese bağlı olduğu için önce metin ve ses hazırlanır, film ayrı ve temiz bir oturumda onun üzerine yapılır. Film oturumunda yalnızca beş şart var ([CLAUDE.md](CLAUDE.md)): yalnızca kod, doğru bilgi, türüne uygun anlatım ([.claude/skills/narration](.claude/skills/narration/SKILL.md)), önceki filmlere bakmamak ve videoya çevirmek için tek küçük söz (`window.__film`). Oynatıcı, altyazı, test, kapak, README gibi işler filmden ayrıldı: altyazıyı ve ses karışımını araçlar yapar, gerisi ayrı bir paketleme oturumudur.
 
 ## Seslendirme (yerel, ücretsiz)
 
@@ -68,11 +69,11 @@ Kurulum (bir kez): `C:\ProgramData	ts_lab\omni` Python ortamı (PyTorch CUDA, `o
 
 ```
 npm run video -- <slug>                # animations/<kategori>/<slug>/renders/<slug>.mp4 + .srt + -chapters.txt
-npm run video -- <slug> --subs burn    # altyazı görüntüye gömülü
+npm run video -- <slug> --subs burn    # altyazı görüntüye gömülü (yalnızca eski window.__video animasyonlarında)
 npm run verify -- <slug>               # renderAt(t) saflık testi: aynı an aynı piksel, sayfa hatası yok
 ```
 
-Claude Code'da `/video git hattı` komutu bütün işi yapar: videoyu, altyazıyı, bölüm listesini, kapak görsellerini ve YouTube açıklamasını `Masaüstü\YouTube\<slug>\` klasörüne çıkarır ([.claude/skills/video/SKILL.md](.claude/skills/video/SKILL.md)).
+Claude Code'da `/package <slug>` komutu bütün işi yapar: videoyu, altyazıyı, bölüm listesini, kapak görsellerini ve YouTube açıklamasını `Masaüstü\YouTube\<slug>\` klasörüne çıkarır ([.claude/skills/video/SKILL.md](.claude/skills/video/SKILL.md)).
 
 Kapak görselleri de kodla çizilir:
 
