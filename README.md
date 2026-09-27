@@ -16,6 +16,7 @@ Tarayıcıda çalışan eğitim animasyonlarının ve denemelerinin koleksiyonu.
 | [Spring Boot'un İçi](animations/software/spring-boot-internals) · [izle](https://eyupduran.github.io/animasyon-lab/spring-boot-internals/) | Yazılım | Canvas 2D · Web Audio | `SpringApplication.run()` ağır çekimde: konteyner, bean yaşam döngüsü, otomatik yapılandırma, proxy'ler ve bir HTTP isteğinin yolculuğu |
 | [Git Hattı: Sürüm Kontrolü](animations/software/git-version-control) · [izle](https://eyupduran.github.io/animasyon-lab/git-version-control/) | Yazılım | Canvas 2D · Web Audio | Git bir metro haritası üzerinde: commit, dal, birleştirme, çakışma, push ve pull |
 | [Karar](animations/short/silent-tooth) · [izle](https://eyupduran.github.io/animasyon-lab/silent-tooth/) | Kısa Film | Three.js · bokeh DOF · Web Audio sentezi | Sözsüz: müzik kutusunun hiç çalınmamış tozlu dişi, yay biterken yarım kalan melodiyi bitirir |
+| [Sağanak](animations/short/desert-cloud) · [izle](https://eyupduran.github.io/animasyon-lab/desert-cloud/) | Kısa Film | Three.js · shader'la boyanmış kanyon · örneklenmiş çayır · Web Audio sentezi | Sözsüz: avuç kadar bir bulut, kurumuş bir tomurcuk için yamaçtan yükselip dev bir fırtınaya dönüşür ve çölü çiçeğe boğar |
 
 ## Yeni animasyon
 
