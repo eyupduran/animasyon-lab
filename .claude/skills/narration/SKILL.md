@@ -5,6 +5,8 @@ description: Video türüne göre anlatım metni yazar (belgesel, açıklayıcı
 
 # Anlatım metni yazma
 
+Bu skill yalnızca **metni** anlatır; görüntüye, tekniğe ve stile karışmaz (onlar tamamen filmi yapanın kararıdır).
+
 Amaç: izleyicinin kulağına yazılmış, resimle birlikte çalışan, merak uyandırıp sonunda karşılığını veren bir anlatım. Ders kitabı cümlesi değil, bir insanın anlattığı hikâye.
 
 Bu klasördeki dosyalar:

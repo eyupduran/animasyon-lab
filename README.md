@@ -8,6 +8,7 @@ Tarayıcıda çalışan eğitim animasyonlarının ve denemelerinin koleksiyonu.
 
 | Animasyon | Kategori | Teknik | Açıklama |
 |---|---|---|---|
+| [Sağanak](animations/short/saganak) · [izle](https://eyupduran.github.io/animasyon-lab/saganak/) | Kısa Film | Canvas 2D · Web Audio | Sözsüz kısa film: avuç kadar bir bulut, boynu bükük bir tomurcuk için dağ kadar büyür ve yağar (serbest üretim deneyi) |
 | [Sindirim Yolculuğu](animations/biology/digestive-journey) · [izle](https://eyupduran.github.io/animasyon-lab/digestive-journey/) | Biyoloji | Three.js · Avaturn GLB | Bir besinin ağızdan mideye, bağırsaklara, kana ve beyne uzanan yolculuğu |
 | [Bal Arısının Bir Günü](animations/documentary/honeybee-day) · [izle](https://eyupduran.github.io/animasyon-lab/honeybee-day/) | Belgesel | Three.js · özel shader · arı gözü mozaiği | Bir toplayıcı arının şafaktan geceye günü: gökyüzü pusulası, UV çiçekler, eve giden ok ve karanlık kovanda sallanım dansı |
 | [Karıncanın Gözünde Hayat · Belgesel Sürümü](animations/documentary/ant-documentary) · [izle](https://eyupduran.github.io/animasyon-lab/ant-documentary/) | Belgesel | Babylon.js · PBR · HDRI | Aynı belgesel, belgesel anlatım skilli ve gerçekçilik araştırmasıyla yeniden: uzun objektif, gerçek çayır ışığı, sahneyi kıran çiy damlaları |
@@ -39,26 +40,16 @@ npm run avatars -- add set-02-f03                  # ham modeli (~14 MB) küçü
 
 Ham modeller git'te tutulmaz (`catalog.json` → `source`).
 
-## Kısa film istemek
+## Film istemek
 
 ```
-/short                                   # serbest brief: en etkileyici kısa filmi kendisi tasarlar
-/short kayıp bir robot gün doğumunu ilk kez görür
+/animation bal arısının bir günü, belgesel     # anlatımlı film: araştırma, anlatım, ses, film
+/short                                         # sözsüz kısa film (fikir verilebilir)
+/package <slug>                                # film bittikten sonra: video, kapaklar, README, yayın
+/audit <slug>                                  # bağımsız denetim raporu
 ```
 
-Sözsüz, 30–90 saniyelik sinematik kısa filmler `animations/short/` altında durur ([.claude/skills/short/SKILL.md](.claude/skills/short/SKILL.md)); anlatımlı eğitim animasyonları için aşağıdaki `/animation` kullanılır.
-
-## Yeni animasyon istemek
-
-En kısa yol, Claude Code'da hazır komutu kullanmak:
-
-```
-/animation telefonun içi nasıl çalışır, ortaokul için
-```
-
-Komut ([.claude/skills/animation/SKILL.md](.claude/skills/animation/SKILL.md)) aşama aşama çalışır: araştırma → **treatment** (beş görsel dünya, biri seçilir; tür kartı `formats/<tür>.md` bir tasarım uzayı verir, `docs/style-ledger.md` tekrarı önler) → anlatım (`narration` skilli) → üretim (`pipeline-tech.md`, `craft.md`, `documentary-tech.md`) → eleştiri turları (`critique.md`) → testler → teslim. Kesin kurallar `CLAUDE.md`'de: yalnızca kod, her videoya taze sanat yönü, dört parçalı kalite, donma yasak. İşin başlangıç ve bitiş saatini not eder, `COST.md` dosyasını yazar, bitince commit edip `main`'e gönderir.
-
-Ya da [prompts/new-animation.md](prompts/new-animation.md) dosyasındaki "İSTEK" bölümünü doldurup yeni bir oturumda şunu yazın: *"prompts/new-animation.md dosyasını oku ve uygula."* Şablon; konunun önce araştırılmasını, anlatımın bir insan konuşması gibi yazılmasını, ortak ses ve altyazı tekniğini ve her animasyonun diğerlerinden bağımsız, özgün bir tasarımla yapılmasını tarif eder.
+**Filmi nasıl yapacağı modele bırakılmıştır.** Bir kıyas deneyinde aynı hikâye hem depo kurallarıyla hem de boş bir klasörde tek prompt'la üretildi; kuralsız olan açıkça daha iyi çıktı (`animations/short/saganak` ve `desert-cloud`). Bu yüzden film oturumunda yalnızca beş şart var ([CLAUDE.md](CLAUDE.md)): yalnızca kod, doğru bilgi, türüne uygun anlatım ([.claude/skills/narration](.claude/skills/narration/SKILL.md)), önceki filmlere bakmamak ve videoya çevirmek için tek küçük söz (`window.__film`). Oynatıcı, altyazı, test, kapak, README gibi işler filmden ayrıldı: altyazıyı ve ses karışımını araçlar yapar, gerisi ayrı bir paketleme oturumudur.
 
 ## Seslendirme (yerel, ücretsiz)
 
@@ -92,7 +83,7 @@ npm run thumbnail -- <slug>            # animations/<kategori>/<slug>/renders/th
 
 Animasyon `thumbnail.html` sayfasını sunar (`?v=<n>` bir konsept çizer; sözleşme `tools/thumbnail.mjs` içinde). Kapaklar kanalın ortak kimliğini [assets/thumbnail-kit/kit.js](assets/thumbnail-kit/kit.js) kitinden alır: "ANİMASYON LAB" işareti, konu etiketi, sarı vurgulu büyük başlık, süre etiketi, renk işleme. Ana görsel her videoda kendi konusundan çizilir; her video için 5 konsept üretilir.
 
-Animasyon `?video=1` adresinde `window.__video` nesnesini sunar (`duration`, `renderAt`, `prepareSound`, `soundChunk`, `srt`, `chapters`). Araç kareleri headless Chrome'da tek tek çizer, film sesini sayfada çevrimdışı üretir ve ffmpeg ile birleştirir. `.srt` dosyası YouTube'a ayrıca yüklenir, izleyici altyazıyı açıp kapatabilir.
+Film `?video=1` adresinde `window.__film` nesnesini sunar: `duration`, `renderAt(t)`; varsa `narration: [{ id, at }]`, `chapters: [{ t, title }]`, `sound(from, to)`. Araç kareleri headless Chrome'da tek tek çizer, altyazıyı anlatım metninden ve kelime zamanlarından üretir, anlatım kayıtlarını filmin kendi sesinin üstüne karıştırır ve ffmpeg ile birleştirir (`tools/lib/film.mjs`). Eski animasyonların `window.__video` sözleşmesi de desteklenir. `.srt` dosyası YouTube'a ayrıca yüklenir, izleyici altyazıyı açıp kapatabilir.
 
 ## Klasörler
 

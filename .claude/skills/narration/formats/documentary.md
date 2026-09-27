@@ -59,9 +59,6 @@ Doğa belgeselleri, hayvanları dizi karakterleri gibi anlattıkları ve olaylar
 5. **Açığa çıkış:** Görünmeyen mekanizma: neden işe yarıyor? Belgeselin "aha" anı burada.
 6. **Dönüş:** Başa dönülür; açılıştaki görüntü yeni anlamıyla. Kalıcı bir son görüntü.
 
-## Görsel dil
-
-Bu dosya yalnızca anlatım sesini tanımlar. Görsel tasarım uzayı `.claude/skills/animation/formats/documentary.md` içindedir; treatment aşamasında oradan bir nokta seçilir.
 
 ## Önce / sonra
 

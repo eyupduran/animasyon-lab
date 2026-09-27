@@ -61,9 +61,6 @@ Kurallar:
 - Hafif, kuru bir mizah işe yarar; ama bir espri bir kavramın yerini almasın.
 - "Basitçe", "sadece", "herkes bilir ki" deme. Basit olmayan bir şeyi basit sanan izleyici kendini yetersiz hisseder.
 
-## Görsel dil
-
-Bu dosya yalnızca anlatım sesini tanımlar. Görsel tasarım uzayı `.claude/skills/animation/formats/software.md` içindedir; treatment aşamasında oradan bir nokta seçilir.
 
 ## Önce / sonra
 

@@ -46,9 +46,6 @@ Fisch'in kapasite modeli: çocuğun çalışan belleği sınırlıdır ve bu bel
 - Yapı: **merak sorusu → tahmin → keşif (bir deney ya da yolculuk) → cevap → yeni kelime → tekrar → küçük bir görev** ("Bu akşam bir yaprağa dokun…").
 - Açıkça bitir. PBS KIDS, izleyiciyi sonsuza kadar tutmaya çalışmak yerine doğal bitiş noktaları ve başarı bildirimleri koyar: "Artık biliyorsun: …"
 
-## Görsel dil
-
-Bu dosya yalnızca anlatım sesini tanımlar. Görsel tasarım uzayı `.claude/skills/animation/formats/kids.md` içindedir; treatment aşamasında oradan bir nokta seçilir.
 
 ## Önce / sonra
 

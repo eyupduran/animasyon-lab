@@ -49,9 +49,6 @@ Gelenek: anlatı tarihi yazarları (Erik Larson, Jack Hart'ın "Storycraft"ı), 
 5. **Doruk.** Anlatıcı yavaşlar, cümleler kısalır.
 6. **Sonuç ve anlam:** Bu olay dünyayı nasıl değiştirdi? Açılıştaki ana dönüş.
 
-## Görsel dil
-
-Bu dosya yalnızca anlatım sesini tanımlar. Görsel tasarım uzayı `.claude/skills/animation/formats/history.md` içindedir; treatment aşamasında oradan bir nokta seçilir.
 
 ## Önce / sonra
 

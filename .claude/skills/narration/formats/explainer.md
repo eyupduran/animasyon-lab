@@ -55,9 +55,6 @@ Uygulama:
 - Kurzgesagt her senaryoyu yazdıktan sonra iki üç kişiye kontrol ettirip uzmana gösteriyor ve bir kaynak listesi yayımlıyor. Biz de her iddiayı `sources` notuna bağlarız.
 - Sadeleştirme yapılabilir, yanlış söylenemez. Sadeleştirdiğin yerde bunu belirt: "Kabaca söylersek…"
 
-## Görsel dil
-
-Bu dosya yalnızca anlatım sesini tanımlar. Görsel tasarım uzayı `.claude/skills/animation/formats/explainer.md` içindedir; treatment aşamasında oradan bir nokta seçilir.
 
 ## Önce / sonra
 

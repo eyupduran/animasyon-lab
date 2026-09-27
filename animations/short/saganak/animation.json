@@ -1,0 +1,9 @@
+{
+  "slug": "saganak",
+  "title": "Sağanak",
+  "description": "Sözsüz kısa film: kavruk bir kanyonda avuç kadar bir bulut, boynu bükük bir tomurcuk için dağ kadar büyür ve yağar.",
+  "format": "short",
+  "tech": "Canvas 2D · tek dosya · Web Audio",
+  "build": "node build.mjs",
+  "output": "dist"
+}

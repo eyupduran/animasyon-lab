@@ -1,48 +1,34 @@
-# Animasyon Lab — kesin kurallar
+# Animasyon Lab
 
-Bu depo bir YouTube kanalının eğitim animasyonlarını üretir. Her video **kendi sanat yönüyle** yapılır; kanalın ortak kimliği yalnızca teknikte ve kapaklardadır. Bu dosya yalnızca kesin kuralları taşır; süreç ve teknik ayrıntı ilgili adımda okunan skill dosyalarındadır.
+Bir YouTube kanalı için kodla üretilen filmler: belgesel, tarih, coğrafya, bilim, yazılım, kısa film. **Filmi nasıl yapacağın tamamen sana bırakılmıştır.** Teknik, görsel dil, kamera, yapı, paket, dosya düzeni: hepsi senin kararın. Bu depo bir kalıp değildir; önceki filmler örnek değildir.
 
-## Giriş kapıları
+## Yalnızca şunlar şart
 
-- `/animation <konu>`: anlatımlı, altyazılı eğitim animasyonu, 6–10 dakika. Süreç: `.claude/skills/animation/SKILL.md`.
-- `/short [brief]`: sözsüz sinematik kısa film, 30–90 sn. Süreç: `.claude/skills/short/SKILL.md`.
-- `/audit <slug>`: bitmiş animasyonun bağımsız denetimi (özgünlük, hikâye, metin, ses, akıcılık, teslim) → `AUDIT.md`. Süreç: `.claude/skills/audit/SKILL.md`.
+1. **Yalnızca kod.** Görüntü, hareket, müzik ve efekt sesleri senin yazdığın kodla üretilir. Üretken görsel/video/ses modeli ve ücretli servis yok. Anlatım sesi yalnızca yerel araçla: `npm run voice -- <slug>`.
+2. **Doğru bilgi.** Konuyu internetten araştır; her sayı, tarih ve ad güvenilir kaynağa dayansın; emin olmadığını yuvarlak ve temkinli söyle. Kaynakları filmin klasöründe `RESEARCH.md`'ye yaz.
+3. **Türüne uygun anlatım.** Anlatım metni, türünün diliyle yazılır: belgesel belgesel gibi, tarih tarih gibi, yazılım yazılımcıya anlatır gibi; doğal Türkçe, insan yazmış gibi. Metni yazmadan önce `.claude/skills/narration/SKILL.md` ve ilgili tür dosyasını oku. Bu, depodaki tek yazım kuralıdır.
+4. **Önceki filmlere bakma.** `animations/` altındaki başka klasörleri açma, kodunu ya da görünümünü örnek alma. Her film sıfırdan.
+5. **Tek teknik söz** (videoya çevirebilmek için): sayfa `?video=1` ile açıldığında şunu sunar:
+   ```js
+   window.__film = {
+     duration,                  // saniye
+     renderAt(t),               // t anını çizer; aynı t her zaman aynı kare
+     narration: [{ id, at }],   // varsa: anlatım kayıtlarının kimliği ve başladığı an (saniye)
+     chapters: [{ t, title }],  // varsa
+     sound(from, to),           // varsa: filmin kendi sesi (müzik, efekt), OfflineAudioContext ile AudioBuffer
+   };
+   ```
+   Altyazıyı, anlatımın sese karıştırılmasını, bölüm listesini ve MP4'ü araçlar yapar (`npm run video -- <slug>`). Filmden oynatıcı, altyazı, zaman çubuğu, kalite ayarı, test ya da kapak **istenmez**. Video kare kare alınır; gerçek zamanlı akıcılık şart değildir, görsel zenginlikten kısma.
 
-## 1. Yalnızca kod
+## Klasör ve adlar
 
-Sahne, karakter, hareket, ses efektleri, müzik ve altyazı Claude'un yazdığı kodla üretilir. Üretken görsel/video/ses modeli yok (ücretsiz katmanlar dahil; öneri olarak da geçmez). Anlatım sesi yalnızca yerel TTS (`tools/voice.mjs`). Serbest: ücretsiz CDN kütüphanesi ve yazı tipi, CC0 veri dosyası (HDRI, doku; kaynağı README'ye). Ücretli servis yok; dışarıya veri göndermeden önce sor.
+`animations/<kategori>/<slug>/` (kategori ve slug İngilizce: documentary, history, geography, biology, physics, chemistry, math, space, technology, software, short). `npm run new -- <kategori>/<slug> "<Başlık>"` boş klasörü açar. `animation.json` içindeki `build` komutu `output` klasörüne kendi başına açılan bir `index.html` üretir. Ekrandaki metinler, README ve commit mesajları düzgün Türkçe.
 
-## 2. Her video taze bir sanat yönü
+## Anlatım sesi
 
-- Kodlamadan önce bir **treatment** yazılır (`TREATMENT.md`): logline, görsel dünya, palet, doku, kamera dili, yazı, ses, 6–8 kahraman sahne. Yaratıcı kararların hepsi burada verilir; bu adımda yalnızca `CLAUDE.md`, tür kartı ve kısa zevk brief'i okunur.
-- **Başka animasyonların kodu, sahnesi, paleti, yazı tipi açılmaz, taklit edilmez.** Aynı türün **teknik** modülleri (oynatıcı, zamanlama, altyazı, ses hattı, kalite kademeleri) kopyalanabilir; görsel dünya kopyalanamaz. Ayrım: `.claude/skills/animation/documentary-tech.md` gibi teknik kartlar.
-- Aynı türde önceki videoyla en az şu üçünden ikisi farklı olmalı: palet ailesi, doku/malzeme dili, kamera ve sahne düzeni. Yayınlanan videoların kimlik özeti `docs/style-ledger.md` içindedir; yalnızca **tekrarı önlemek için** okunur, örnek almak için değil.
-- Tür kartları (`.claude/skills/animation/formats/`) bir **tasarım uzayı** tarif eder; içinden bir nokta seçilir ve gerekçelenir. Kart, tarif değil sınırdır.
+`narration/lines.json`: `{ "voice", "speed", "out": "public/voice", "manifest": "narration/manifest.json", "lines": [{ "id", "say", "text" }] }`. Bir satır bir bölümün bütün anlatımıdır (tek kayıt). `say` söylendiği gibi yazılır (rakamlar sözcükle, kısaltmalar okunuşuyla, parantez yok); `text` altyazıda görünecek yazılı hâlidir. `npm run voice -- <slug>` kayıtları ve `manifest.json`'ı (süre ve kelime zamanları) üretir; filmdeki olayları bu zamanlara bağla. Sesler: `npm run voice -- voices`.
 
-## 3. Kalite: dördü birden
+## İki ayrı iş
 
-1. **Görsel:** türe uygun, özenli, ucuz görünmeyen dünya (ışık, derinlik, doku, easing, ikincil hareket, kamera dili).
-2. **Hikâye:** izleyiciyi saran anlatı: açılış sorusu, kahraman, gerilim, ödül, cevap. `.claude/skills/narration/`.
-3. **Metin insan yazmış gibi:** belgesel belgesel gibi, yazılım yazılım gibi; yapay zekâ kalıpları yok; sesli okunup kesilmiş.
-4. **Ses ve akıcılık:** aynı anlatıcı sesi baştan sona, bölüm başına tek kayıt, kodla üretilen ince ortam sesleri; ve **hiç donmama** (madde 5).
-
-Bilimsel ve tarihsel doğruluk pazarlıksızdır: her sayı `RESEARCH.md`'deki bir kaynağa dayanır; emin olunmayan yuvarlak ve temkinli söylenir.
-
-## 4. Klasörler ve adlar
-
-- `animations/<kategori>/<slug>/`; kategori İngilizce (biology, history, geography, physics, chemistry, math, space, technology, software, documentary, short; liste `tools/lib/animations.mjs`). Belgeseller konusu ne olursa olsun `documentary/` altında. Slug bütün depoda tek; adres `…/animasyon-lab/<slug>/`.
-- `npm run new -- <kategori>/<slug> "<Başlık>"` boş klasör açar. `animation.json`: `slug`, `title`, `description`, `format`, `tech`, `build`, `output`. `build` klasörde çalışır ve `output`'a kendi başına açılan `index.html` üretir.
-- Yalnızca kendi klasöründe çalış; başka animasyonun dosyasına dokunma. Kök `README.md` tablosuna satır ekle.
-- Arayüz metni, README ve commit Türkçe (düzgün Türkçe karakter); kod tanımlayıcıları ve dosya adları İngilizce.
-
-## 5. Donma yasak
-
-İzleyicinin bilgisayarı bizimkinden zayıftır. Çalışma anında değişen kalite kademeleri, açılışta otomatik seçim, oynatmada düşürme; video her zaman en üst kademede. Her kademede fps ölçülür; hedef orta makinede ≥ 50, en düşük kademede zayıf makinede ≥ 30, 50 ms üstü kare ≈ 0. Ayrıntı: `craft.md` → Performans.
-
-## 6. Ortak teknik (değişmez)
-
-Bölüm başına tek ses kaydı; hikâye zamanı kaydı izler, geri gitmez, yüklenirken bekler; altyazı iki satır, kelime kelime, Whisper zamanlarından; CC ve anlatım ayrı ayrı kapanır, seçim hatırlanır; sahne durumu zamanın saf fonksiyonu; `?video=1` ile `window.__video` sözleşmesi. Ayrıntı: `.claude/skills/animation/pipeline-tech.md`.
-
-## 7. Yerel araçlar
-
-Chrome `C:/Program Files/Google/Chrome/Application/chrome.exe`; ffmpeg PATH'te; OmniVoice + Whisper `C:\ProgramData\tts_lab` (RTX 3050 Ti 4 GB). Ortak araçlar: `tools/voice.mjs`, `tools/render-video.mjs`, `tools/thumbnail.mjs` (+ `assets/thumbnail-kit`, kanal kimliği), `tools/build-site.mjs`, `assets/avatars/` (yalnızca gerçek insan karakteri gerekirse).
+- **Film** (`/animation <konu>`, `/short [fikir]`): araştırma, anlatım, film. Başka hiçbir şey.
+- **Paket** (`/package <slug>`): film bittikten ve kullanıcı izledikten sonra, ayrı oturumda: video, kapaklar, README, yayın. Film oturumunda paket işleri yapılmaz, `.claude/skills/package/` okunmaz.

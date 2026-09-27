@@ -34,14 +34,15 @@ await page.setViewport({ width: 1280, height: 720, deviceScaleFactor: 1 });
 const logs = [];
 page.on('pageerror', e => logs.push(e.message));
 await page.goto(`http://localhost:${server.address().port}/index.html?video=1&subs=0${opt('query') ? '&' + opt('query') : ''}`, { waitUntil: 'load' });
-await page.waitForFunction('window.__video && window.__ready === true', { timeout: 120000 });
-const duration = await page.evaluate(() => window.__video.duration);
+await page.waitForFunction('(window.__video && window.__ready === true) || (window.__film && window.__film.duration > 0)', { timeout: 180000 });
+const V = await page.evaluate(() => window.__film ? '__film' : '__video');
+const duration = await page.evaluate(v => window[v].duration, V);
 const n = Number(opt('n', 9));
 const times = opt('times') ? String(opt('times')).split(',').map(Number) : Array.from({ length: n }, (_, i) => +(duration * (i + 0.5) / n).toFixed(3));
 
 // the page may draw into WebGL: read pixels from the canvas as PNG (preserveDrawingBuffer must be on)
 const hash = async t => {
-  await page.evaluate(tt => window.__video.renderAt(tt), t);
+  await page.evaluate((v, tt) => window[v].renderAt(tt), V, t);
   const png = await page.evaluate(() => { const c = document.querySelector('canvas'); return c.toDataURL('image/png'); });
   return crypto.createHash('sha1').update(png).digest('hex').slice(0, 12);
 };
