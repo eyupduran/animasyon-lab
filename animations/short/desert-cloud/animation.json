@@ -1,9 +1,0 @@
-{
-  "slug": "desert-cloud",
-  "title": "Sağanak",
-  "description": "Sözsüz kısa film: çölde kurumuş bir tomurcuğa yağmur yağdırmak isteyen avuç kadar bir bulut, rüzgârla yamaçtan yükselip dev bir fırtına bulutuna dönüşür ve vadiyi çiçeğe boğar.",
-  "format": "short",
-  "tech": "Three.js · shader'la boyanmış kanyon, örneklenmiş çiçek çayırı ve yağmur · bloom · Web Audio ile sentezlenmiş ses",
-  "build": "node build.mjs",
-  "output": "dist"
-}
