@@ -71,6 +71,7 @@ Biçim: **belirti** → neden → çözüm. Her oturum sonunda yeni bulunanlar e
 - **Video aracı bekleyip duruyor** → sayfa `window.__ready = true` ayarlamamış → video modunda bu işareti koy.
 - **Kapakta "Git" "GİT" olmuş** → Türkçe sayfada CSS `text-transform: uppercase` → başlıkları elle büyük harfle yaz (GIT, İ ile I doğru).
 - **Kapakta ana görsel başlığın altına giriyor** → görselin ağırlığı sol altta → ana görseli sağa yasla; beşini temas sayfasında yan yana kontrol et.
+- **MP4'te ses tepesi −3 dB civarında kalıyor** (hedef ≈ −1 dB) → karışım sessiz tarafta bırakıyor → videoya dokunmadan yalnızca sesi yeniden kodla: `ffmpeg -i x.mp4 -c:v copy -af "volume=2.2dB,alimiter=limit=0.89:level=false" -c:a aac -b:a 256k -movflags +faststart y.mp4`; sonra `volumedetect` ile doğrula.
 - **Görsel ya da kart kadrajdan taşıyor** → perspektif dörtgeni ekranın dışına çıkıyor → önemli öğeler (işaretçi, etiket) en az 40 px içeride kalsın.
 
 ## Araçlar

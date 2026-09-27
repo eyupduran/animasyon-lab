@@ -1,0 +1,41 @@
+# Anlatım metni: Bir Sayfanın Yolculuğu
+
+Ses: omni-erkek-derin (O9), hız 0,92. Kayıtlar public/voice/, süre ve kelime zamanları narration/manifest.json.
+
+## 1. Sıcak sayfa (01-sicak, 28.0 sn)
+
+Yazıcıdan yeni çıkmış bir sayfaya dokunun. Sıcak. Neden sıcak olsun? Çoğumuz yazıcının kâğıda mürekkep sürdüğünü düşünürüz. Ama bir lazer yazıcının içinde tek damla sıvı yok. Bu sayfadaki siyah, erimiş plastik. Üstündeki fotoğrafta ise tek bir gri nokta bile yok. Bir sayfanın makinenin içinde nasıl doğduğunu adım adım açacağız. Sonra onu fotokopiye sokacağız. Kopyadaki fotoğraf, aslına hiç benzemeyen desenlerle çıkacak. Nedenini, sayfanın doğuşu anlatıyor.
+
+## 2. Kâğıt (02-kagit, 28.2 sn)
+
+Her şey bir tabaka kâğıtla başlıyor. Kenarları 210 ve 297 milimetre. Garip sayılar, ama bir sırları var. Kâğıdı ortadan katlayın. Her yarısı, aynı biçimde daha küçük bir kâğıt olur. Tabakanın ağırlığı 5 gram kadar. Makine onu yığının üstünden kauçuk bir tekerle çekiyor. Hemen altındaki sürtünmeli bir ped, ikinci kâğıdın peşinden gelmesini engelliyor. Tek bir tabaka, içeri. Ama yazı henüz hiçbir yerde yok. Önce başka bir yüzeye yazılacak.
+
+## 3. Tambur (03-tambur, 31.0 sn)
+
+Makinenin kalbinde bir silindir dönüyor. Adı tambur. Yüzeyinde tuhaf bir kaplama var. Karanlıkta elektrik yükünü sıkıca tutuyor. Üstüne ışık düştüğü anda ise o noktadaki yük akıp gidiyor. Bütün makine bu tek özelliğe dayanıyor. Önce ince bir tel ya da bir silindir, tamburun her yerine aynı yükü seriyor. Yüzlerce volt. Kışın kazağınızı çıkarırken saçınızı kabartan elektrikle aynı türden. Tambur şimdi baştan sona yüklü. Ve tamamen boş. Bir yazı için bu yükün bazı yerlerden silinmesi gerekiyor. Bunu yapacak olan, ışık.
+
+## 4. Lazer (04-lazer, 38.4 sn)
+
+Bilgisayardan gelen sayfa, makinenin içinde bir noktalar haritasına dönüşüyor. Bir harf, küçük bir ızgaradaki dolu ve boş karelerden ibaret. Bir inçte 600 nokta. Bu haritayı tambura bir lazer yazıyor. Ama lazer yerinden kıpırdamıyor. Hareket eden, dönen çok yüzlü bir ayna. Her yüzü, ışını tamburun bir ucundan öbür ucuna süpürüyor. Bir satır. Tambur azıcık dönüyor. Bir satır daha. Lazer bu sırada saniyede milyonlarca kez yanıp sönüyor. Işığın değdiği her noktada yük boşalıyor. Işık değmeyen yerde kalıyor. Sonunda tamburun üstünde bir yazı var. Ama onu göremezsiniz. Yalnızca elektrik yükünden yapılmış, görünmez bir yazı.
+
+## 5. Toner ve ısı (05-toner, 48.8 sn)
+
+Görünmez yazıyı görünür yapmak için toz gerekiyor. Un kadar ince, kuru bir plastik tozu. Rengini içindeki karbon siyahı veriyor. Tek bir tanecik, bir saç telinin kalınlığının onda biri kadar. Bu toza toner deniyor. Tanecikler de elektrikle yüklü. Tamburun yüklü yerleri onları itiyor. Işığın boşalttığı yerler ise kabul ediyor. Toz, lazerin çizdiği yere tutunuyor, gerisine değmiyor. Şimdi kâğıt geliyor. Arkasından verilen daha güçlü bir yük, tozu tamburdan koparıp kâğıda çekiyor. Yazı artık kâğıtta. Ama parmağınızı sürseniz dağılır. Onu kalıcı yapan son durak, iki silindirin arası. Biri 200 dereceye yakın sıcaklıkta. Plastik eriyor, kâğıdın liflerine işliyor ve orada donuyor. Baştaki sıcaklık buradan geliyor. Tambur bu arada temizleniyor, yeniden yükleniyor. Bir sonraki sayfa için hazır.
+
+## 6. Yarım ton (06-yarim-ton, 43.2 sn)
+
+Yazı kolay. Bir nokta ya toz alır ya almaz. Peki bir fotoğraf? Bir yüzün gölgesi, gökyüzünün açıktan koyuya geçişi? Yazıcının elinde gri toz yok. Tek bir siyah var. Hile, noktaların büyüklüğünde. Koyu yerlerde noktalar şişip birbirine değiyor. Açık yerlerde küçülüp neredeyse kayboluyor. Yakından bakınca yalnızca bir nokta ızgarası görürsünüz. Birkaç adım geri çekilince göz noktaları birleştiriyor ve griyi kendisi uyduruyor. Matbaacılar buna yarım ton diyor. Renkli yazıcı aynı hileyi dört ayrı tozla yapar. Üç ana renk, bir de siyah. Her rengin ızgarası farklı bir açıya çevrilmiş. Aynı açıda dursalar, üst üste binip dalgalı desenler çıkarırlar. Bu dalgaları aklınızda tutun. Birazdan geri dönecekler.
+
+## 7. Fotokopi (07-fotokopi, 73.0 sn)
+
+Şimdi bu sayfayı fotokopi makinesinin camına koyalım. Camın altından bir ışık çubuğu geçiyor. Sayfadan yansıyan ışığı bir sensör sırası okuyor, satır satır. Beyaz kâğıt çok ışık yansıtır, siyah toz az. Her satır sayılara dönüşüyor. Sonrası tanıdık. O sayılar lazere gidiyor ve sayfa baştan yazılıyor. Bugünkü fotokopi makinesi, aynı gövdeye girmiş bir tarayıcı ile bir yazıcı. Ama tarih tersinden işledi. Önce fotokopi vardı. 1930'lar. Chester Carlson adında bir patent uzmanı, belgelerin kopyasını çıkarmanın kolay bir yolunu arıyor. Mutfağında kükürt kaplı levhalarla deneyler yapıyor, sık sık yangın çıkarıyor. Sonunda Astoria'da bir oda kiralıyor. 22 Ekim 1938'de ilk kopyayı alıyor. Bir tarih ve bir semt adı. Yirmiden fazla şirket fikri geri çeviriyor. Bu fikirden doğan otomatik fotokopi makinesi ancak 1959'da tanıtılıyor. Adı Yunancadan geliyor: kuru yazı. Kserografi. 12 yıl sonra Gary Starkweather adında bir mühendis, bir fotokopi makinesinin içine lazer yerleştiriyor. İlk lazer yazıcı böyle doğuyor. Ama bir farkla. Eski fotokopide ışık, sayfanın beyaz yerlerinden tambura yansıyordu. Işık beyazı yazıyordu. Lazer yazıcı ise siyahı yazar.
+
+## 8. Kopyanın kopyası (08-kopya, 58.1 sn)
+
+Şimdi başa dönelim. Asıl sayfada bir yazı ve bir fotoğraf var. Kopya çıkıyor. Yazı neredeyse aynı. Harfler biraz kalınlaşmış, kenarları biraz tırtıklanmış. Ama fotoğraf başka bir şeye dönmüş. Yüzün üstünde dalgalar, gökyüzünde halkalar. Neden? Makine bir fotoğraf görmüyor. Yarım ton noktalarını görüyor. Sonra bu noktaları kendi ızgarasıyla yeniden noktalıyor. İki ızgara üst üste biniyor. Bir tül perdeyi ikinci bir tülün önüne tuttuğunuzda gördüğünüz dalgalar gibi. Bunun adı hare. Bu yüzden birçok makinede bir fotoğraf ayarı var. Önce noktaları hafifçe yumuşatıyor, sonra yeniden basıyor. Bir sorun daha var. Çoğu makine yazıyı okunaklı tutmak için koyuyu daha koyu, açığı daha açık yapar. Fotoğraf ara tonlarını kaybediyor, sertleşiyor. Şimdi kopyanın kopyasını alalım. Sonra onun da. Her kuşakta ince ayrıntılar biraz daha kopuyor. Yüz, düz lekelerden bir afişe dönüyor. Yazı ise direniyor. Çünkü yazıda zaten yalnızca iki şey var. Toz ve boşluk.
+
+## 9. Bir anlık ışık (09-final, 26.9 sn)
+
+O sıcak sayfa, ışığın bir elektrik yükünü silmesiyle başladı. Elektrik tozu yerine çekti. Sıcaklık tozu kâğıda mühürledi. Fotoğrafı ise bizim gözümüz tamamladı. Fotokopi aynı yolu bir kez daha yürür. Ama o yolda kendi noktalarını da ekler. Her kopya, biraz daha makinenin eseridir. Carlson'un ilk kopyası bulanık, silik bir satırdı. Bugün her ofiste aynı yol, günde yüzlerce kez yürünüyor. Karanlıkta bekleyen, yüklü bir silindir. Ve bir anlık ışık.
+
+Toplam konuşma: 6 dk 16 sn (sessiz aralar hariç).

@@ -1,0 +1,31 @@
+BAŞLIK ÖNERİLERİ
+1. Yazıcıdan Çıkan Sayfa Neden Sıcak? Bir Sayfanın Yolculuğu
+2. Lazer Yazıcı Mürekkep Kullanmaz: Işık, Elektrik ve Toz
+3. Fotokopi Fotoğrafları Neden Bozar? Yazıcının İçinde Bir Sayfa
+
+AÇIKLAMA
+Lazer yazıcının içinde tek damla mürekkep yok: sayfadaki siyah, ışıkla ve durgun elektrikle yerine çekilip kâğıda eritilmiş plastik tozu. Bu filmde tek bir sayfayı tamburdan lazere, tonerden ısıtıcıya kadar izliyor, yazıcının tek bir siyahla fotoğrafı nasıl bastığını görüyor ve sayfayı fotokopiye sokuyoruz. Kopyada beliren dalgalı desenlerin nedeni, sayfanın doğuşunda saklı.
+
+Görüntü, müzik ve efekt sesleri tamamen kodla üretildi; anlatım yerel bir ses modeliyle seslendirildi.
+
+BÖLÜMLER
+0:00 Sıcak bir sayfa
+0:38 Kâğıt
+1:08 Tambur
+1:41 Lazer
+2:22 Toz ve ısı
+3:13 Yarım ton
+3:59 Fotokopi
+5:15 Kopyanın kopyası
+6:17 Bir anlık ışık
+
+KAYNAKLAR
+- Wikipedia: Xerography, Laser printing, Chester Carlson, Toner (printing), Halftone, Paper size
+- ETHW / IEEE Milestone: Development of the Commercial Laser Printer, 1971-1977
+- Xerox: Chester Carlson Xerography History
+- Wikipedia: Generation loss; ScanTips: Descreen for moiré
+
+Sitede izle: https://eyupduran.github.io/animasyon-lab/printer-copier/
+
+ETİKETLER
+lazer yazıcı, fotokopi, yazıcı nasıl çalışır, toner, kserografi, yarım ton, halftone, hare deseni, moiré, Chester Carlson, Xerox, tambur, bilim belgeseli, teknoloji, animasyon

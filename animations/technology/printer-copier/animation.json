@@ -1,0 +1,8 @@
+{
+  "slug": "printer-copier",
+  "title": "Bir Sayfanın Yolculuğu: Yazıcı ve Fotokopi",
+  "description": "Bir lazer yazıcının içinde sayfanın doğuşu ve fotokopide fotoğrafın neden hareli desenlere döndüğü.",
+  "tech": "Canvas 2D + WebGL2 (yarım ton, tarama ve kopya benzetimi gölgelendiricide), Web Audio (OfflineAudioContext) ile üretilen ses",
+  "build": "node build.mjs",
+  "output": "dist"
+}

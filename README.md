@@ -8,6 +8,7 @@ Tarayıcıda çalışan eğitim animasyonlarının ve denemelerinin koleksiyonu.
 
 | Animasyon | Kategori | Teknik | Açıklama |
 |---|---|---|---|
+| [Bir Sayfanın Yolculuğu: Yazıcı ve Fotokopi](animations/technology/printer-copier) · [izle](https://eyupduran.github.io/animasyon-lab/printer-copier/) | Teknoloji | Canvas 2D · WebGL2 gölgelendirici · Web Audio | Lazer yazıcıda bir sayfanın doğuşu (tambur, lazer, toner, ısıtıcı), gri tonsuz fotoğraf ve fotokopide beliren hare desenleri |
 | [Sağanak](animations/short/cloudburst) · [izle](https://eyupduran.github.io/animasyon-lab/cloudburst/) | Kısa Film | Canvas 2D · Web Audio | Sözsüz kısa film: avuç kadar bir bulut, boynu bükük bir tomurcuk için dağ kadar büyür ve yağar (serbest üretim deneyi) |
 | [Sindirim Yolculuğu](animations/biology/digestive-journey) · [izle](https://eyupduran.github.io/animasyon-lab/digestive-journey/) | Biyoloji | Three.js · Avaturn GLB | Bir besinin ağızdan mideye, bağırsaklara, kana ve beyne uzanan yolculuğu |
 | [Bal Arısının Bir Günü](animations/documentary/honeybee-day) · [izle](https://eyupduran.github.io/animasyon-lab/honeybee-day/) | Belgesel | Three.js · özel shader · arı gözü mozaiği | Bir toplayıcı arının şafaktan geceye günü: gökyüzü pusulası, UV çiçekler, eve giden ok ve karanlık kovanda sallanım dansı |

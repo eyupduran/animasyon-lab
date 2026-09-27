@@ -16,6 +16,12 @@ Amaç **tekrarı önlemek**: yeni bir treatment yazılırken aynı türden önce
 
 - **laser-printer** (Yazıcının İçinde): Three.js kesit, GPU benzetimi; makine içi, teknik kesit dili.
 
+- **printer-copier** (Bir Sayfanın Yolculuğu: Yazıcı ve Fotokopi, 2026-09): Canvas 2D + WebGL2 gölgelendirici (yarım ton, tarama, kopya kuşakları benzetimi); palet: neredeyse siyah zemin (#07090c) + kırık beyaz kâğıt, fotoiletken tambur için camgöbeği-yeşil, lazer kırmızısı, ısıtıcı turuncusu; tarih bölümü krem parşömen zeminli çizgi çizimi;
+  doku: yarım ton nokta ızgaraları, hare desenleri, kâğıt lifleri, toz tanecikleri; heykel büstü fotoğrafı ortak motif;
+  kamera: düz, önden şematik kesitler ve yakın çekim makro geçişleri (harfin içine, noktanın içine dalış), tek sayfa baştan sona izleniyor;
+  sahne düzeni: sıcak sayfa → kâğıt → tambur → lazer → toner/ısıtıcı → yarım ton → fotokopi ve tarih şeridi → kopyanın kopyası → final; yazı: Segoe UI Variable (ince) + Georgia (sayfa içi) + Consolas;
+  ses: O9 (omni-erkek-derin, 0,92), Web Audio makine sesleri ve yumuşak müzik zemini.
+
 ## software
 
 - **git-version-control** (Git Hattı): Canvas 2D metro haritası; renkli hatlar, koyu zemin.
