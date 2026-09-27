@@ -7,34 +7,511 @@
 <body>
 <div id="root"></div>
 <script type="module">
-// YouTube kapakları. Ana görsel filmin kendi karesi: thumb/hero-<saniye×10>.jpg, filmin renderAt'ı ile
-// ekrandaki yazılar kapatılarak alındı (thumb/grab.mjs). Kanal katmanı assets/thumbnail-kit/kit.js'ten.
+// YouTube kapakları: "büyük nesne, kısa dev yazı". Nesne kapak için ayrıca çizildi: ışın yürütmeyle
+// (WebGL2) bir ofis lazer yazıcısı / fotokopi makinesi, içinden çıkan sayfa ve sayfadaki fotoğraf.
+// Fotoğraf ve kopyası 2B tuvalde çizilir, doku olarak sayfaya giydirilir. Kanal katmanı kit.js'ten.
 //   v=1 ana kapak · v=2 ve v=3 A/B denemesi için
 import * as kit from '/_kit/kit.js';
 
 const CONCEPTS = [
-  // yarım ton portre: fotoğrafta tek gri nokta yok
-  { id: 'gri-yok', img: 'hero-0195', title: '*GRİ* YOK', accent: 'Yazıcı bir fotoğrafı nasıl basar?',
-    hero: { focus: [0.54, 0.46], at: [0.68, 0.47], zoom: 1.1 }, scrim: 0.9 },
-  // lazer, dönen ayna ve tambur: sayfa ışıkla yazılır
-  { id: 'murekkep-yok', img: 'hero-1270', title: 'MÜREKKEP *YOK*', accent: 'Lazer yazıcı sayfayı ışıkla yazar',
-    hero: { focus: [0.55, 0.44], at: [0.73, 0.47], zoom: 1.5 }, scrim: 0.75 },
-  // kaynaştırıcı silindir: sayfanın sıcaklığı buradan
-  { id: 'sayfa-sicak', img: 'hero-1785', title: 'SAYFA NEDEN *SICAK?*', accent: 'Lazer yazıcının içinde bir sayfa',
-    hero: { focus: [0.48, 0.4], at: [0.7, 0.42], zoom: 1.2 }, scrim: 0.75 },
+  { id: 'yazici-nasil-calisir', title: 'YAZICI\nNASIL\n*ÇALIŞIR?*' },
+  { id: 'kopya-neden-bozulur', title: 'KOPYA\nNEDEN\n*BOZULUR?*' },
+  { id: 'yazicinin-ici', title: 'YAZICININ\n*İÇİ*', width: 590 },
 ];
-
 const v = Math.max(1, Math.min(CONCEPTS.length, Number(new URLSearchParams(location.search).get('v')) || 1));
-const c = CONCEPTS[v - 1];
+const C = CONCEPTS[v - 1];
+const W = kit.W, H = kit.H, DPR = kit.DPR;
 
-const img = new Image();
-img.src = `thumb/${c.img}.jpg`;
-await img.decode();
-kit.hero(kit.layer(1), img, c.hero);
+// ------------------------------------------------------------------------------------------------
+// Sayfadaki fotoğraf: gün batımında dağlar ve göl. İri, renkli biçimler: küçük önizlemede de seçilsin.
+// ------------------------------------------------------------------------------------------------
+function canvas(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
+function ridge(g, w, base, amp, seed, freq, fill) {
+  const r = kit.rand(seed); const ph = [r() * 9, r() * 9, r() * 9, r() * 9];
+  g.beginPath(); g.moveTo(0, base + 400);
+  for (let x = 0; x <= w; x += 4) {
+    const u = x / w * freq;
+    let y = Math.sin(u * 1.0 + ph[0]) * 0.55 + Math.sin(u * 2.3 + ph[1]) * 0.28 + Math.abs(Math.sin(u * 5.1 + ph[2])) * 0.22 + Math.sin(u * 11.7 + ph[3]) * 0.06;
+    g.lineTo(x, base - y * amp);
+  }
+  g.lineTo(w, base + 400); g.closePath(); g.fillStyle = fill; g.fill();
+}
+function paintPhoto(w, h) {
+  const c = canvas(w, h), g = c.getContext('2d');
+  const hz = h * 0.6;
+  let gr = g.createLinearGradient(0, 0, 0, hz);
+  gr.addColorStop(0, '#0f3fc4'); gr.addColorStop(0.42, '#3f8dff'); gr.addColorStop(0.75, '#ffb56a'); gr.addColorStop(1, '#ff5e2e');
+  g.fillStyle = gr; g.fillRect(0, 0, w, hz + 2);
+  const sx = w * 0.62, sy = hz - h * 0.05, sr = h * 0.12;
+  gr = g.createRadialGradient(sx, sy, sr * 0.8, sx, sy, sr * 4);
+  gr.addColorStop(0, 'rgba(255,236,170,.95)'); gr.addColorStop(1, 'rgba(255,200,120,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, w, hz);
+  g.fillStyle = '#fff6cf'; g.beginPath(); g.arc(sx, sy, sr, 0, Math.PI * 2); g.fill();
+  // bulutlar
+  g.fillStyle = 'rgba(255,255,255,.85)';
+  for (const [cx, cy, s] of [[0.18, 0.16, 1], [0.3, 0.13, 0.8], [0.82, 0.22, 0.9], [0.72, 0.19, 0.6]]) {
+    for (let k = 0; k < 5; k++) { g.beginPath(); g.ellipse((cx + (k - 2) * 0.035 * s) * w, (cy + (k % 2 ? -0.015 : 0.01)) * h, 0.05 * s * w, 0.03 * s * h, 0, 0, Math.PI * 2); g.fill(); }
+  }
+  ridge(g, w, hz - h * 0.08, h * 0.16, 3, 5, '#6b4fb5');
+  ridge(g, w, hz + 2, h * 0.14, 11, 4, '#22307a');
+  // göl: gökyüzünün yansıması ve güneş şeridi
+  gr = g.createLinearGradient(0, hz, 0, h);
+  gr.addColorStop(0, '#ff7a45'); gr.addColorStop(0.35, '#3a6fe0'); gr.addColorStop(1, '#0c2a8a');
+  g.fillStyle = gr; g.fillRect(0, hz, w, h - hz);
+  g.fillStyle = 'rgba(255,240,180,.9)';
+  for (let i = 0; i < 16; i++) { const y = hz + 8 + i * i * 1.6; const ww = sr * (1.4 - i * 0.07); g.fillRect(sx - ww / 2 + Math.sin(i * 2.1) * 6, y, ww, 4 + i * 0.5); }
+  // ön planda koyu kıyı ve çamlar
+  g.fillStyle = '#0b2a22';
+  g.beginPath(); g.moveTo(0, h); g.lineTo(0, h * 0.8); g.quadraticCurveTo(w * 0.22, h * 0.78, w * 0.4, h * 0.92); g.lineTo(w * 0.45, h); g.fill();
+  const tree = (x, y, s) => { g.beginPath(); g.moveTo(x, y - s); for (let k = 0; k < 4; k++) { g.lineTo(x + s * 0.28 * (k + 1) / 4 + s * 0.1, y - s + s * (k + 1) / 4); g.lineTo(x + s * 0.06, y - s + s * (k + 0.8) / 4); } g.lineTo(x - s * 0.06, y); for (let k = 3; k >= 0; k--) { g.lineTo(x - s * 0.06, y - s + s * (k + 0.8) / 4); g.lineTo(x - s * 0.28 * (k + 1) / 4 - s * 0.1, y - s + s * (k + 1) / 4); } g.closePath(); g.fill(); };
+  tree(w * 0.08, h * 0.84, h * 0.34); tree(w * 0.16, h * 0.83, h * 0.26); tree(w * 0.25, h * 0.86, h * 0.2);
+  return c;
+}
 
-kit.brand({ title: c.title, accent: c.accent, category: 'technology', scrim: c.scrim });
+// Kopyanın kopyası: gri, sert, yeniden noktalanmış (hare), kirli ve biraz eğri
+function paintCopy(photo, gens = 3) {
+  const w = photo.width, h = photo.height;
+  const src = canvas(w, h), sg = src.getContext('2d');
+  sg.filter = 'blur(2.2px)'; sg.drawImage(photo, 0, 0); sg.filter = 'none';
+  const d = sg.getImageData(0, 0, w, h), px = d.data;
+  const out = canvas(w, h), og = out.getContext('2d');
+  const od = og.createImageData(w, h), o = od.data;
+  const r = kit.rand(7);
+  const screen = (x, y, per, ang) => { const c = Math.cos(ang), s = Math.sin(ang); const u = (x * c + y * s) / per, v2 = (-x * s + y * c) / per; return (Math.cos(u * 6.2832) * Math.cos(v2 * 6.2832)) * 0.5 + 0.5; };
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = (y * w + x) * 4;
+    let L = (0.3 * px[i] + 0.59 * px[i + 1] + 0.11 * px[i + 2]) / 255;
+    // her kuşakta koyu daha koyu, açık daha açık
+    for (let k = 0; k < gens; k++) L = L * L * (3 - 2 * L);
+    L = Math.min(1, Math.max(0, (L - 0.1) * 1.25));
+    // aslındaki yarım ton ve makinenin kendi ızgarası üst üste: hare
+    const a = screen(x, y, 9.0, 0.26), b = screen(x, y, 9.8, 0.36);
+    const dot = (a * 0.55 + b * 0.45);
+    let ink = dot > L ? 1 : 0;
+    ink = ink * 0.8 + (1 - L) * 0.2;
+    // leke ve toz
+    if (r() < 0.004) ink = 1;
+    const tone = 232 - ink * 205 + (r() - 0.5) * 18;
+    o[i] = tone; o[i + 1] = tone - 1; o[i + 2] = tone - 5; o[i + 3] = 255;
+  }
+  og.putImageData(od, 0, 0);
+  og.filter = 'blur(0.8px)'; og.drawImage(out, 0, 0); og.filter = 'none';
+  return out;
+}
+
+// A4 sayfa: üstte yazı satırları, altta büyük fotoğraf (sayfanın makineden çıkan kısmı)
+function paintPage(photo, copy) {
+  const w = 1024, h = 1448, c = canvas(w, h), g = c.getContext('2d');
+  g.fillStyle = copy ? '#e8e6df' : '#fbfbf8'; g.fillRect(0, 0, w, h);
+  const ink = copy ? '#2a2a2a' : '#1d2230';
+  g.fillStyle = ink;
+  g.fillRect(84, 100, 560, 44);
+  const r = kit.rand(copy ? 5 : 4);
+  for (let i = 0; i < 9; i++) g.fillRect(84, 190 + i * 40, (i === 8 ? 420 : 856) - r() * 40, copy ? 17 : 14);
+  const px = 70, py = 600, pw = w - 140, ph = h - py - 70;
+  g.save();
+  if (copy) { g.translate(w / 2, py + ph / 2); g.rotate(-0.018); g.translate(-w / 2, -(py + ph / 2)); }
+  g.drawImage(copy || photo, 0, 0, photo.width, photo.height, px, py, pw, ph);
+  g.restore();
+  if (copy) {
+    // kopya kenarı gölgesi, tambur çizgisi, toz
+    let gr = g.createLinearGradient(0, 0, 60, 0); gr.addColorStop(0, 'rgba(20,20,20,.55)'); gr.addColorStop(1, 'rgba(20,20,20,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, 60, h);
+    gr = g.createLinearGradient(w, 0, w - 40, 0); gr.addColorStop(0, 'rgba(20,20,20,.35)'); gr.addColorStop(1, 'rgba(20,20,20,0)');
+    g.fillStyle = gr; g.fillRect(w - 40, 0, 40, h);
+    g.fillStyle = 'rgba(30,30,30,.45)'; g.fillRect(612, 0, 3, h);
+    for (let i = 0; i < 900; i++) { g.fillStyle = `rgba(20,20,20,${0.2 + r() * 0.6})`; g.fillRect(r() * w, r() * h, 1 + r() * 2.5, 1 + r() * 2.5); }
+  }
+  return c;
+}
+
+const photo = paintPhoto(900, 750);
+const pageOrig = paintPage(photo, null);
+const pageCopy = paintPage(photo, paintCopy(photo, 1));
+
+// ------------------------------------------------------------------------------------------------
+// Işın yürütme sahnesi
+// ------------------------------------------------------------------------------------------------
+const cv = document.createElement('canvas');
+cv.width = W * DPR; cv.height = H * DPR; cv.style.zIndex = 1;
+kit.root.appendChild(cv);
+const gl = cv.getContext('webgl2', { preserveDrawingBuffer: true, antialias: false, alpha: false });
+
+const VS = `#version 300 es
+in vec2 aPos; void main(){ gl_Position = vec4(aPos, 0., 1.); }`;
+const FS = `#version 300 es
+precision highp float;
+out vec4 outColor;
+uniform vec2 uRes;
+uniform int uScene;
+uniform vec3 uRo, uTa;
+uniform float uFl;
+uniform vec2 uPP;
+uniform sampler2D uTex0, uTex1;
+
+#define PI 3.14159265
+mat2 rot(float a){ float c = cos(a), s = sin(a); return mat2(c, -s, s, c); }
+float sdBox(vec3 p, vec3 b){ vec3 q = abs(p) - b; return length(max(q, 0.)) + min(max(q.x, max(q.y, q.z)), 0.); }
+float sdRB(vec3 p, vec3 b, float r){ return sdBox(p, b - r) - r; }
+float smin(float a, float b, float k){ float h = max(k - abs(a - b), 0.) / k; return min(a, b) - h * h * k * .25; }
+float smax(float a, float b, float k){ return -smin(-a, -b, k); }
+float sdCylX(vec3 p, float r, float hl){ vec2 d = vec2(length(p.yz) - r, abs(p.x) - hl); return min(max(d.x, d.y), 0.) + length(max(d, 0.)); }
+vec3 lin(vec3 c){ return pow(c, vec3(2.2)); }
+
+// Kavisli sayfa: S (z,y) noktasından a açısıyla çıkar, R yarıçapıyla kıvrılır (R>0 yukarı), uzunluk L, yarı genişlik w.
+// dönüş: (uzaklık, u, v, üst yüz mü)
+// Üç parçalı sayfa: S'den a açısıyla L1 boyunca düz, sonra R yarıçapıyla A radyan kıvrılır (R<0 aşağı sarkar),
+// kalan boy yine düz. Yan kesit (z,y) düzleminde; x yönünde ox merkezli, 2w genişliğinde.
+vec4 sheet3(vec3 p, vec2 S, float a, float L1, float R, float A, float L, float w, float ox){
+  vec2 q = vec2(p.z, p.y) - S;
+  vec2 d0 = vec2(cos(a), sin(a)), n = vec2(-sin(a), cos(a));
+  float ar = abs(R);
+  // 1. düz parça
+  float s1 = clamp(dot(q, d0), 0., L1);
+  vec2 n1 = d0 * s1; float best = length(q - n1), sBest = s1; vec2 np = n1, tg = d0;
+  // 2. yay
+  vec2 P1 = d0 * L1, Cc = P1 + n * R, e1 = -n * sign(R), e2 = d0;
+  vec2 qc = q - Cc;
+  float ph = atan(dot(qc, e2 * sign(1.)), dot(qc, e1));
+  float pc = clamp(ph, 0., A);
+  vec2 n2 = Cc + ar * (e1 * cos(pc) + e2 * sin(pc));
+  float d2 = length(q - n2);
+  if (d2 < best) { best = d2; sBest = L1 + pc * ar; np = n2; tg = -e1 * sin(pc) + e2 * cos(pc); }
+  // 3. düz parça
+  vec2 P2 = Cc + ar * (e1 * cos(A) + e2 * sin(A)), t3 = -e1 * sin(A) + e2 * cos(A);
+  float L3 = max(L - L1 - A * ar, 0.);
+  float s3 = clamp(dot(q - P2, t3), 0., L3);
+  vec2 n3 = P2 + t3 * s3; float d3 = length(q - n3);
+  if (d3 < best) { best = d3; sBest = L1 + A * ar + s3; np = n3; tg = t3; }
+  vec2 dd = vec2(best - .0022, abs(p.x - ox) - w);
+  float d = length(max(dd, 0.)) + min(max(dd.x, dd.y), 0.);
+  vec2 N = vec2(-tg.y, tg.x);
+  float top = dot(q - np, N) > 0. ? 1. : 0.;
+  return vec4(d, (p.x - ox) / (2. * w) + .5, sBest / L, top);
+}
+vec4 sheet(vec3 p, vec2 S, float a, float R, float L, float w, float ox){ return sheet3(p, S, a, 0., R, L / abs(R), L, w, ox); }
+
+vec4 gSheet; // son sayfa sorgusunun uv'si
+float gPanel;
+
+// ---- makine ----
+float cutBox(vec3 p){ return sdBox(p - vec3(.33, .37, .2), vec3(.3, .32, .3)); }
+float bayCut(vec3 p){ return sdRB(p - vec3(0., .655, .16), vec3(.44, .082, .42), .025); }
+
+vec2 opU(vec2 a, float d, float m){ return d < a.x ? vec2(d, m) : a; }
+
+vec2 machine(vec3 p, vec2 res){
+  float body = sdRB(p - vec3(0., .37, 0.), vec3(.52, .355, .44), .05);
+  body = smax(body, -bayCut(p), .014);
+  body = max(body, -sdBox(p - vec3(0., .205, .44), vec3(.6, .0035, .03)));
+  body = max(body, -sdBox(p - vec3(.52, .205, 0.), vec3(.03, .0035, .6)));
+  body = smax(body, -sdRB(p - vec3(0., .125, .455), vec3(.14, .024, .03), .02), .01);
+  // yan havalandırma yarıkları
+  vec3 q = p - vec3(.52, .44, -.1); q.z = mod(q.z + .02, .04) - .02;
+  float vent = sdBox(q, vec3(.02, .09, .007));
+  vent = max(vent, abs(p.z + .1) - .17);
+  body = smax(body, -vent, .004);
+  if (uScene == 3) {
+    // kesit: sağ ön çeyrek açık
+    body = max(body, -cutBox(p));
+  }
+  res = opU(res, body, 1.);
+  float sb = sdRB(p - vec3(0., .75, -.005), vec3(.528, .032, .448), .022);
+  res = opU(res, sb, 2.);
+  float lid = sdRB(p - vec3(0., .818, -.02), vec3(.515, .04, .425), .032);
+  res = opU(res, lid, 1.);
+  // kontrol paneli
+  vec3 cp = p - vec3(.27, .745, .485); cp.yz = rot(.62) * cp.yz;
+  float pan = sdRB(cp, vec3(.2, .014, .07), .013);
+  res = opU(res, pan, 2.);
+  float scr = sdRB(cp - vec3(-.045, .012, 0.), vec3(.115, .004, .05), .004);
+  res = opU(res, scr, 6.);
+  float led = length(cp - vec3(.13, .014, .0)) - .012;
+  res = opU(res, led, 8.);
+  float btn = length(cp - vec3(.13, .01, .04)) - .011;
+  res = opU(res, btn, 2.);
+  return res;
+}
+
+// kesit sahnesinin iç parçaları: kâğıt yığını, tambur, toner, lazer birimi, kaynaştırıcı
+const vec3 DRUM = vec3(.27, .3, .2);
+vec2 inner(vec3 p, vec2 res){
+  float drum = sdCylX(p - DRUM, .075, .23);
+  res = opU(res, drum, 10.);
+  float cap = min(sdCylX(p - DRUM - vec3(.24, 0., 0.), .05, .012), sdCylX(p - DRUM + vec3(.24, 0., 0.), .05, .012));
+  res = opU(res, cap, 11.);
+  float ton = sdRB(p - vec3(.27, .405, .03), vec3(.24, .06, .1), .018);
+  ton = smax(ton, -sdCylX(p - DRUM, .088, .3), .01);
+  res = opU(res, ton, 11.);
+  float dev = sdCylX(p - vec3(.27, .355, .105), .028, .22);
+  res = opU(res, dev, 14.);
+  float tr = sdCylX(p - vec3(.27, .19, .21), .03, .22);
+  res = opU(res, tr, 11.);
+  float lsu = sdRB(p - vec3(.27, .53, .26), vec3(.22, .028, .11), .01);
+  res = opU(res, lsu, 2.);
+  float fu = min(sdCylX(p - vec3(.27, .27, -.06), .042, .23), sdCylX(p - vec3(.27, .185, -.06), .038, .23));
+  res = opU(res, fu, 12.);
+  // çekmecedeki kâğıt yığını
+  float stack = sdRB(p - vec3(.02, .1, .1), vec3(.5, .04, .3), .004);
+  res = opU(res, stack, 9.);
+  return res;
+}
+
+vec2 map(vec3 p){
+  vec2 res = vec2(1e9, 0.);
+  res = machine(p, res);
+  vec4 s;
+  if (uScene == 1) {
+    s = sheet3(p, vec2(.08, .588), .03, .4, -.1, 1.25, .86, .3, 0.);
+    if (s.x < res.x) { res = vec2(s.x, 4.); gSheet = s; }
+  } else if (uScene == 2) {
+    s = sheet3(p, vec2(.08, .588), .03, .4, -.1, 1.25, .86, .3, 0.);
+    if (s.x < res.x) { res = vec2(s.x, 5.); gSheet = s; }
+    // asıl sayfa: kapağın üstünde, hafif dönük
+    vec3 q = p - vec3(-.02, .8625, .02); q.xz = rot(.12) * q.xz;
+    vec4 s2 = sheet(q, vec2(-.43, 0.), .0, 40., .86, .3, 0.);
+    if (s2.x < res.x) { res = vec2(s2.x, 4.); gSheet = s2; }
+  } else {
+    res = inner(p, res);
+    // tamburun altından geçen sayfa
+    vec4 s3 = sheet(p, vec2(.44, .222), PI, 60., .5, .21, .27);
+    if (s3.x < res.x) { res = vec2(s3.x, 9.); }
+  }
+  return res;
+}
+
+vec3 calcN(vec3 p){
+  vec2 e = vec2(.0005, -.0005);
+  return normalize(e.xyy * map(p + e.xyy).x + e.yyx * map(p + e.yyx).x + e.yxy * map(p + e.yxy).x + e.xxx * map(p + e.xxx).x);
+}
+float softSh(vec3 ro, vec3 rd, float k){
+  float r = 1., t = .012;
+  for (int i = 0; i < 70; i++) { float h = map(ro + rd * t).x; r = min(r, k * h / t); t += clamp(h, .006, .09); if (r < .002 || t > 4.) break; }
+  return clamp(r, 0., 1.);
+}
+float calcAO(vec3 p, vec3 n){
+  float o = 0., s = 1.;
+  for (int i = 1; i <= 5; i++) { float h = .018 * float(i) * 1.7; o += (h - map(p + n * h).x) * s; s *= .72; }
+  return clamp(1. - 2.4 * o, 0., 1.);
+}
+
+// ---- arka plan (ekran uzayında, görüntü renginde) ----
+vec3 bgCol(vec2 fc){
+  vec2 uv = fc / uRes;
+  vec2 c = vec2(.64, .5);
+  float r = length((uv - c) * vec2(uRes.x / uRes.y, 1.));
+  vec3 inner = vec3(.16, .52, 1.0), mid = vec3(.07, .26, .82), outer = vec3(.02, .07, .3);
+  if (uScene == 2) { inner = vec3(.18, .75, .95); mid = vec3(.04, .38, .7); outer = vec3(.01, .1, .28); }
+  if (uScene == 3) { inner = vec3(.34, .2, .9); mid = vec3(.16, .08, .52); outer = vec3(.04, .02, .16); }
+  vec3 col = mix(inner, mid, smoothstep(0., .55, r));
+  col = mix(col, outer, smoothstep(.45, 1.15, r));
+  // arka plana yarım ton noktaları: sağa doğru büyür
+  float per = uRes.y / 34.;
+  vec2 g = fc / per; g = rot(.785) * g;
+  vec2 f = fract(g) - .5;
+  float rad = .5 * smoothstep(.05, 1., uv.x) * (1. - smoothstep(.2, .95, r)) * .75;
+  float dotm = smoothstep(rad, rad - .06, length(f));
+  col += dotm * .05 * vec3(.7, .85, 1.);
+  return col;
+}
+
+vec3 env(vec3 r){
+  vec3 c = mix(vec3(.05, .1, .3), vec3(.2, .35, .8), smoothstep(-.3, .6, r.y));
+  // yumuşak ışık kutusu: sol üst
+  float box = smoothstep(.35, .55, r.y) * smoothstep(.35, -.1, r.x) * smoothstep(-.7, -.3, r.z * -1. + .0);
+  c += vec3(4.2, 4.0, 3.8) * box;
+  // arkadan turuncu kenar ışığı
+  c += vec3(2.2, .8, .35) * smoothstep(.2, .9, r.x) * smoothstep(0., -.6, r.z) * smoothstep(-.2, .3, r.y);
+  return c;
+}
+
+vec3 screenUI(vec2 u){
+  // u: -1..1
+  vec3 c = mix(vec3(.05, .35, .9), vec3(.1, .8, 1.), u.x * .5 + .5);
+  float bar = step(abs(u.y + .45), .1) * step(abs(u.x), .75);
+  float fill = bar * step(u.x, .25);
+  c = mix(c, vec3(.9), bar * .35); c = mix(c, vec3(1.), fill);
+  float icon = step(length(max(abs(u - vec2(-.45, .25)) - vec2(.22, .18), 0.)), .01);
+  c = mix(c, vec3(1.), icon * .9);
+  float lines = step(abs(u.y - .35), .06) * step(abs(u.x - .35), .35) + step(abs(u.y - .08), .05) * step(abs(u.x - .25), .25);
+  c = mix(c, vec3(1.), clamp(lines, 0., 1.) * .8);
+  return c * 1.6;
+}
+
+vec3 shade(vec3 p, vec3 rd, float m){
+  vec3 n = calcN(p);
+  map(p); vec4 sh = gSheet;
+  vec3 alb = vec3(.86, .875, .9); float ks = .5, ex = 70., rim = 1., paper = 0.; vec3 emi = vec3(0.);
+  if (m == 1.) {
+    if (bayCut(p) < .006) { alb = vec3(.03, .033, .04); ks = .15; rim = .25; }
+    if (uScene == 3 && abs(cutBox(p)) < .004) { alb = vec3(.1, .105, .12); ks = .1; rim = 0.; if (bayCut(p) > .006) { alb = vec3(1., .12, .04); emi = vec3(.35, .05, .01); } }
+  }
+  else if (m == 2.) { alb = vec3(.035, .04, .05); ks = .7; ex = 110.; rim = .5; }
+  else if (m == 6.) {
+    vec3 cp = p - vec3(.27, .745, .485); cp.yz = rot(.62) * cp.yz;
+    vec2 u = vec2((cp.x + .045) / .115, cp.z / .05);
+    alb = vec3(.0); emi = lin(screenUI(u)) * 1.2; ks = .15; ex = 200.; rim = .2;
+  } else if (m == 8.) { alb = vec3(0.); emi = vec3(.3, 2.6, .7); }
+  else if (m == 4. || m == 5.) {
+    ks = .08; ex = 20.; paper = 1.; rim = .3;
+    if (sh.w > .5) {
+      vec2 uv = vec2(sh.y, sh.z);
+      vec3 t = m == 4. ? texture(uTex0, uv).rgb : texture(uTex1, uv).rgb;
+      alb = lin(t); alb = clamp(mix(vec3(dot(alb, vec3(.3, .59, .11))), alb, 1.3), 0., 1.);
+    } else alb = vec3(.9);
+  }
+  else if (m == 9.) { alb = vec3(.9, .9, .88); ks = .05; paper = .6; rim = .3; }
+  else if (m == 10.) { alb = vec3(.01, .42, .12); ks = .45; ex = 160.; emi = vec3(.0, .1, .03); rim = .4; }
+  else if (m == 11.) { alb = vec3(.018, .02, .025); ks = .5; ex = 70.; }
+  else if (m == 12.) { alb = vec3(.5, .47, .44); ks = 1.; ex = 120.; }
+  else if (m == 14.) { alb = vec3(.12, .12, .13); ks = .8; ex = 90.; }
+
+  vec3 Lk = normalize(vec3(-.55, .85, .5));
+  vec3 Lf = normalize(vec3(.85, .3, .55));
+  vec3 Lr = normalize(vec3(.65, .35, -.7));
+  float ao = calcAO(p, n);
+  float dk = max(dot(n, Lk), 0.);
+  float sk = dk > 0. ? softSh(p + n * .002, Lk, 14.) : 0.;
+  float df = max(dot(n, Lf), 0.);
+  float fre = pow(clamp(1. + dot(n, rd), 0., 1.), 3.);
+  vec3 col = vec3(0.);
+  col += alb * vec3(1.0, .95, .88) * 2.9 * dk * sk;
+  col += alb * vec3(.5, .65, 1.) * .55 * df * (.4 + .6 * ao);
+  col += alb * mix(vec3(.08, .1, .22), vec3(.35, .45, .8), n.y * .5 + .5) * ao;
+  // basılı kâğıt: kendi ışığıyla da parlasın (kapakta renkler solmasın)
+  col += alb * paper * .45 * (.55 + .45 * ao);
+  col += vec3(2.4, .8, .3) * fre * max(dot(n, Lr) * .6 + .4, 0.) * ao * .9 * rim;
+  vec3 h = normalize(Lk - rd);
+  col += vec3(1., .96, .9) * pow(max(dot(n, h), 0.), ex) * ks * 3. * sk;
+  vec3 r = reflect(rd, n);
+  float F = .04 + .96 * pow(clamp(1. + dot(n, rd), 0., 1.), 5.);
+  col += env(r) * mix(ks * .12, 1., F) * ao * (paper > 0. ? .12 : 1.) * mix(1., .35, 1. - rim);
+  col += emi;
+  return col;
+}
+
+// ışın ile doğru parçası arasındaki en yakın uzaklık (lazer ışını parıltısı için); x: uzaklık, y: ışın boyunca t
+vec2 segDist(vec3 ro, vec3 rd, vec3 a, vec3 b){
+  vec3 ba = b - a, w0 = ro - a;
+  float bb = dot(rd, ba), c = dot(ba, ba), d = dot(rd, w0), e = dot(ba, w0);
+  float den = max(c - bb * bb, 1e-6);
+  float s = clamp((e - bb * d) / den, 0., 1.);
+  vec3 q = a + ba * s;
+  float t = max(dot(q - ro, rd), 0.);
+  return vec2(length(ro + rd * t - q), t);
+}
+vec3 laser(vec3 ro, vec3 rd, float tHit){
+  vec3 src = vec3(.27, .5, .27), c = vec3(0.);
+  for (int i = 0; i < 5; i++) {
+    float x = mix(.06, .48, float(i) / 4.);
+    vec3 dst = DRUM + vec3(x - DRUM.x, .075 * .8, .075 * .6);
+    vec2 sd = segDist(ro, rd, src, dst);
+    if (sd.y > tHit) continue;
+    float k = i == 2 ? 1. : .45;
+    c += vec3(4., .12, .05) * (exp(-sd.x * sd.x / 1e-5) * 4. + .0004 / (sd.x + .002)) * k;
+  }
+  // tamburun üstünde lazerin çizdiği satır
+  vec3 a = DRUM + vec3(.06 - DRUM.x, .075 * .8 + .002, .075 * .6 + .002), b = a + vec3(.42, 0., 0.);
+  vec2 sd = segDist(ro, rd, a, b);
+  if (sd.y <= tHit + .01) c += vec3(4., .3, .12) * (exp(-sd.x * sd.x / 8e-6) * 5. + .0008 / (sd.x + .003));
+  return c;
+}
+
+vec3 tone(vec3 c){ c = c * .8; c = (c * (2.51 * c + .03)) / (c * (2.43 * c + .59) + .14); return pow(clamp(c, 0., 1.), vec3(1. / 2.2)); }
+
+vec3 render(vec2 fc){
+  vec3 ww = normalize(uTa - uRo), uu = normalize(cross(ww, vec3(0., 1., 0.))), vv = cross(uu, ww);
+  vec2 pc = (2. * fc - uRes) / uRes.y - uPP;
+  vec3 rd = normalize(pc.x * uu + pc.y * vv + uFl * ww), ro = uRo;
+  vec3 bg = bgCol(fc);
+  float t = .1, m = -1.;
+  for (int i = 0; i < 220; i++) {
+    vec2 h = map(ro + rd * t);
+    if (h.x < .0003 * t) { m = h.y; break; }
+    t += h.x * .9;
+    if (t > 12.) break;
+  }
+  float tf = rd.y < 0. ? -ro.y / rd.y : 1e9;
+  vec3 glow = uScene == 3 ? laser(ro, rd, min(t, tf)) : vec3(0.);
+  if (m > 0. && t < tf) return tone(shade(ro + rd * t, rd, m) + glow);
+  if (tf < 1e8) {
+    vec3 p = ro + rd * tf;
+    vec3 n = vec3(0., 1., 0.);
+    float s = softSh(p + n * .001, normalize(vec3(-.55, .85, .5)), 10.);
+    float ao = calcAO(p, n);
+    float occ = mix(.45, 1., s) * mix(.35, 1., ao);
+    vec3 col = bg * occ;
+    // parlak zemin: nesnenin hafif yansıması
+    vec3 rr = reflect(rd, n); float tr = .01, mr = -1.;
+    for (int i = 0; i < 90; i++) { vec2 h = map(p + rr * tr); if (h.x < .0006) { mr = h.y; break; } tr += h.x; if (tr > 3.) break; }
+    if (mr > 0.) col = mix(col, tone(shade(p + rr * tr, rr, mr)), .16 * exp(-tr * 2.));
+    return col + tone(glow) * 0.;
+  }
+  return bg;
+}
+
+uniform vec2 uJit;
+void main(){ outColor = vec4(render(gl_FragCoord.xy + uJit), 1.); }`;
+
+function sh(type, src) {
+  const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { const log = gl.getShaderInfoLog(s); console.error(log); throw new Error(log); }
+  return s;
+}
+const prog = gl.createProgram();
+gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS));
+gl.bindAttribLocation(prog, 0, 'aPos'); gl.linkProgram(prog);
+if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+gl.useProgram(prog);
+const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+
+const aniso = gl.getExtension('EXT_texture_filter_anisotropic');
+function tex(unit, img) {
+  const t = gl.createTexture(); gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+  gl.generateMipmap(gl.TEXTURE_2D);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  if (aniso) gl.texParameterf(gl.TEXTURE_2D, aniso.TEXTURE_MAX_ANISOTROPY_EXT, 8);
+}
+tex(0, pageOrig); tex(1, pageCopy);
+
+const CAMS = {
+  1: { ro: [1.0, 1.28, 1.62], ta: [.04, .45, .42], fl: 2.4, pp: [.68, .03] },
+  2: { ro: [.95, 1.75, 1.55], ta: [.02, .55, .3], fl: 2.4, pp: [.76, .06] },
+  3: { ro: [1.5, 1.1, 1.5], ta: [.2, .4, .22], fl: 2.55, pp: [.84, .02] },
+};
+const cam = CAMS[v];
+const U = n => gl.getUniformLocation(prog, n);
+gl.uniform2f(U('uRes'), cv.width, cv.height);
+gl.uniform1i(U('uScene'), v);
+gl.uniform3fv(U('uRo'), cam.ro); gl.uniform3fv(U('uTa'), cam.ta);
+gl.uniform1f(U('uFl'), cam.fl); gl.uniform2fv(U('uPP'), cam.pp);
+gl.uniform1i(U('uTex0'), 0); gl.uniform1i(U('uTex1'), 1);
+gl.viewport(0, 0, cv.width, cv.height);
+gl.clearColor(0, 0, 0, 1); gl.clear(gl.COLOR_BUFFER_BIT);
+// 2×2 örnekleme: dört kaydırılmış geçiş, her biri çeyrek ağırlıkla toplanır
+gl.enable(gl.BLEND); gl.blendColor(0, 0, 0, 0.25); gl.blendFunc(gl.CONSTANT_ALPHA, gl.ONE);
+gl.enable(gl.SCISSOR_TEST);
+const STRIP = 120;
+for (const [jx, jy] of [[-.25, -.25], [.25, -.25], [-.25, .25], [.25, .25]]) {
+  gl.uniform2f(U('uJit'), jx, jy);
+  for (let y = 0; y < cv.height; y += STRIP) {
+    gl.scissor(0, y, cv.width, STRIP);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.finish();
+    await new Promise(r => setTimeout(r, 0));
+  }
+}
+
+kit.brand({ title: C.title, category: 'technology', width: C.width || 640 });
 await kit.ready();
-window.__thumbs = { count: CONCEPTS.length, list: CONCEPTS.map(x => ({ id: x.id, title: x.title.replace(/\*/g, '') })) };
+window.__thumbs = { count: CONCEPTS.length, list: CONCEPTS.map(x => ({ id: x.id, title: x.title.replace(/\*/g, '').replace(/\n/g, ' ') })) };
 window.__thumbReady = true;
 </script>
 </body>

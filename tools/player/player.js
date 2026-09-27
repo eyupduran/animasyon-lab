@@ -5,12 +5,14 @@
 // element: streams, seeks, plays with the iPhone silent switch on). Without it the player mixes live with the
 // AudioContext: narration clips plus the film's own sound rendered in chunks with film.sound(from, to).
 // Data comes from window.__PLAYER, written by tools/build-site.mjs:
-//   { title, soundtrack?, musicDb, cue: { lead, tail, minDur, join }, fade: [in, out], clips: { id: { file?, cues: [{ a, b, text }] } } }
+//   { title, soundtrack?, musicDb, cue: { gap, reveal }, clips: { id: { file?, cues: [{ a, b, lines, words: [{ w, t }] }] } } }
+// Subtitles work like the burned-in video: one chunk of at most two lines is laid out at once, and each word
+// fades in as the narrator says it (tools/lib/film.mjs → clipCues, cuesToAss).
 (() => {
   const D = window.__PLAYER;
   const root = document.getElementById('pl');
   const $ = s => root.querySelector(s);
-  const video = $('.pl-video'), frame = $('.pl-film'), subEl = $('.pl-sub span'), big = $('.pl-big');
+  const video = $('.pl-video'), frame = $('.pl-film'), subEl = $('.pl-subin'), big = $('.pl-big');
   const track = $('.pl-track'), fill = $('.pl-fill'), knob = $('.pl-knob'), tip = $('.pl-tip'), timeEl = $('.pl-time');
   const ICON = {
     play: '<svg viewBox="0 0 24 24"><path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 8 5.14z"/></svg>',
@@ -80,10 +82,10 @@
 
   // same rules as tools/lib/film.mjs → placeCues
   function placeCues() {
-    const C = D.cue, out = [];
-    for (const p of placed) for (const c of D.clips[p.id].cues) out.push({ a: p.at + c.a - C.lead, b: p.at + Math.max(c.b, c.a + C.minDur) + C.tail, text: c.text });
+    const out = [];
+    for (const p of placed) for (const c of D.clips[p.id].cues) out.push({ a: p.at + c.a, b: p.at + c.b, lines: c.lines, words: c.words.map(w => ({ w: w.w, t: p.at + w.t })) });
     out.sort((x, y) => x.a - y.a);
-    for (let i = 0; i < out.length - 1; i++) { const nx = out[i + 1].a; if (out[i].b > nx - C.join) out[i].b = nx - 0.02; }
+    for (let i = 0; i < out.length - 1; i++) out[i].b = Math.min(out[i].b, out[i + 1].a - D.cue.gap);
     return out;
   }
 
@@ -194,12 +196,34 @@
   }
   requestAnimationFrame(frameLoop);
 
-  let lastCue = null;
+  let lastCue = null, spans = [];
   function subs(now) {
     let c = null;
     for (let i = 0; i < cues.length; i++) { if (cues[i].a > now) break; if (now < cues[i].b) c = cues[i]; }
-    if (c !== lastCue) { subEl.textContent = c ? c.text : ''; lastCue = c; }
-    if (c) { const [fi, fo] = D.fade; subEl.style.opacity = Math.max(0, Math.min(1, (now - c.a) / fi, (c.b - now) / fo)); }
+    if (c !== lastCue) {
+      lastCue = c; subEl.textContent = ''; spans = [];
+      if (c) {
+        let k = 0;
+        for (const line of c.lines) {
+          const d = document.createElement('div'); d.className = 'pl-line';
+          const n = line.split(' ').length;
+          c.words.slice(k, k + n).forEach((w, i) => {
+            const s = document.createElement('span'); s.className = 'w'; s.textContent = w.w;
+            d.appendChild(s); if (i < n - 1) d.appendChild(document.createTextNode(' '));
+            spans.push([s, w.t, -1]);
+          });
+          k += n; subEl.appendChild(d);
+        }
+      }
+    }
+    // each word rises into place, sharpening, as it is spoken
+    for (const it of spans) {
+      const q = Math.round(Math.max(0, Math.min(1, (now - it[1] + 0.06) / D.cue.reveal)) * 20) / 20;
+      if (q === it[2]) continue;
+      it[2] = q; it[0].style.opacity = q;
+      it[0].style.transform = q < 1 ? `translateY(${(1 - q) * 0.12}em)` : '';
+      it[0].style.filter = q < 1 ? `blur(${(1 - q) * 0.07}em)` : '';
+    }
   }
 
   const fmt = s => { s = Math.max(0, Math.floor(s)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };

@@ -1,4 +1,5 @@
-// Draws the subtitles into the picture: renders/<name>.mp4 + <name>.srt → renders/<name>-altyazili.mp4
+// Draws the subtitles into the picture: renders/<name>.mp4 + <name>.cues.json (word times; falls back to
+// <name>.srt without the word-by-word reveal) → renders/<name>-altyazili.mp4
 //   npm run subs -- <slug> [--srt] [--name <dosya adı, uzantısız>] [--crf 18]
 //   --srt first rewrites renders/<slug>.srt from the film (narration placement + current cue rules), so an
 //   existing video gets the current subtitles without being rendered again.
@@ -16,9 +17,9 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const FONTS = path.join(ROOT, 'assets', 'fonts');
 
 export function burnSubs(renders, name, { crf = '18' } = {}) {
-  const mp4 = path.join(renders, `${name}.mp4`), srt = path.join(renders, `${name}.srt`);
-  if (!fs.existsSync(mp4) || !fs.existsSync(srt)) throw new Error(`eksik: ${!fs.existsSync(mp4) ? mp4 : srt}`);
-  const cues = srtToCues(fs.readFileSync(srt, 'utf8'));
+  const mp4 = path.join(renders, `${name}.mp4`), srt = path.join(renders, `${name}.srt`), json = path.join(renders, `${name}.cues.json`);
+  if (!fs.existsSync(mp4) || (!fs.existsSync(srt) && !fs.existsSync(json))) throw new Error(`eksik: ${!fs.existsSync(mp4) ? mp4 : srt}`);
+  const cues = fs.existsSync(json) ? JSON.parse(fs.readFileSync(json, 'utf8')) : srtToCues(fs.readFileSync(srt, 'utf8'));
   if (!cues.length) { console.log(`${name}.srt boş, altyazılı sürüm atlandı`); return null; }
   const ass = `${name}.ass`, out = `${name}-altyazili.mp4`;
   fs.writeFileSync(path.join(renders, ass), cuesToAss(cues), 'utf8');
@@ -44,7 +45,9 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     const placed = await f.page.evaluate(() => window.__film.narration || []);
     await f.close();
     const srt = path.join(dir, 'renders', `${opt('name', slug)}.srt`);
-    fs.writeFileSync(srt, cuesToSrt(makeCues(readNarration(dir) || {}, placed)), 'utf8');
+    const cues = makeCues(readNarration(dir) || {}, placed);
+    fs.writeFileSync(srt, cuesToSrt(cues), 'utf8');
+    fs.writeFileSync(srt.replace(/\.srt$/, '.cues.json'), JSON.stringify(cues), 'utf8');
     console.log(`→ ${path.relative(ROOT, srt)} yeniden yazıldı`);
   }
   const out = burnSubs(path.join(dir, 'renders'), opt('name', slug), { crf: opt('crf', '18') });

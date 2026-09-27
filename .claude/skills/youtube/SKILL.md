@@ -21,7 +21,7 @@ Filmin **görünümünü değiştirme.** Kusur görürsen düzeltme, son mesajı
      - `<slug>-altyazili.mp4`: altyazı görüntüye basılı.
      - `<slug>.srt`
      - `<slug>-chapters.txt`
-   - Altyazı kısa, tek satırlık parçalar hâlinde, sesi izleyerek akar. Görünüşü sitedeki oynatıcıyla aynıdır (`tools/lib/film.mjs` → `CUE`, `SUB_STYLE`).
+   - Altyazı sesle ilerler: en fazla iki satırlık parça baştan yerleşir, kelimeler söylendikçe tek tek belirir. Görünüşü sitedeki oynatıcıyla aynıdır (`tools/lib/film.mjs` → `CUE`, `SUB_STYLE`).
    - Uzun iştir, arka planda çalıştır ve bitmesini bekle.
 2. **Denetim:**
    - İki videodan da kareler çıkar. Siyah kare, kayık ses ya da taşan yazı var mı?
@@ -29,12 +29,12 @@ Filmin **görünümünü değiştirme.** Kusur görürsen düzeltme, son mesajı
    - Ses düzeyini ölç: tepe yaklaşık −1 dB olmalı. Anlatım müziğin belirgin üstünde olmalı (`--music -8` ayarı).
    - MP4'e sonradan dokunursan (ör. ses düzeyi), altyazılı sürümü `npm run subs -- <slug>` ile yeniden üret.
 3. **Başlık:** YouTube başlığının 2–3 önerisini yaz. Her biri 70 karakterden kısa, merak uyandıran ama abartısız ve doğru olsun. Kapağın başlığı video başlığını tekrar etmesin, onu tamamlasın.
-4. **Kapaklar:** kanalın seri kimliği `assets/thumbnail-kit/kit.js`'de. Başındaki kullanım yorumunu oku ve ona uy.
-   - Her kapak aynı ızgarayı, kanal işaretini ve kategori rengini taşır. Hepsi aynı serinin parçası gibi durmalı, her biri de tek başına şık olmalı.
-   - Filmin klasöründe `thumbnail.html` yoksa yaz: `?v=1` **ana kapak**, `?v=2` ve `?v=3` A/B denemesi için alternatifler.
-   - Ana görsel filmin kendi karesinden ya da kendi kodundan gelir. Filmin ekrandaki yazıları kapağa girmemeli.
-   - Başlık 2–4 kelime olmalı ve 168×94'lük mobil önizlemede de okunmalı. Sağ alt köşe (YouTube'un süre rozeti) boş kalmalı.
-   - Üret: `npm run thumbnail -- <slug>`. Kareleri tam boyda ve 168×94'e küçültülmüş hâlde incele; zayıfsa yeniden yap.
+4. **Kapaklar:** tarz "büyük nesne, kısa dev yazı". Seri kimliği `assets/thumbnail-kit/kit.js`'de; başındaki kullanım yorumunu oku ve ona uy.
+   - Filmin klasöründe `thumbnail.html` yoksa yaz: `?v=1` **ana kapak**, `?v=2` ve `?v=3` farklı fikirlerle A/B alternatifleri.
+   - Ana görsel konunun kendisi olan tek, büyük, parlak, net bir nesnedir (yazıcı, arı, diş…). Filmde böyle bir kare yoksa kapak için kodla ayrıca çiz; filmin kodundan parça alınabilir.
+   - Başlık konuyu doğrudan söyler, 2–3 kelime: "YAZICI NASIL ÇALIŞIR?" gibi.
+   - Yasak: soyut film kareleri ve konuyu söylemeyen zekice başlıklar ("GRİ YOK" gibi). Küçük açıklama yazısı da yok.
+   - Üret: `npm run thumbnail -- <slug>`. Kareleri tam boyda ve 168×94'e küçültülmüş hâlde incele. Sor: "Gören biri konuyu anında anlar mı?" Anlamıyorsa yeniden yap. Sağ alt köşe (süre rozeti) boş kalmalı.
 5. **YouTube metni:** `youtube.txt` şunları içerir:
    - başlık önerileri,
    - 2–3 cümlelik açıklama,

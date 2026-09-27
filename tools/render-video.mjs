@@ -19,7 +19,7 @@ import { spawn, execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import puppeteer from 'puppeteer-core';
 import { findAnimation } from './lib/animations.mjs';
-import { readNarration, makeSrt, mixArgs, WAV_IN_PAGE } from './lib/film.mjs';
+import { readNarration, makeCues, cuesToSrt, mixArgs, WAV_IN_PAGE } from './lib/film.mjs';
 import { burnSubs } from './burn-subs.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -88,7 +88,10 @@ if (FILM) {
   execSync(['ffmpeg', '-y', '-v', 'error', ...mixArgs({ base: hasSound ? own : null, narr, placed, from, len, musicDb: hasVoice ? Number(opt('music', -8)) : 0 }), wavFile]
     .map(a => /[\s;\[\]=]/.test(a) ? `"${a}"` : a).join(' '), { stdio: 'inherit' });
   fs.rmSync(own, { force: true });
-  fs.writeFileSync(`${base}.srt`, makeSrt(narr, placed, from, to), 'utf8');
+  // subtitles: plain chunks for YouTube (.srt) and word times for the burned-in copy (.cues.json, clip time)
+  const cues = makeCues(narr, placed);
+  fs.writeFileSync(`${base}.srt`, cuesToSrt(cues, from, to), 'utf8');
+  fs.writeFileSync(`${base}.cues.json`, JSON.stringify(cues.filter(c => c.b > from && c.a < to).map(c => ({ ...c, a: c.a - from, b: c.b - from, words: c.words.map(w => ({ w: w.w, t: w.t - from })) }))), 'utf8');
   chapters = (await page.evaluate(() => window.__film.chapters || [])).filter(c => c.t >= from - 0.01 && c.t < to).map(c => ({ t: Math.max(0, c.t - from), title: c.title }));
 } else {
   const chunks = await page.evaluate((a, b) => window.__video.prepareSound(a, b), from, to);

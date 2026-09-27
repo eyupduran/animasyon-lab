@@ -84,7 +84,7 @@ npm run subs -- <slug> [--srt]         # yalnızca altyazılı sürümü yeniden
 npm run verify -- <slug>               # renderAt(t) saflık testi: aynı an aynı piksel, sayfa hatası yok
 ```
 
-Altyazı kısa, tek satırlık parçalar hâlinde sesi izleyerek akar ve sade bir bantla alt ortada durur (Inter Medium, `assets/fonts/`). Kurallar ve görünüş `tools/lib/film.mjs` içinde (`CUE`, `SUB_STYLE`); `.srt`, altyazılı video ve site oynatıcısı aynı kaynaktan beslenir.
+Altyazı sesle ilerler: bir cümle (uzunsa bir parçası) en fazla iki satırlık bir parça olarak baştan yerleşir, kelimeler anlatıcı söyledikçe tek tek belirir; bant yok, yumuşak gölge var (Inter Medium, `assets/fonts/`). Kurallar ve görünüş `tools/lib/film.mjs` içinde (`CUE`, `SUB_STYLE`); `.srt`, altyazılı video ve site oynatıcısı aynı kaynaktan beslenir.
 
 Claude Code'da `/youtube <slug>` komutu bütün işi yapar: iki videoyu, altyazıyı, bölüm listesini, kapakları ve YouTube metnini `Masaüstü\YouTube\<slug>\` klasörüne çıkarır ([.claude/skills/youtube/SKILL.md](.claude/skills/youtube/SKILL.md)).
 

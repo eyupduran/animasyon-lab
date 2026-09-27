@@ -13,7 +13,7 @@ import path from 'path';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { listAnimations, CATEGORIES } from './lib/animations.mjs';
-import { readNarration, clipCues, CUE, SUB_STYLE } from './lib/film.mjs';
+import { readNarration, clipCues, CUE } from './lib/film.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -65,7 +65,7 @@ function writePlayer(slug, dir, cfg) {
     fs.copyFileSync(n.file, path.join(DIST, slug, 'voice', name));
     clips[id].file = `voice/${encodeURIComponent(name)}`;
   }
-  const data = { title: cfg.title, soundtrack: soundtrack ? 'soundtrack.m4a' : undefined, musicDb: -8, cue: { lead: CUE.lead, tail: CUE.tail, minDur: CUE.minDur, join: CUE.join }, fade: [SUB_STYLE.fadeIn, SUB_STYLE.fadeOut], clips };
+  const data = { title: cfg.title, soundtrack: soundtrack ? 'soundtrack.m4a' : undefined, musicDb: -8, cue: { gap: CUE.gap, reveal: CUE.reveal }, clips };
   const hasPoster = fs.existsSync(path.join(dir, 'poster.jpg'));
   fs.writeFileSync(path.join(DIST, slug, 'index.html'), `<!doctype html>
 <html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -79,7 +79,7 @@ function writePlayer(slug, dir, cfg) {
   <div class="pl-video">
     <iframe class="pl-film" src="film/index.html?video=1" title="${esc(cfg.title)}" scrolling="no" tabindex="-1" allow="autoplay"></iframe>
     ${hasPoster ? '<img class="pl-poster" src="poster.jpg" alt="">' : ''}
-    <div class="pl-sub" aria-live="off"><span></span></div>
+    <div class="pl-sub" aria-live="off"><div class="pl-subin"></div></div>
   </div>
   <div class="pl-hit"></div>
   <div class="pl-top"><a href="../">← Animasyon Lab</a><b>${esc(cfg.title)}</b></div>

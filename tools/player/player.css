@@ -6,7 +6,7 @@ body { display: flex; align-items: center; justify-content: center; overflow: hi
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
 button:focus-visible, a:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 4px; }
 
-.pl { position: relative; width: min(100vw, calc(100vh * 16 / 9)); aspect-ratio: 16 / 9; background: #000; overflow: hidden; --w: 100vw; --h: 56.25vw; user-select: none; -webkit-user-select: none; }
+.pl { position: relative; width: min(100vw, calc(100vh * 16 / 9)); aspect-ratio: 16 / 9; background: #000; overflow: hidden; --w: 100vw; --h: 56.25vw; --bar: 96px; user-select: none; -webkit-user-select: none; }
 @supports (height: 100dvh) { .pl { width: min(100vw, calc(100dvh * 16 / 9)); } }
 .pl.full { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; aspect-ratio: auto; z-index: 10; }
 .pl-video { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: hidden; } /* JS fits it to 16:9 and sets --w/--h */
@@ -15,11 +15,15 @@ button:focus-visible, a:focus-visible { outline: 2px solid #fff; outline-offset:
 .pl.started .pl-poster { opacity: 0; pointer-events: none; }
 .pl-hit { position: absolute; inset: 0; }
 
-/* subtitles: same look as the burned-in video (tools/lib/film.mjs → SUB_STYLE, sizes for 1920×1080) */
-.pl-sub { position: absolute; left: 0; right: 0; bottom: calc(64 / 1080 * var(--h)); display: flex; justify-content: center; pointer-events: none; transition: transform .25s ease; }
-.pl-sub span { font-size: max(calc(44 / 1920 * var(--w)), 13px); line-height: 1.22; padding: .27em .3em; background: rgba(12, 10, 10, .5); border-radius: .1em; max-width: 88%; text-align: center; opacity: 0; }
-.pl-sub span:empty { display: none; }
-.pl.started:not(.idle) .pl-sub { transform: translateY(calc(-1 * max(0px, 58px - 64 / 1080 * var(--h)))); }
+/* subtitles: same look as the burned-in video (tools/lib/film.mjs → SUB_STYLE, sizes for 1920×1080):
+   a chunk of up to two lines, words fade in as they are spoken, soft shadow and no band */
+.pl-sub { position: absolute; left: 0; right: 0; bottom: calc(70 / 1080 * var(--h)); display: flex; justify-content: center; pointer-events: none; transition: transform .3s ease; }
+.pl-subin { font-size: max(calc(42 / 1920 * var(--w)), 14px); line-height: 1.42; color: #fbfaf6; text-align: center; max-width: 92%;
+  text-shadow: 0 0 2px rgba(10,8,6,.95), 0 1px 3px rgba(10,8,6,.9), 0 0 12px rgba(10,8,6,.55); }
+.pl-line { white-space: nowrap; }
+.pl-subin .w { display: inline-block; opacity: 0; }
+@media (max-width: 560px) { .pl-line { white-space: normal; } }
+.pl.started:not(.idle) .pl-sub { transform: translateY(calc(-1 * max(0px, var(--bar) - 70 / 1080 * var(--h)))); }
 .pl.nosubs .pl-sub, .pl:not(.started) .pl-sub { display: none; }
 
 /* overlays */
@@ -69,6 +73,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid #fff; outline-offset:
 .pl-err { position: absolute; inset: auto 16px 16px; text-align: center; font-size: 14px; color: #ffb4a8; }
 
 @media (max-width: 560px), (max-height: 420px) {
+  .pl { --bar: 84px; }
   .pl-top { padding: 10px 12px 28px; font-size: 13px; }
   .pl-bar { padding: 18px 6px 2px; }
   .pl-btn { width: 36px; height: 36px; }

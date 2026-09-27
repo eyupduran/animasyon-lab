@@ -52,40 +52,47 @@ export function readNarration(dir) {
   return out;
 }
 
-// Subtitles come in short one-line pieces that follow the voice ("parça parça"): each sentence is cut at
-// punctuation or natural breaks into pieces of at most ~42 letters, timed by the recognised words.
-// The same cues feed the .srt, the burned-in video (.ass) and the site player, so all three look alike.
-export const CUE = { max: 42, min: 10, lead: 0.05, tail: 0.2, minDur: 0.9, join: 0.35 };
+// Subtitles move with the voice: a sentence (or a long sentence's part) is one chunk of at most two balanced
+// lines; the whole chunk is laid out at once (so nothing reflows) and each word fades in as it is spoken.
+// The same cues feed the .srt (plain chunks), the burned-in video (.ass, word by word) and the site player.
+export const CUE = { chunk: 84, line: 44, lead: 0.12, hold: 1.6, gap: 0.05, reveal: 0.22 };
 
-// cues of one clip in clip time: [{ a, b, text }]
+function toLines(text) {
+  if (text.length <= CUE.line) return [text];
+  const w = text.split(' '); let best = 1, d = 1e9, acc = 0;
+  for (let i = 0; i < w.length - 1; i++) { acc += w[i].length + 1; const x = Math.abs(acc - (text.length - acc)); if (x < d) { d = x; best = i + 1; } }
+  return [w.slice(0, best).join(' '), w.slice(best).join(' ')];
+}
+
+// cues of one clip in clip time: [{ a, b, lines: [..], words: [{ w, t }] }]
 export function clipCues(n) {
   const map = ratioToTime(n.words, n.dur), total = letters(n.text).length || 1;
+  const at = i => +map(letters(n.text.slice(0, i)).length / total).toFixed(3);
   const sentences = n.text.match(/[^.!?…]+(?:[.!?…]+|$)/g) || [n.text];
   const out = []; let pos = 0;
   for (const sen of sentences) {
     if (!sen.trim()) continue;
-    const parts = splitLong(sen.trim(), CUE.max, CUE.min);
-    for (const part of parts) {
-      const i = n.text.indexOf(part, pos); if (i < 0) continue; pos = i + part.length;
-      const t0 = map(letters(n.text.slice(0, i)).length / total), t1 = map(letters(n.text.slice(0, pos)).length / total);
-      const prev = out[out.length - 1];
-      // a piece spoken too fast to read joins the one before it (same sentence, still short enough)
-      if (prev && prev.sen === sen && (t1 - t0 < 0.6 || prev.b - prev.a < 0.6) && prev.text.length + part.length < CUE.max + 12) { prev.text += ' ' + part; prev.b = t1; continue; }
-      out.push({ a: t0, b: t1, text: part, sen });
+    for (const part of splitLong(sen.trim(), CUE.chunk, 20)) {
+      const start = n.text.indexOf(part, pos); if (start < 0) continue; pos = start + part.length;
+      const words = []; const re = /\S+/g; let m;
+      while ((m = re.exec(part))) words.push({ w: m[0], t: at(start + m.index) });
+      out.push({ lines: toLines(part), words });
     }
   }
-  return out.map(({ a, b, text }) => ({ a: +a.toFixed(3), b: +b.toFixed(3), text }));
+  out.forEach((c, i) => {
+    c.a = +(c.words[0].t - CUE.lead).toFixed(3);
+    const last = c.words[c.words.length - 1].t;
+    c.b = +(i + 1 < out.length ? out[i + 1].words[0].t - CUE.lead - CUE.gap : Math.min(n.dur + 0.4, last + CUE.hold)).toFixed(3);
+  });
+  return out;
 }
 
 // clip cues laid on the film's timeline; placed: [{ id, at }]
 export function placeCues(clips, placed) {
   const cues = [];
-  for (const p of placed) for (const c of clips[p.id] || []) cues.push({ a: p.at + c.a - CUE.lead, b: p.at + Math.max(c.b, c.a + CUE.minDur) + CUE.tail, text: c.text });
+  for (const p of placed) for (const c of clips[p.id] || []) cues.push({ a: p.at + c.a, b: p.at + c.b, lines: c.lines, words: c.words.map(w => ({ w: w.w, t: p.at + w.t })) });
   cues.sort((x, y) => x.a - y.a);
-  for (let i = 0; i < cues.length - 1; i++) {
-    const nx = cues[i + 1].a;
-    cues[i].b = cues[i].b > nx - CUE.join ? nx - 0.02 : cues[i].b; // close gaps shorter than `join`: no flicker
-  }
+  for (let i = 0; i < cues.length - 1; i++) cues[i].b = Math.min(cues[i].b, cues[i + 1].a - CUE.gap);
   return cues;
 }
 
@@ -94,43 +101,57 @@ export function makeCues(narr, placed) {
   return placeCues(clips, placed);
 }
 
-
+const cueText = c => c.lines ? c.lines.join('\n') : c.text;
 export function cuesToSrt(cues, from = 0, to = Infinity) {
   let k = 1, s = '';
-  for (const c of cues) { if (c.b < from || c.a > to) continue; s += `${k++}\n${stamp(Math.max(from, c.a) - from)} --> ${stamp(Math.min(to, c.b) - from)}\n${c.text}\n\n`; }
+  for (const c of cues) { if (c.b < from || c.a > to) continue; s += `${k++}\n${stamp(Math.max(from, c.a) - from)} --> ${stamp(Math.min(to, c.b) - from)}\n${cueText(c)}\n\n`; }
   return s;
 }
 
 export function srtToCues(srt) {
   const t = x => { const [h, m, r] = x.trim().split(':'); return +h * 3600 + +m * 60 + parseFloat(r.replace(',', '.')); };
   return srt.replace(/\r/g, '').split(/\n\n+/).map(b => b.split('\n')).filter(l => l.length >= 3 && l[1].includes('-->'))
-    .map(l => { const [a, b] = l[1].split('-->'); return { a: t(a), b: t(b), text: l.slice(2).join(' ') }; });
+    .map(l => { const [a, b] = l[1].split('-->'); return { a: t(a), b: t(b), lines: l.slice(2) }; });
 }
 
 export function makeSrt(narr, placed, from = 0, to = Infinity) { return cuesToSrt(makeCues(narr, placed), from, to); }
 
-// Subtitle look, shared by the video (.ass) and the site player (tools/player): Inter Medium, white on a
-// soft dark band, bottom centre. Sizes are for a 1920×1080 frame.
-export const SUB_STYLE = { font: 'Inter Medium', size: 44, bottom: 64, pad: 12, band: 0.5, fadeIn: 0.12, fadeOut: 0.08 };
+// Subtitle look, shared by the video (.ass) and the site player (tools/player): Inter Medium, white, soft dark
+// shadow and no band, bottom centre. Sizes are for a 1920×1080 frame.
+export const SUB_STYLE = { font: 'Inter Medium', size: 42, bottom: 70, lineHeight: 1.42 };
 
-export function cuesToAss(cues) {
-  const S = SUB_STYLE, alpha = Math.round((1 - S.band) * 255).toString(16).padStart(2, '0').toUpperCase();
+// cues (with word times when present) → .ass; `from` shifts everything for clips
+export function cuesToAss(cues, from = 0) {
+  const S = SUB_STYLE;
   const ts = s => { const cs = Math.max(0, Math.round(s * 100)); return `${Math.floor(cs / 360000)}:${String(Math.floor(cs / 6000) % 60).padStart(2, '0')}:${String(Math.floor(cs / 100) % 60).padStart(2, '0')}.${String(cs % 100).padStart(2, '0')}`; };
-  const esc = x => x.replace(/[{}]/g, '').replace(/\\/g, '/').replace(/\n/g, ' ');
+  const esc = x => x.replace(/[{}]/g, '').replace(/\\/g, '/');
+  const body = c => {
+    if (!c.words) return (c.lines || [c.text]).map(esc).join('\\N');
+    // every word is there from the start (transparent), then fades in when it is spoken: no reflow
+    let k = 0, out = [];
+    for (const line of c.lines) {
+      const n = line.split(' ').length, ws = c.words.slice(k, k + n); k += n;
+      out.push(ws.map(w => {
+        const t0 = Math.max(0, Math.round((w.t - 0.06 - c.a) * 1000)), t1 = t0 + Math.round(CUE.reveal * 1000);
+        return `{\\1a&HFF&\\3a&HFF&\\4a&HFF&\\t(${t0},${t1},\\1a&H00&\\3a&H20&\\4a&H80&)}${esc(w.w)}`;
+      }).join(' '));
+    }
+    return out.join('\\N');
+  };
   return `[Script Info]
 ScriptType: v4.00+
 PlayResX: 1920
 PlayResY: 1080
-WrapStyle: 0
+WrapStyle: 2
 ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Sub,${S.font},${S.size},&H00FFFFFF,&H00FFFFFF,&H${alpha}0C0A0A,&H${alpha}0C0A0A,0,0,0,0,100,100,0,0,3,${S.pad},0,2,160,160,${S.bottom},1
+Style: Sub,${S.font},${S.size},&H00F6FAFB,&H00F6FAFB,&H2006080A,&H8006080A,0,0,0,0,100,100,0,0,1,1.6,1.2,2,120,120,${S.bottom},1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-${cues.map(c => `Dialogue: 0,${ts(c.a)},${ts(c.b)},Sub,,0,0,0,,{\\fad(${Math.round(S.fadeIn * 1000)},${Math.round(S.fadeOut * 1000)})}${esc(c.text)}`).join('\n')}
+${cues.filter(c => c.b > from).map(c => { const d = { ...c, a: c.a - from, b: c.b - from, words: c.words && c.words.map(w => ({ w: w.w, t: w.t - from })) }; return `Dialogue: 0,${ts(d.a)},${ts(d.b)},Sub,,0,0,0,,{\\blur2.2\\fad(0,120)}${body(d)}`; }).join('\n')}
 `;
 }
 

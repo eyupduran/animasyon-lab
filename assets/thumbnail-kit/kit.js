@@ -1,46 +1,57 @@
 // Animasyon Lab kapak kiti: kanalın bütün YouTube kapaklarında aynı kalan kimlik.
 //
+// TARZ: "BÜYÜK NESNE, KISA DEV YAZI"
+//   • Ana görsel konunun KENDİSİ olan tek, büyük, parlak, net bir nesnedir (yazıcı, arı, diş, sunucu…).
+//     Bir bakışta "bu video X hakkında" dedirtmeli. Filmden soyut bir kare yetmiyorsa nesneyi kapak için
+//     ayrıca çizin (Canvas, WebGL, SVG; filmin kendi kodundan parça alınabilir). Canlı renk, sert ışık,
+//     yüksek kontrast; nesne arka plandan net ayrılsın.
+//   • Başlık konuyu DOĞRUDAN söyler, 2–3 kelime: "YAZICI NASIL ÇALIŞIR?", "ARININ BİR GÜNÜ".
+//     Konuyu söylemeyen zekice başlık ("GRİ YOK") yasak.
+//   • Küçük yazı yok. Kanal işareti dışında ekranda yalnızca dev başlık bulunur; accent satırı yalnızca
+//     eski sayfalar içindir.
+//   • Sınama: kapağı 168×94'e küçültün. Nesne tanınıyor ve başlık okunuyor mu? Değilse büyütün, sadeleştirin.
+//
 // DÜZEN
 //   Film kendi thumbnail.html'inde ana görseli çizer (1280×720 #root, tam kadraj), sonra kit.brand() kanal
 //   katmanını ekler, en sonda await kit.ready() yazılar yüklenip yerine oturana kadar bekler.
 //   Araç: npm run thumbnail -- <slug>  (tools/thumbnail.mjs; kit /_kit/kit.js adresinden gelir).
 //
 //     import * as kit from '/_kit/kit.js';
-//     const g = kit.layer(1);
-//     kit.hero(g, img, { focus: [0.62, 0.45], zoom: 1.1 });        // ya da kendi çiziminiz
-//     kit.brand({ title: '*GRİ* YOK', category: 'technology', accent: 'Yazıcı bir fotoğrafı nasıl basar?' });
+//     const g = kit.layer(1);                                        // ya da kendi WebGL tuvaliniz
+//     ...büyük nesneyi SAĞ yarıya çizin...
+//     kit.brand({ title: 'YAZICI NASIL *ÇALIŞIR?*', category: 'technology' });
 //     await kit.ready();
 //     window.__thumbs = { count, list: [{ id, title }] }; window.__thumbReady = true;
 //
 // SERİ SİSTEMİ (brand() hepsini kendisi uygular, film yalnızca görseli ve başlığı verir)
-//   • Izgara: 1280×720, kenar payı 56 px. Yazı bloğu sol altta, genişliği en çok 660 px (sol yarı).
-//     Sağ alt köşe BOŞ kalır (YouTube'un süre rozeti orada), sağ üst de boş (izle-sonra düğmeleri).
-//     Ana görselin odağını sağ yarıya koyun; sol yarı koyulaştırılır.
+//   • Izgara: 1280×720, kenar payı 56 px. Başlık solda (varsayılan: sol orta), genişliği en çok 640 px.
+//     Nesne sağ yarıda, büyük; kadrajdan taşabilir. Sağ alt köşe (SAFE.badge) BOŞ kalır: YouTube'un süre
+//     rozeti orada. Sağ üst de sade kalsın (izle-sonra düğmeleri). ?guides=1 bu alanları gösterir.
 //   • Kanal işareti: sol üstte "ANİMASYON [LAB]" yazı işareti. Her kapakta aynı yer, aynı boy.
-//   • Kategori sırtı: sol kenarda tam boy, kategori renginde ince şerit + başlığın üstünde kategori adı.
-//     Renkler CATEGORIES tablosunda (anahtarlar tools/lib/animations.mjs → CATEGORIES ile aynı).
-//   • Başlık: Archivo 800, büyük harf, 2–4 kelime, en çok 2 satır. *kelime* kategori renginde yazılır.
-//     Boyut kendiliğinden ayarlanır (148 → 92 px; sığmazsa harfler daraltılır). 168×94 mobil önizlemede
-//     de okunacak kadar büyük kalır; uzun cümle yazmayın, onu accent satırına koyun.
-//   • Işık ve renk: solda koyu perde, altta hafif karartma, kenar kararması, başlığın arkasında kategori
-//     renginde çok hafif bir ışık, hafif kontrast ve ince gren. Her kapak aynı işlemden geçer.
+//   • Kategori rengi: sol kenarda tam boy şerit ve başlıktaki *vurgulu* kelime. Renkler CATEGORIES
+//     tablosunda (anahtarlar tools/lib/animations.mjs → CATEGORIES ile aynı). Kategori adı yazılmaz.
+//   • Başlık: Archivo 900, büyük harf, 2–3 kelime, en çok 3 satır; beyaz, sert gölgeli. *kelime* kategori
+//     renginde (box: true ise kategori renginde kutunun içinde koyu). Boyut kendiliğinden ayarlanır
+//     (180 → 100 px; sığmazsa harfler daraltılır).
+//   • Işık: başlığın arkasında hafif perde (scrim), kenar kararması, canlılığı artıran renk işlemi, ince gren.
 //
 // brand(seçenekler)
-//   title     (şart) büyük harfle yazılmış başlık; *...* vurgulanır. Türkçe İ/I'yı çağıran doğru yazar.
-//   category  'technology' | 'software' | 'history' | … (renk ve etiket buradan). Verilmezse topic'ten bulunur.
-//   topic     etiket metni (eski sayfalar 'TEKNOLOJİ' gibi verir); category varsa onun etiketi kullanılır.
-//   accent    başlığın altındaki kısa açıklama satırı (isteğe bağlı; mobilde okunmaz, süs değil bilgi olsun).
-//   color     kategori rengini elle ezmek için (#rrggbb).
-//   tint      başlık arkasındaki ışığın rengi (varsayılan: kategori rengi).
-//   scrim     sol perdenin koyuluğu 0–1 (varsayılan 0.86). Görsel zaten koyuysa düşürün.
-//   size      başlığın en büyük punto değeri (varsayılan 148).
-//   width     yazı bloğunun en büyük genişliği (varsayılan 660).
-//   valign    'bottom' (varsayılan) | 'middle': blok sol altta ya da sol ortada.
-//   grade     false: hafif kontrast işlemini kapatır.
-//   minutes   eski sürümden kaldı; YOK SAYILIR (süre çıkartması artık yok).
+//   title     (şart) büyük harfle başlık; *...* vurgulanır; satırı elle bölmek için \n. Türkçe İ/I'yı çağıran doğru yazar.
+//   category  'technology' | 'software' | 'history' | … (renk buradan). Verilmezse topic'ten bulunur.
+//   box       true: vurgulu kelime kategori renginde bir kutuda koyu yazılır (daha "YouTube" bir görünüm).
+//   scrim     başlık arkasındaki perdenin koyuluğu 0–1 (varsayılan 0.55). Arka plan zaten koyuysa düşürün.
+//   size      başlığın en büyük punto değeri (varsayılan 180).
+//   width     başlık bloğunun en büyük genişliği (varsayılan 640).
+//   lines     en çok satır (varsayılan 3).
+//   valign    'middle' (varsayılan) | 'bottom' | 'top'.
+//   color     kategori rengini elle ezmek için (#rrggbb).   tint: başlık arkasındaki ışığın rengi.
+//   grade     false: renk işlemini kapatır.
+//   label     true: kategori adını başlığın üstüne yazar (önerilmez).
+//   accent, topic, minutes: eski sayfalar için kabul edilir. accent küçük bir satır olarak yine çizilir ama
+//     yeni kapaklarda kullanmayın; minutes yok sayılır.
 //
 // Diğer araçlar: layer(z), off(w,h), hero(ctx,img,o), html(s,css,z), bloom, depthOfField, bokeh,
-// homography, drawQuad, rand(seed), lerp. W/H 1280×720, DPR 2 (araç ?dpr=2 ile açar, çıktı 1920×1080).
+// homography, drawQuad, rand(seed), lerp, SAFE. W/H 1280×720, DPR 2 (araç ?dpr=2 ile açar, çıktı 1920×1080).
 export const W = 1280, H = 720;
 export const DPR = Math.min(2, Number(new URLSearchParams(location.search).get('dpr')) || 2);
 
@@ -58,6 +69,9 @@ export const CATEGORIES = {
   short: { label: 'KISA FİLM', color: '#FF6F8E' },
 };
 export const BRAND = { ink: '#07080B', white: '#FFFFFF', name: 'ANİMASYON LAB', yellow: '#FFD04A' };
+// korunacak alanlar: süre rozeti (sağ alt) ve izle-sonra düğmeleri (sağ üst)
+export const SAFE = { margin: 56, badge: { x: 1280 - 250, y: 720 - 110, w: 250, h: 110 }, topRight: { x: 1280 - 170, y: 0, w: 170, h: 120 } };
+const GUIDES = new URLSearchParams(location.search).get('guides') === '1';
 
 const css = document.createElement('link');
 css.rel = 'stylesheet';
@@ -69,24 +83,27 @@ style.textContent = `
 html,body{margin:0;background:#000;overflow:hidden}
 #root{position:relative;width:${W}px;height:${H}px;overflow:hidden;font-family:Archivo,'Segoe UI',sans-serif;background:${BRAND.ink}}
 #root canvas{position:absolute;inset:0;width:${W}px;height:${H}px}
-#root.kit-graded canvas{filter:contrast(1.06) saturate(1.05)}
+#root.kit-graded canvas{filter:contrast(1.07) saturate(1.12)}
 #root .t{position:absolute;white-space:nowrap}
 .kit-fx{position:absolute;inset:0;pointer-events:none}
-.kit-grain{position:absolute;inset:0;pointer-events:none;opacity:.09;mix-blend-mode:overlay;z-index:90;
+.kit-grain{position:absolute;inset:0;pointer-events:none;opacity:.06;mix-blend-mode:overlay;z-index:90;
  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-.kit-spine{position:absolute;left:0;top:0;bottom:0;width:10px;z-index:96}
+.kit-spine{position:absolute;left:0;top:0;bottom:0;width:12px;z-index:96}
 .kit-mark{position:absolute;left:56px;top:44px;z-index:96;display:flex;align-items:center;gap:9px;
  font:800 17px/1 Archivo,sans-serif;letter-spacing:.24em;color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.6)}
 .kit-mark b{font-weight:800;color:${BRAND.ink};background:#fff;padding:5px 3px 4px 7px;letter-spacing:.2em;text-shadow:none}
 .kit-block{position:absolute;left:56px;z-index:96;display:flex;flex-direction:column;align-items:flex-start}
-.kit-cat{display:flex;align-items:center;gap:12px;font:700 17px/1 'JetBrains Mono',monospace;letter-spacing:.2em;margin-bottom:20px;
+.kit-cat{display:flex;align-items:center;gap:12px;font:700 17px/1 'JetBrains Mono',monospace;letter-spacing:.2em;margin-bottom:18px;
  text-shadow:0 1px 10px rgba(0,0,0,.7)}
 .kit-cat i{display:block;width:34px;height:4px}
-.kit-title{font-family:Archivo,sans-serif;font-weight:800;color:#fff;line-height:.9;letter-spacing:-.012em;white-space:normal;
- text-shadow:0 4px 30px rgba(0,0,0,.45)}
+.kit-title{font-family:Archivo,sans-serif;font-weight:900;color:#fff;line-height:.92;letter-spacing:-.018em;white-space:pre-line;
+ text-shadow:0 .045em 0 rgba(4,6,14,.55),0 .08em .25em rgba(0,0,0,.55)}
 .kit-title em{font-style:normal}
-.kit-accent{margin-top:22px;font:600 27px/1.15 Archivo,sans-serif;color:rgba(255,255,255,.82);white-space:nowrap;
+.kit-title em.box{display:inline-block;color:${BRAND.ink};padding:.04em .1em 0;margin:.05em 0 .03em -.04em;line-height:.96;
+ text-shadow:none;box-shadow:0 .05em 0 rgba(4,6,14,.45)}
+.kit-accent{margin-top:20px;font:700 26px/1.15 Archivo,sans-serif;color:rgba(255,255,255,.88);white-space:nowrap;
  text-shadow:0 2px 14px rgba(0,0,0,.8)}
+.kit-guide{position:absolute;z-index:99;outline:2px dashed #0ff;background:rgba(0,255,255,.12);pointer-events:none}
 `;
 document.head.appendChild(style);
 
@@ -194,23 +211,21 @@ function findCategory(category, topic) {
   return Object.values(CATEGORIES).find(c => c.label === t) || { label: t, color: CATEGORIES.technology.color };
 }
 
-export function brand({ title, accent = '', topic = '', category = null, color = null, tint = null, scrim = 0.86,
-  size = null, width = 660, valign = 'bottom', grade = true, minutes = null } = {}) {
+export function brand({ title, accent = '', topic = '', category = null, color = null, tint = null, scrim = 0.55,
+  size = null, width = 640, lines = 3, valign = 'middle', grade = true, box = false, label = false, minutes = null } = {}) {
   void minutes; // süre çıkartması kaldırıldı: YouTube kendi rozetini sağ alta koyar
   const cat = findCategory(category, topic);
   const col = color || cat.color;
-  const label = category && CATEGORIES[category] ? CATEGORIES[category].label : (topic || cat.label);
+  const labelText = category && CATEGORIES[category] ? CATEGORIES[category].label : (topic || cat.label);
   const glow = tint || col;
   if (grade) root.classList.add('kit-graded');
   const fx = (bg, z, extra = {}) => { const d = document.createElement('div'); d.className = 'kit-fx'; d.style.background = bg; d.style.zIndex = z; Object.assign(d.style, extra); root.appendChild(d); return d; };
   const s = Math.max(0, Math.min(1, scrim));
-  // sol perde: yazının durduğu koyu taraf
-  fx(`linear-gradient(90deg, rgba(7,8,11,${s}) 0%, rgba(7,8,11,${s * 0.78}) 30%, rgba(7,8,11,${s * 0.3}) 50%, rgba(7,8,11,0) 66%)`, 80);
-  // alt karartma ve kenar kararması
-  fx(`linear-gradient(0deg, rgba(7,8,11,${0.55 * s + 0.1}) 0%, rgba(7,8,11,0) 42%)`, 80);
-  fx('radial-gradient(ellipse 75% 85% at 58% 48%, rgba(0,0,0,0) 55%, rgba(0,0,0,.5) 100%)', 81);
-  // başlığın arkasında kategori renginde çok hafif ışık
-  fx(`radial-gradient(ellipse 46% 52% at 12% ${valign === 'middle' ? 52 : 78}%, ${hexA(glow, 0.16)} 0%, ${hexA(glow, 0)} 100%)`, 82, { mixBlendMode: 'screen' });
+  const cy = valign === 'bottom' ? 72 : valign === 'top' ? 34 : 52;
+  // başlığın arkasındaki perde: yalnızca yazının durduğu yeri koyulaştırır, nesneye pek dokunmaz
+  fx(`radial-gradient(ellipse 50% 72% at 18% ${cy}%, rgba(5,7,14,${s}) 0%, rgba(5,7,14,${s * 0.6}) 45%, rgba(5,7,14,0) 100%)`, 80);
+  fx('radial-gradient(ellipse 78% 88% at 55% 48%, rgba(0,0,0,0) 58%, rgba(0,0,0,.42) 100%)', 81);
+  fx(`radial-gradient(ellipse 40% 50% at 14% ${cy}%, ${hexA(glow, 0.14)} 0%, ${hexA(glow, 0)} 100%)`, 82, { mixBlendMode: 'screen' });
   const grain = document.createElement('div'); grain.className = 'kit-grain'; root.appendChild(grain);
 
   const spine = document.createElement('div'); spine.className = 'kit-spine'; spine.style.background = col; root.appendChild(spine);
@@ -219,26 +234,36 @@ export function brand({ title, accent = '', topic = '', category = null, color =
   root.appendChild(mark);
 
   const block = document.createElement('div'); block.className = 'kit-block';
-  if (valign === 'middle') { block.style.top = '50%'; block.style.transform = 'translateY(-46%)'; } else block.style.bottom = '58px';
-  const catEl = document.createElement('div'); catEl.className = 'kit-cat'; catEl.style.color = col;
-  catEl.innerHTML = `<i style="background:${col}"></i><span>${label}</span>`;
+  if (valign === 'bottom') block.style.bottom = '56px';
+  else if (valign === 'top') block.style.top = '104px';
+  else { block.style.top = '50%'; block.style.transform = 'translateY(-44%)'; }
+  if (label) {
+    const catEl = document.createElement('div'); catEl.className = 'kit-cat'; catEl.style.color = col;
+    catEl.innerHTML = `<i style="background:${col}"></i><span>${labelText}</span>`;
+    block.appendChild(catEl);
+  }
   const t = document.createElement('div'); t.className = 'kit-title';
-  t.innerHTML = title.replace(/\*([^*]+)\*/g, `<em style="color:${col}">$1</em>`);
-  block.append(catEl, t);
+  t.innerHTML = title.replace(/\*([^*]+)\*/g, box ? `<em class="box" style="background:${col}">$1</em>` : `<em style="color:${col}">$1</em>`);
+  block.appendChild(t);
   let a = null;
   if (accent) { a = document.createElement('div'); a.className = 'kit-accent'; a.textContent = accent; block.appendChild(a); }
   root.appendChild(block);
 
-  // en büyük punto: en çok 2 satır ve width içinde; 92'ye inip hâlâ sığmıyorsa harfleri daralt
+  if (GUIDES) for (const r of [SAFE.badge, SAFE.topRight]) {
+    const g = document.createElement('div'); g.className = 'kit-guide';
+    Object.assign(g.style, { left: r.x + 'px', top: r.y + 'px', width: r.w + 'px', height: r.h + 'px' }); root.appendChild(g);
+  }
+
+  // en büyük punto: en çok `lines` satır ve width içinde; 100'e inip hâlâ sığmıyorsa harfleri daralt
   const fit = () => {
-    const max = size || 148;
+    const max = size || 180;
     let fs = max, stretch = 100;
     const apply = () => { t.style.fontSize = fs + 'px'; t.style.fontStretch = stretch + '%'; t.style.maxWidth = width + 'px'; };
-    const over = () => t.scrollWidth > width + 1 || t.getBoundingClientRect().height > fs * 0.9 * 2 + 4;
+    const over = () => t.scrollWidth > width + 1 || t.getBoundingClientRect().height > fs * 0.98 * lines + 6;
     apply();
-    while (over() && fs > 92) { fs -= 2; apply(); }
+    while (over() && fs > 100) { fs -= 2; apply(); }
     while (over() && stretch > 70) { stretch -= 3; apply(); }
-    if (a) { let as = 27; a.style.fontSize = as + 'px'; while (a.scrollWidth > width && as > 18) { as -= 1; a.style.fontSize = as + 'px'; } }
+    if (a) { let as = 26; a.style.fontSize = as + 'px'; while (a.scrollWidth > width && as > 18) { as -= 1; a.style.fontSize = as + 'px'; } }
   };
   fit();
   fitters.push(fit);
@@ -248,7 +273,7 @@ export function brand({ title, accent = '', topic = '', category = null, color =
 export async function ready(fontsExtra = []) {
   await Promise.race([cssLoaded, new Promise(r => setTimeout(r, 4000))]);
   await Promise.race([
-    Promise.all(['800 100px Archivo', '600 27px Archivo', '700 17px "JetBrains Mono"', ...fontsExtra].map(f => document.fonts.load(f))),
+    Promise.all(['900 100px Archivo', '800 100px Archivo', '700 26px Archivo', '700 17px "JetBrains Mono"', ...fontsExtra].map(f => document.fonts.load(f))),
     new Promise(r => setTimeout(r, 6000)),
   ]);
   await document.fonts.ready;
