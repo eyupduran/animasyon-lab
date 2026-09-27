@@ -2,9 +2,10 @@
 //   npm run video -- <slug> [--subs burn] [--fps 30] [--size 1920x1080] [--from 0] [--to 60] [--crf 18]
 // Output (renders/ is not in git):
 //   animations/<kategori>/<slug>/renders/<slug>.mp4             picture + soundtrack (narration and effects)
+//   animations/<kategori>/<slug>/renders/<slug>-altyazili.mp4   the same video with the subtitles drawn in (npm run subs)
 //   animations/<kategori>/<slug>/renders/<slug>.srt             subtitles to upload to YouTube (viewers turn them on/off)
 //   animations/<kategori>/<slug>/renders/<slug>-chapters.txt    chapter list for the YouTube description
-// With --subs burn the subtitles are drawn into the picture instead (file name ends with -altyazili).
+// With --subs burn an older page (window.__video) draws its own subtitles instead; then no second copy is made.
 //
 // The film opts in by answering to ?video=1 with the minimal contract (tools/lib/film.mjs):
 //   window.__film = { duration, renderAt(t), narration?: [{ id, at }], chapters?: [{ t, title }], sound?(from, to) → AudioBuffer }
@@ -19,6 +20,7 @@ import { fileURLToPath } from 'url';
 import puppeteer from 'puppeteer-core';
 import { findAnimation } from './lib/animations.mjs';
 import { readNarration, makeSrt, mixArgs, WAV_IN_PAGE } from './lib/film.mjs';
+import { burnSubs } from './burn-subs.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -120,4 +122,7 @@ await new Promise(r => ff.on('close', r));
 await browser.close();
 server.close();
 fs.rmSync(wavFile, { force: true });
-console.log(`\n→ ${path.relative(ROOT, mp4)}\n→ ${path.relative(ROOT, base)}.srt (YouTube: Altyazılar → Dosya yükle → Zamanlamalı)\n→ ${path.relative(ROOT, base)}-chapters.txt (açıklamaya yapıştırın)`);
+// second copy with the subtitles drawn into the picture (for places where the .srt cannot be attached)
+if (!burn) console.log('\naltyazılı sürüm hazırlanıyor…');
+const subbed = burn ? null : burnSubs(renders, path.basename(base), { crf: opt('crf', '18') });
+console.log(`\n→ ${path.relative(ROOT, mp4)}${subbed ? `\n→ ${path.relative(ROOT, subbed)} (altyazı görüntüye basılı)` : ''}\n→ ${path.relative(ROOT, base)}.srt (YouTube: Altyazılar → Dosya yükle → Zamanlamalı)\n→ ${path.relative(ROOT, base)}-chapters.txt (açıklamaya yapıştırın)`);
