@@ -1,4 +1,4 @@
-# Yayın çizelgesi
+# Şimdi Anladım: yayın çizelgesi
 
 29 Eylül 2026 Salı – 31 Ocak 2027 Pazar · 36 video · son güncelleme 29 Eylül 2026 Salı
 

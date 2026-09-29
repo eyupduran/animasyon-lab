@@ -10,7 +10,7 @@ import { fileURLToPath } from 'url';
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const ANIM = path.join(ROOT, 'animations');
 export const CHANNEL = path.join(ROOT, 'youtube');
-// collection id → folder; 'channel' films are listed on the site's /kanal/ page, 'lab' ones on the front page
+// collection id → folder; 'channel' films are listed on the site's /channel/ page, 'lab' ones on the front page
 export const COLLECTIONS = { channel: { dir: CHANNEL, folder: 'youtube', tr: 'Kanal' }, lab: { dir: ANIM, folder: 'animations', tr: 'Denemeler' } };
 
 // category folder → label on the site and on YouTube covers

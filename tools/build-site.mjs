@@ -1,8 +1,8 @@
 // Builds the whole site: runs every film's own build and collects the results.
-//   node tools/build-site.mjs            → dist/index.html + dist/kanal/index.html + dist/<slug>/...
+//   node tools/build-site.mjs            → dist/index.html + dist/channel/index.html + dist/<slug>/...
 //   node tools/build-site.mjs <slug>     → only that film (plus the two list pages)
 // Films live in youtube/<category>/<slug>/ (the channel) and animations/<category>/<slug>/ (the lab); the site
-// keeps flat addresses (dist/<slug>/). The channel's films are listed on their own page, dist/kanal/; the front
+// keeps flat addresses (dist/<slug>/). The channel's films are listed on their own page, dist/channel/; the front
 // page lists the lab. Each film declares in its animation.json how it is built ("build") and where the output
 // lands ("output"). Folders starting with "_" (templates) are skipped.
 // A film that answers the minimal contract (window.__film) is published inside the site player
@@ -20,6 +20,11 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
 const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const copyDir = (a, b) => { fs.mkdirSync(b, { recursive: true }); for (const e of fs.readdirSync(a, { withFileTypes: true })) { const s = path.join(a, e.name), d = path.join(b, e.name); if (e.isDirectory()) copyDir(s, d); else fs.copyFileSync(s, d); } };
+
+const planFile = path.join(ROOT, 'channel', 'plan.json');
+const plan = fs.existsSync(planFile) ? JSON.parse(fs.readFileSync(planFile, 'utf8')) : { channel: {}, videos: [] };
+const planned = Object.fromEntries((plan.videos || []).map(v => [v.slug, v]));
+const CHANNEL_NAME = (plan.channel && plan.channel.name) || 'Kanal filmleri';
 
 const only = process.argv[2];
 const items = [];
@@ -70,7 +75,7 @@ function writePlayer(slug, dir, cfg, collection) {
   const hasPoster = fs.existsSync(path.join(dir, 'poster.jpg'));
   fs.writeFileSync(path.join(DIST, slug, 'index.html'), `<!doctype html>
 <html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>${esc(cfg.title)} · Animasyon Lab</title>
+<title>${esc(cfg.title)} · ${esc(collection === 'channel' ? CHANNEL_NAME : 'Animasyon Lab')}</title>
 <meta name="description" content="${esc(cfg.description)}">
 <meta property="og:title" content="${esc(cfg.title)}"><meta property="og:description" content="${esc(cfg.description)}">${hasPoster ? '<meta property="og:image" content="poster.jpg">' : ''}
 <meta name="theme-color" content="#000000"><link rel="icon" href="data:,">
@@ -83,7 +88,7 @@ function writePlayer(slug, dir, cfg, collection) {
     <div class="pl-sub" aria-live="off"><div class="pl-subin"></div></div>
   </div>
   <div class="pl-hit"></div>
-  <div class="pl-top">${collection === 'channel' ? '<a href="../kanal/">← Bütün filmler</a>' : '<a href="../">← Animasyon Lab</a>'}<b>${esc(cfg.title)}</b></div>
+  <div class="pl-top">${collection === 'channel' ? `<a href="../channel/">← ${esc(CHANNEL_NAME)}</a>` : '<a href="../">← Animasyon Lab</a>'}<b>${esc(cfg.title)}</b></div>
   <button class="pl-big" aria-label="Oynat"></button>
   <div class="pl-hint">Sesi açık izleyin</div>
   <div class="pl-load"></div>
@@ -107,11 +112,8 @@ function writePlayer(slug, dir, cfg, collection) {
 copyPlayerAssets();
 
 // ---- list pages ------------------------------------------------------------------------------------------
-// the front page lists the lab (experiments), /kanal/ lists the channel's films; cards are filtered by category
+// the front page lists the lab (experiments), /channel/ lists the channel's films; cards are filtered by category
 function label(c) { return (CATEGORIES[c] && CATEGORIES[c].tr) || c; }
-const planFile = path.join(ROOT, 'channel', 'plan.json');
-const plan = fs.existsSync(planFile) ? JSON.parse(fs.readFileSync(planFile, 'utf8')) : { channel: {}, videos: [] };
-const planned = Object.fromEntries((plan.videos || []).map(v => [v.slug, v]));
 
 function writeList({ file, base, list, title, eyebrow, heading, lead, order, more = '' }) {
   const cats = [...new Set([...Object.keys(CATEGORIES), ...list.map(a => a.category)])].filter(c => list.some(a => a.category === c));
@@ -157,19 +159,20 @@ ${grid}
 }
 
 const lab = items.filter(a => a.collection !== 'channel'), channel = items.filter(a => a.collection === 'channel');
-const name = (plan.channel && plan.channel.name) || '';
+// "Şimdi Anladım" → Şimdi <em>Anladım</em>, the same two-tone heading as the front page
+function twoTone(s) { const w = s.split(' '); return w.length < 2 ? esc(s) : `${esc(w.slice(0, -1).join(' '))} <em>${esc(w[w.length - 1])}</em>`; }
 writeList({
   file: path.join(DIST, 'index.html'), base: './', list: lab, title: 'Animasyon Lab',
   eyebrow: 'Tarayıcıda eğitim animasyonları', heading: 'Animasyon <em>Lab</em>',
   lead: 'Denemeler ve ilk çalışmalar. Her animasyon tarayıcıda, kodla çiziliyor. Bir karta tıklayıp izlemeye başlayın; ses için hoparlörü açın.',
-  more: channel.length ? ' YouTube kanalının filmleri ayrı bir sayfada: <a href="./kanal/">kanal filmleri</a>.' : '',
+  more: channel.length ? ` YouTube kanalının filmleri ayrı bir sayfada: <a href="./channel/">${esc(CHANNEL_NAME)}</a>.` : '',
 });
 // newest first: by the date in the publishing schedule when the film is on it
 const when = a => (planned[a.slug] && planned[a.slug].date) || '';
 writeList({
-  file: path.join(DIST, 'kanal', 'index.html'), base: '../', list: channel, title: name || 'Kanal filmleri',
-  eyebrow: 'Kodla çizilmiş belgeseller', heading: name ? esc(name) : 'Kanal <em>filmleri</em>',
+  file: path.join(DIST, 'channel', 'index.html'), base: '../', list: channel, title: CHANNEL_NAME,
+  eyebrow: 'Kodla çizilmiş belgeseller', heading: twoTone(CHANNEL_NAME),
   lead: 'YouTube kanalında yayınlanan filmler. Her biri tarayıcıda, kodla çiziliyor. Bir karta tıklayıp izlemeye başlayın; ses için hoparlörü açın.',
   order: (a, b) => when(b).localeCompare(when(a)) || a.title.localeCompare(b.title, 'tr'),
 });
-console.log(`site → dist/index.html (${lab.length} deneme) · dist/kanal/index.html (${channel.length} kanal filmi)`);
+console.log(`site → dist/index.html (${lab.length} deneme) · dist/channel/index.html (${channel.length} kanal filmi)`);

@@ -23,7 +23,7 @@ Filmin **görünümünü değiştirme.** Kusur görürsen düzeltme, son mesajı
    - Oynatıcıyı yerelde bir sunucuyla aç. Oynat'a bas, birkaç noktaya atla. Görüntünün sesle birlikte ilerlediğini ve altyazının göründüğünü kareyle doğrula.
 7. **Yayın:**
    - Türkçe bir commit mesajı yaz ve `main`'e push et.
-   - Canlı adresi doğrula: `https://eyupduran.github.io/animasyon-lab/<slug>/`. Adres 200 dönmeli, oynatıcı açılmalı. Kanal filmleri ayrıca `https://eyupduran.github.io/animasyon-lab/kanal/` sayfasında listelenir; film orada görünüyor mu, bak.
+   - Canlı adresi doğrula: `https://eyupduran.github.io/animasyon-lab/<slug>/`. Adres 200 dönmeli, oynatıcı açılmalı. Kanal filmleri ayrıca `https://eyupduran.github.io/animasyon-lab/channel/` sayfasında listelenir; film orada görünüyor mu, bak.
 
 ## Son mesaj
 

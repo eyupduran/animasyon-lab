@@ -1,6 +1,6 @@
 # Kanal çizelgesi
 
-YouTube kanalında hangi gün hangi videonun çıkacağı burada durur. Filmlerin nasıl yapılacağıyla ilgili hiçbir şey burada yazmaz; burası yalnızca **ne zaman, hangi konu**.
+**Şimdi Anladım** YouTube kanalında hangi gün hangi videonun çıkacağı burada durur. Filmlerin nasıl yapılacağıyla ilgili hiçbir şey burada yazmaz; burası yalnızca **ne zaman, hangi konu**.
 
 Kanal filmleri `youtube/` klasöründe durur. `animations/` altındaki eski filmler denemedir; çizelgeye girmez, kanala yüklenmez.
 

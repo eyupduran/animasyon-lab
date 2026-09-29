@@ -1,9 +1,9 @@
-# Kanal filmleri
+# Şimdi Anladım: kanal filmleri
 
-YouTube kanalı için yapılan filmler burada durur: `youtube/<kategori>/<slug>/`. Her film kendi başına bir projedir; kendi kodu, paketleri ve görsel dili vardır.
+**Şimdi Anladım** YouTube kanalı için yapılan filmler burada durur: `youtube/<kategori>/<slug>/`. Her film kendi başına bir projedir; kendi kodu, paketleri ve görsel dili vardır.
 
 - Hangi gün hangi konu: [../channel/PLAN.md](../channel/PLAN.md)
-- Sitede: https://eyupduran.github.io/animasyon-lab/kanal/
+- Sitede: https://eyupduran.github.io/animasyon-lab/channel/
 - Yeni film: `/next` (çizelgeden) ya da `/animation <konu>` (çizelge dışı)
 - YouTube paketi: `/youtube <slug>`
 

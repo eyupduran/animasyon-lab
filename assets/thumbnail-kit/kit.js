@@ -1,4 +1,4 @@
-// Animasyon Lab kapak kiti: kanalın bütün YouTube kapaklarında aynı kalan kimlik.
+// Şimdi Anladım kapak kiti: kanalın bütün YouTube kapaklarında aynı kalan kimlik.
 //
 // TARZ: "BÜYÜK NESNE, KISA DEV YAZI"
 //   • Ana görsel konunun KENDİSİ olan tek, büyük, parlak, net bir nesnedir (yazıcı, arı, diş, sunucu…).
@@ -27,7 +27,7 @@
 //   • Izgara: 1280×720, kenar payı 56 px. Başlık solda (varsayılan: sol orta), genişliği en çok 640 px.
 //     Nesne sağ yarıda, büyük; kadrajdan taşabilir. Sağ alt köşe (SAFE.badge) BOŞ kalır: YouTube'un süre
 //     rozeti orada. Sağ üst de sade kalsın (izle-sonra düğmeleri). ?guides=1 bu alanları gösterir.
-//   • Kanal işareti: sol üstte "ANİMASYON [LAB]" yazı işareti. Her kapakta aynı yer, aynı boy.
+//   • Kanal işareti: sol üstte "ŞİMDİ [ANLADIM]" yazı işareti (BRAND.name; son kelime kutuda). Her kapakta aynı yer, aynı boy.
 //   • Kategori rengi: sol kenarda tam boy şerit ve başlıktaki *vurgulu* kelime. Renkler CATEGORIES
 //     tablosunda (anahtarlar tools/lib/animations.mjs → CATEGORIES ile aynı). Kategori adı yazılmaz.
 //   • Başlık: Archivo 900, büyük harf, 2–3 kelime, en çok 3 satır; beyaz, sert gölgeli. *kelime* kategori
@@ -70,7 +70,7 @@ export const CATEGORIES = {
   documentary: { label: 'BELGESEL', color: '#E9DCC4' },
   short: { label: 'KISA FİLM', color: '#FF6F8E' },
 };
-export const BRAND = { ink: '#07080B', white: '#FFFFFF', name: 'ANİMASYON LAB', yellow: '#FFD04A' };
+export const BRAND = { ink: '#07080B', white: '#FFFFFF', name: 'ŞİMDİ ANLADIM', yellow: '#FFD04A' };
 // korunacak alanlar: süre rozeti (sağ alt) ve izle-sonra düğmeleri (sağ üst)
 export const SAFE = { margin: 56, badge: { x: 1280 - 250, y: 720 - 110, w: 250, h: 110 }, topRight: { x: 1280 - 170, y: 0, w: 170, h: 120 } };
 const GUIDES = new URLSearchParams(location.search).get('guides') === '1';
@@ -232,7 +232,8 @@ export function brand({ title, accent = '', topic = '', category = null, color =
 
   const spine = document.createElement('div'); spine.className = 'kit-spine'; spine.style.background = col; root.appendChild(spine);
   const mark = document.createElement('div'); mark.className = 'kit-mark';
-  mark.innerHTML = '<span>ANİMASYON</span><b>LAB</b>';
+  const words = BRAND.name.split(' ');                          // the last word sits in the white box
+  mark.innerHTML = `<span>${words.slice(0, -1).join(' ')}</span><b>${words[words.length - 1]}</b>`;
   root.appendChild(mark);
 
   const block = document.createElement('div'); block.className = 'kit-block';

@@ -1,6 +1,6 @@
 # Animasyon Lab
 
-Bir YouTube kanalı için kodla üretilen filmler: belgesel, tarih, coğrafya, bilim, yazılım, kısa film. **Filmi nasıl yapacağın tamamen sana bırakılmıştır.** Teknik, görsel dil, kamera, yapı, paket, dosya düzeni: hepsi senin kararın. Bu depo bir kalıp değildir; önceki filmler örnek değildir.
+**Şimdi Anladım** adlı YouTube kanalı için kodla üretilen filmler: belgesel, tarih, coğrafya, bilim, yazılım, kısa film. **Filmi nasıl yapacağın tamamen sana bırakılmıştır.** Teknik, görsel dil, kamera, yapı, paket, dosya düzeni: hepsi senin kararın. Bu depo bir kalıp değildir; önceki filmler örnek değildir.
 
 ## Yalnızca şunlar şart
 
@@ -27,7 +27,7 @@ Filmlerin iki evi var, düzenleri aynı (`<kategori>/<slug>/`):
 - `youtube/`: YouTube kanalının filmleri. **Bundan sonra yapılan her film buraya gider**, çizelgeden gelsin gelmesin. `npm run new -- youtube/<kategori>/<slug> "<Başlık>"`.
 - `animations/`: denemeler ve ilk çalışmalar. Olduğu gibi durur; yeni film buraya yalnızca istek "deneme" ya da "test" diyorsa açılır. `npm run new -- <kategori>/<slug> "<Başlık>"`.
 
-Kategori ve slug İngilizce (documentary, history, geography, biology, physics, chemistry, math, space, technology, software, philosophy, economy, short). Slug bütün depoda tektir; sitedeki adres iki evde de `…/animasyon-lab/<slug>/`. Kanal filmleri sitede ayrı bir sayfada listelenir (`…/animasyon-lab/kanal/`). `animation.json` içindeki `build` komutu `output` klasörüne kendi başına açılan bir `index.html` üretir. Ekrandaki metinler, README ve commit mesajları düzgün Türkçe.
+Kategori ve slug İngilizce (documentary, history, geography, biology, physics, chemistry, math, space, technology, software, philosophy, economy, short). Slug bütün depoda tektir; sitedeki adres iki evde de `…/animasyon-lab/<slug>/`. Kanal filmleri sitede ayrı bir sayfada listelenir (`…/animasyon-lab/channel/`). `animation.json` içindeki `build` komutu `output` klasörüne kendi başına açılan bir `index.html` üretir. Ekrandaki metinler, README ve commit mesajları düzgün Türkçe.
 
 ## Anlatım sesi
 

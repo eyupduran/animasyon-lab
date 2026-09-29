@@ -24,7 +24,7 @@ if (!collection || !okName(category) || !okName(slug) || !title) {
   process.exit(1);
 }
 if (findAnimation(slug, { exit: false })) { console.log(`"${slug}" adında bir film zaten var (slug bütün depoda tek olmalı).`); process.exit(1); }
-if (['kanal', '_player'].includes(slug)) { console.log(`"${slug}" sitenin kendi adresi; başka bir slug seçin.`); process.exit(1); }
+if (['channel', '_player'].includes(slug)) { console.log(`"${slug}" sitenin kendi adresi; başka bir slug seçin.`); process.exit(1); }
 if (!CATEGORIES[category]) console.log(`not: "${category}" yeni bir kategori; tools/lib/animations.mjs → CATEGORIES listesine Türkçe adını ekleyin.`);
 const dir = path.join(COLLECTIONS[collection].dir, category, slug);
 fs.mkdirSync(dir, { recursive: true });

@@ -35,7 +35,7 @@ Filmin **görünümünü değiştirme.** Kusur görürsen düzeltme, son mesajı
    - 70 karakterden kısa. İzleyicinin arayacağı sözcükler başta ("Osmanlı nasıl kuruldu?", "GPS nasıl çalışır?").
    - Merak uyandırır ama abartmaz; filmde karşılığı olmayan söz vermez. Büyük harfle bağırma, ünlem yığma yok.
    - Kapağın yazısı başlığı tekrar etmesin, onu tamamlasın.
-5. **Kapaklar:** tarz "büyük nesne, kısa dev yazı". Kanal kimliği `assets/thumbnail-kit/kit.js`'de; başındaki kullanım yorumunu oku ve ona uy. Bütün kapaklar aynı kimliği taşır, kanal sayfasında yan yana durduklarında bir seri gibi görünür.
+5. **Kapaklar:** tarz "büyük nesne, kısa dev yazı". Kanalın adı **Şimdi Anladım**; kimliği `assets/thumbnail-kit/kit.js`'de; başındaki kullanım yorumunu oku ve ona uy. Bütün kapaklar aynı kimliği taşır, kanal sayfasında yan yana durduklarında bir seri gibi görünür.
    - Filmin klasöründe `thumbnail.html` yoksa yaz: `?v=1` **ana kapak**, `?v=2` ve `?v=3` farklı fikirlerle yedekler.
    - Ana görsel konunun kendisi olan tek, büyük, parlak, net bir nesnedir (yazıcı, arı, sur, gemi…). Filmde böyle bir kare yoksa kapak için kodla ayrıca çiz; filmin kodundan parça alınabilir.
    - Kapak yazısı konuyu doğrudan söyler, 2–3 kelime: "YAZICI NASIL ÇALIŞIR?" gibi.
@@ -60,7 +60,7 @@ Filmin **görünümünü değiştirme.** Kusur görürsen düzeltme, son mesajı
    - <RESEARCH.md'den en önemli 4–6 kaynak: ad ve adres>
 
    Tarayıcıda izle: https://eyupduran.github.io/animasyon-lab/<slug>/
-   Bütün filmler: https://eyupduran.github.io/animasyon-lab/kanal/
+   Bütün filmler: https://eyupduran.github.io/animasyon-lab/channel/
 
    Görüntüler kodla çizildi, anlatım bilgisayar sesiyle yapıldı.
 

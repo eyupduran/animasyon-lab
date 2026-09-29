@@ -6,7 +6,7 @@ Kodla çizilen eğitim filmleri. Kanal filmleri `youtube/` altında, denemeler `
 
 ## Kanal filmleri
 
-YouTube kanalı için yapılan filmler `youtube/` altında durur ve sitede ayrı bir sayfada listelenir: https://eyupduran.github.io/animasyon-lab/kanal/
+**Şimdi Anladım** YouTube kanalı için yapılan filmler `youtube/` altında durur ve sitede ayrı bir sayfada listelenir: https://eyupduran.github.io/animasyon-lab/channel/
 
 | Film | Kategori | Teknik | Açıklama |
 |---|---|---|---|

@@ -13,6 +13,7 @@ import { ROOT, CATEGORIES, COLLECTIONS, listAnimations } from './lib/animations.
 const DIR = path.join(ROOT, 'channel');
 const FILE = path.join(DIR, 'plan.json');
 const STATUS = { planned: 'Planlandı', produced: 'Film hazır', packaged: 'Paket hazır', published: 'Yayında', skipped: 'Atlandı' };
+const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const MONTHS = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
 const DAYS = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
 
@@ -105,7 +106,7 @@ function table(rows) {
 function markdown() {
   const out = [];
   const p = plan.channel.period;
-  out.push('# Yayın çizelgesi', '');
+  out.push(`# ${plan.channel.name ? plan.channel.name + ': yayın çizelgesi' : 'Yayın çizelgesi'}`, '');
   out.push(`${long(p.from)} – ${long(p.to)} · ${plan.videos.length} video · son güncelleme ${long(plan.updated)}`, '');
   out.push('> Bu dosya üretilir (`npm run plan -- build`). Elle düzenleme; kaynak `channel/plan.json`. Kurallar: [README.md](README.md).', '');
   if (plan.channel.artifact) out.push(`Çizelge sayfası: ${plan.channel.artifact}`, '');
@@ -154,7 +155,8 @@ function build() {
     const data = JSON.stringify({ ...plan, built: today(), statusLabels: STATUS }).replace(/</g, '\\u003c');
     const html = fs.readFileSync(tpl, 'utf8');
     if (!html.includes('/*__PLAN__*/null')) { console.log('page.template.html içinde /*__PLAN__*/null işareti yok'); process.exit(1); }
-    fs.writeFileSync(path.join(DIR, 'plan.html'), html.replace('/*__PLAN__*/null', () => data), 'utf8');
+    const name = esc(plan.channel.name || 'Animasyon Lab');
+    fs.writeFileSync(path.join(DIR, 'plan.html'), html.replaceAll('__CHANNEL__', name).replace('/*__PLAN__*/null', () => data), 'utf8');
     made.push('channel/plan.html');
   }
   console.log('→ ' + made.join('\n→ '));
