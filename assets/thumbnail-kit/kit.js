@@ -65,6 +65,8 @@ export const CATEGORIES = {
   chemistry: { label: 'KİMYA', color: '#E774D8' },
   math: { label: 'MATEMATİK', color: '#FFD04A' },
   space: { label: 'UZAY', color: '#A48BFF' },
+  philosophy: { label: 'FELSEFE', color: '#F4A6C8' },
+  economy: { label: 'EKONOMİ', color: '#35E08A' },
   documentary: { label: 'BELGESEL', color: '#E9DCC4' },
   short: { label: 'KISA FİLM', color: '#FF6F8E' },
 };

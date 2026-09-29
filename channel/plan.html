@@ -1,0 +1,594 @@
+<meta charset="utf-8">
+<title>Animasyon Lab Yayın Çizelgesi</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a two-lane broadcast timetable. Weeks are rows, Çarşamba and Pazar are the lanes,
+   months are dividers. What is next sits above the timetable; reference material below it. */
+:root {
+  --ground: #F1F3F6;
+  --panel: #FFFFFF;
+  --panel-2: #E7EBF0;
+  --ink: #121923;
+  --ink-2: #485364;
+  --ink-3: #6F7B8C;
+  --rule: #D3D9E2;
+  --onair: #CF2A1D;
+  --onair-ink: #FFFFFF;
+  --done: #14764A;
+  --s-tarih: #9A5A08;
+  --s-cografya: #0A7563;
+  --s-nasil: #2253C0;
+  --s-felsefe: #7539BD;
+  --s-uzay: #A92374;
+  --s-doga: #3A731B;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "Barlow", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #0D1219; --panel: #151C27; --panel-2: #1D2633; --ink: #EDF1F6; --ink-2: #AEB9C8; --ink-3: #8390A2; --rule: #2A3545;
+    --onair: #FF5F52; --onair-ink: #1A0503; --done: #55C98D;
+    --s-tarih: #EFB04C; --s-cografya: #4DD0B5; --s-nasil: #8CB0FF; --s-felsefe: #C4A3FF; --s-uzay: #F288C5; --s-doga: #9AD774;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #0D1219; --panel: #151C27; --panel-2: #1D2633; --ink: #EDF1F6; --ink-2: #AEB9C8; --ink-3: #8390A2; --rule: #2A3545;
+  --onair: #FF5F52; --onair-ink: #1A0503; --done: #55C98D;
+  --s-tarih: #EFB04C; --s-cografya: #4DD0B5; --s-nasil: #8CB0FF; --s-felsefe: #C4A3FF; --s-uzay: #F288C5; --s-doga: #9AD774;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { background: var(--ground); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.5; }
+.wrap { max-width: 1120px; margin-inline: auto; padding-inline: clamp(16px, 4vw, 40px); padding-block: 36px 72px; display: flex; flex-direction: column; gap: 56px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; line-height: 1.05; margin: 0; text-wrap: balance; letter-spacing: 0.005em; }
+h1 { font-size: clamp(40px, 7vw, 68px); font-weight: 700; text-transform: uppercase; }
+h2 { font-size: 30px; text-transform: uppercase; }
+h3 { font-size: 22px; }
+p { margin: 0; }
+a { color: inherit; text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--onair); outline-offset: 2px; border-radius: 2px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+.lede { color: var(--ink-2); max-width: 62ch; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.section-head { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+
+/* masthead */
+.masthead { display: flex; flex-direction: column; gap: 14px; border-bottom: 3px solid var(--ink); padding-bottom: 22px; }
+.masthead .period { font-family: var(--mono); font-size: 14px; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.bars { display: flex; height: 8px; width: 132px; }
+.bars span { flex: 1; }
+
+/* now */
+.now { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.ticket { background: var(--panel); border: 1px solid var(--rule); display: grid; grid-template-columns: auto minmax(0, 1fr); }
+.ticket .when { background: var(--ink); color: var(--ground); padding: 16px 18px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; min-width: 108px; }
+.ticket.onair .when { background: var(--onair); color: var(--onair-ink); }
+.ticket .when .d { font-family: var(--display); font-weight: 700; font-size: 46px; line-height: 0.9; }
+.ticket .when .m { font-family: var(--display); font-weight: 600; font-size: 20px; text-transform: uppercase; letter-spacing: 0.03em; }
+.ticket .when .t { font-family: var(--mono); font-size: 12px; margin-top: 8px; opacity: 0.85; }
+.ticket .what { padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.ticket .what h3 { font-size: 26px; }
+.ticket .what .sub { color: var(--ink-2); font-size: 14px; }
+.tally { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 10px; }
+.meter { display: flex; height: 14px; background: var(--panel-2); }
+.meter span { min-width: 2px; }
+.meter .published { background: var(--done); }
+.meter .packaged { background: var(--ink); }
+.meter .produced { background: var(--ink-3); }
+.meter .planned { background: var(--rule); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 14px; color: var(--ink-2); }
+.legend i { display: inline-block; width: 10px; height: 10px; margin-right: 7px; vertical-align: baseline; }
+
+/* decisions */
+.decisions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--rule); }
+.decision { padding: 18px 20px 18px 0; border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; gap: 6px; }
+.decision:nth-child(odd) { border-right: 1px solid var(--rule); }
+.decision:nth-child(even) { padding-left: 20px; }
+.decision .q { font-family: var(--display); font-size: 21px; font-weight: 600; }
+.decision .a { color: var(--ink-2); font-size: 15px; }
+
+/* filters */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 18px; }
+.chip { font: 500 14px/1 var(--body); color: var(--ink); background: var(--panel); border: 1px solid var(--rule); padding: 8px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+.chip i { width: 10px; height: 10px; background: var(--c, var(--ink-3)); display: inline-block; }
+.chip[aria-pressed="false"] { color: var(--ink-3); background: transparent; }
+.chip[aria-pressed="false"] i { background: transparent; box-shadow: inset 0 0 0 1.5px var(--ink-3); }
+.chip:hover { border-color: var(--ink-2); }
+.filters .gap { flex: 1 1 12px; }
+
+/* board */
+.month { font-family: var(--display); font-weight: 700; font-size: 34px; text-transform: uppercase; border-bottom: 3px solid var(--ink); padding-bottom: 6px; margin: 34px 0 0; display: flex; align-items: baseline; gap: 12px; }
+.month:first-of-type { margin-top: 0; }
+.month small { font-family: var(--mono); font-size: 12px; font-weight: 400; letter-spacing: 0.08em; color: var(--ink-3); }
+.lanes-head, .week { display: grid; grid-template-columns: 104px minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+.lanes-head { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 2; background: var(--ground); padding: 10px 0 8px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--rule); }
+.week { padding: 14px 0; border-bottom: 1px solid var(--rule); align-items: start; }
+.week.thisweek { box-shadow: inset 3px 0 0 var(--onair); padding-left: 10px; margin-left: -13px; }
+.week .wk { font-family: var(--mono); font-size: 13px; color: var(--ink-2); padding-top: 12px; }
+.week .wk b { display: block; font-weight: 500; color: var(--onair); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.cell { min-width: 0; }
+.cell.empty { border: 1px dashed var(--rule); min-height: 64px; color: var(--ink-3); font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.card { background: var(--panel); border: 1px solid var(--rule); border-top: 4px solid var(--c); padding: 12px 14px 12px; display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.card.next { outline: 2px solid var(--onair); outline-offset: 1px; }
+.card .top { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; font-family: var(--mono); font-size: 12px; color: var(--ink-3); }
+.card .top .no { color: var(--ink-2); }
+.card .top .day { display: none; }
+.card .top .ser { color: var(--c); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+.card h3 { font-size: 23px; overflow-wrap: anywhere; }
+.card .angle { font-size: 14.5px; color: var(--ink-2); }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.tag { font-size: 12.5px; line-height: 1; padding: 5px 8px; border: 1px solid var(--rule); color: var(--ink-2); white-space: nowrap; }
+.tag.status { font-weight: 600; color: var(--ink); border-color: var(--ink-3); }
+.tag.status.published { background: var(--done); border-color: var(--done); color: var(--panel); }
+.tag.status.packaged { background: var(--ink); border-color: var(--ink); color: var(--ground); }
+.tag.status.planned { color: var(--ink-3); border-style: dashed; }
+.tag.fixed { border-color: var(--onair); color: var(--onair); }
+.tag.hook { white-space: normal; line-height: 1.25; }
+details.more { margin-top: 4px; border-top: 1px solid var(--rule); padding-top: 8px; }
+details.more > summary { cursor: pointer; font-size: 13px; color: var(--ink-2); list-style: none; display: inline-flex; gap: 6px; align-items: center; }
+details.more > summary::-webkit-details-marker { display: none; }
+details.more > summary::before { content: "+"; font-family: var(--mono); }
+details.more[open] > summary::before { content: "−"; }
+.more-body { display: flex; flex-direction: column; gap: 12px; padding-top: 10px; font-size: 14px; color: var(--ink-2); }
+.more-body .lab { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.more-body ul { margin: 0; padding-left: 18px; }
+.cmd { display: flex; align-items: stretch; border: 1px solid var(--rule); background: var(--panel-2); min-width: 0; }
+.cmd code { font-family: var(--mono); font-size: 13px; padding: 8px 10px; color: var(--ink); overflow-x: auto; white-space: nowrap; flex: 1 1 auto; min-width: 0; user-select: all; }
+.cmd button { font: 500 12px/1 var(--body); border: 0; border-left: 1px solid var(--rule); background: var(--panel); color: var(--ink); padding: 0 12px; cursor: pointer; }
+.cmd button:hover { background: var(--ink); color: var(--ground); }
+.mark { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 10px; }
+.mark label { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--ink-3); min-width: 0; }
+.mark label.wide { grid-column: 1 / -1; }
+.mark label.check { flex-direction: row; align-items: center; gap: 8px; font-size: 14px; color: var(--ink); grid-column: 1 / -1; }
+.mark input[type="url"], .mark input[type="number"] { font: 400 14px/1.2 var(--body); color: var(--ink); background: var(--panel); border: 1px solid var(--rule); padding: 7px 8px; width: 100%; min-width: 0; }
+.mark .row { grid-column: 1 / -1; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.btn { font: 600 13px/1 var(--body); background: var(--ink); color: var(--ground); border: 0; padding: 9px 14px; cursor: pointer; }
+.btn[disabled] { opacity: 0.5; cursor: default; }
+.note { font-size: 13px; color: var(--ink-3); }
+.band { grid-column: 1 / -1; display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--rule); align-items: baseline; }
+.band .wk { font-family: var(--mono); font-size: 13px; color: var(--ink-2); }
+.band .body { border-left: 3px solid var(--ink); padding-left: 12px; display: flex; flex-direction: column; gap: 3px; }
+.band.compile .body { border-left-style: dashed; }
+.band .body b { font-family: var(--display); font-size: 20px; font-weight: 600; }
+.band .body span { font-size: 14px; color: var(--ink-2); }
+
+/* reference lists */
+.series-list { display: flex; flex-direction: column; border-top: 1px solid var(--rule); }
+.series-row { display: grid; grid-template-columns: 250px 150px minmax(0, 1fr); gap: 8px 20px; padding: 16px 0; border-bottom: 1px solid var(--rule); align-items: baseline; }
+.series-row .name { font-family: var(--display); font-size: 22px; font-weight: 600; display: flex; gap: 10px; align-items: baseline; }
+.series-row .name i { width: 12px; height: 12px; background: var(--c); display: inline-block; flex: none; }
+.series-row .meta { font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); }
+.series-row .about { font-size: 15px; color: var(--ink-2); }
+.series-row .about em { font-style: normal; color: var(--ink-3); display: block; margin-top: 4px; font-size: 13.5px; }
+.reserve { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 40px; }
+.reserve h3 { display: flex; gap: 10px; align-items: baseline; border-bottom: 1px solid var(--rule); padding-bottom: 6px; margin-bottom: 8px; }
+.reserve h3 i { width: 12px; height: 12px; background: var(--c); display: inline-block; }
+.reserve ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+.reserve li { font-size: 15px; }
+.reserve li span { display: block; color: var(--ink-3); font-size: 13px; }
+.steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 28px; counter-reset: step; }
+.step { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.step b { font-family: var(--display); font-size: 21px; font-weight: 600; }
+.step p { font-size: 15px; color: var(--ink-2); }
+.sources { margin: 0; padding-left: 18px; font-size: 14px; color: var(--ink-2); display: flex; flex-direction: column; gap: 6px; max-width: 80ch; }
+footer { font-family: var(--mono); font-size: 12px; color: var(--ink-3); border-top: 1px solid var(--rule); padding-top: 14px; }
+
+@media (max-width: 760px) {
+  .wrap { gap: 44px; padding-block: 24px 56px; }
+  .now, .decisions, .reserve, .steps { grid-template-columns: minmax(0, 1fr); }
+  .decision, .decision:nth-child(odd), .decision:nth-child(even) { border-right: 0; padding: 16px 0; }
+  .lanes-head { display: none; }
+  .week, .band { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .week .wk { padding-top: 0; display: flex; gap: 12px; align-items: baseline; }
+  .week .wk b { margin-top: 0; }
+  .week.thisweek { margin-left: -10px; }
+  .cell.empty { display: none; }
+  .card .top .day { display: inline; color: var(--ink); font-weight: 500; }
+  .series-row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .ticket .when { min-width: 92px; padding: 14px; }
+  .ticket .when .d { font-size: 40px; }
+  .month { font-size: 30px; }
+}
+@media (prefers-reduced-motion: no-preference) { .chip, .cmd button { transition: background-color .12s, color .12s, border-color .12s; } }
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <div class="bars" aria-hidden="true"><span style="background:var(--s-tarih)"></span><span style="background:var(--s-cografya)"></span><span style="background:var(--s-nasil)"></span><span style="background:var(--s-felsefe)"></span><span style="background:var(--s-uzay)"></span><span style="background:var(--s-doga)"></span></div>
+    <p class="eyebrow">Animasyon Lab · yayın akışı</p>
+    <h1>Yayın çizelgesi</h1>
+    <p class="period" id="period"></p>
+  </header>
+
+  <section aria-labelledby="h-now">
+    <div class="section-head"><h2 id="h-now">Şimdi</h2></div>
+    <div class="now" id="now"></div>
+  </section>
+
+  <section aria-labelledby="h-dec">
+    <div class="section-head">
+      <h2 id="h-dec">Kararlar</h2>
+      <p class="lede">Çizelge bu dört karara göre kuruldu. Hepsi izlenme ve arama verisine dayanıyor; kaynaklar sayfanın sonunda.</p>
+    </div>
+    <div class="decisions" id="decisions"></div>
+  </section>
+
+  <section aria-labelledby="h-board">
+    <div class="section-head">
+      <h2 id="h-board">Hafta hafta</h2>
+      <p class="lede">Her satır bir hafta. Kırmızı çerçeveli kart sıradaki üretim. Kırmızı etiketli videolar bir güne bağlı; o günden önce yayında olmalı.</p>
+    </div>
+    <div class="filters" id="filters" role="group" aria-label="Seriye göre süz"></div>
+    <div id="board"></div>
+  </section>
+
+  <section aria-labelledby="h-series">
+    <div class="section-head">
+      <h2 id="h-series">Seriler</h2>
+      <p class="lede">Dört ana seri sürekli döner. Deneme serileri sekizinci haftadaki değerlendirmede ya ana seri olur ya durur.</p>
+    </div>
+    <div class="series-list" id="series"></div>
+  </section>
+
+  <section aria-labelledby="h-reserve">
+    <div class="section-head">
+      <h2 id="h-reserve">Yedek konular</h2>
+      <p class="lede">Atlanan bir haftanın yerine ya da sonraki dönem için. Hepsinin arkasında bir arama ya da izlenme verisi var.</p>
+    </div>
+    <div class="reserve" id="reserve"></div>
+  </section>
+
+  <section aria-labelledby="h-how">
+    <div class="section-head"><h2 id="h-how">Nasıl işliyor</h2></div>
+    <div class="steps">
+      <div class="step"><b>1. Sıradaki videoyu üret</b><p>Claude Code'da tek komut. Konuyu çizelgeden alır, filmi yapar, sitedeki kanal sayfasında yayınlar, çizelgeyi günceller.</p><div class="cmd"><code>/next</code><button type="button" data-copy="/next">Kopyala</button></div></div>
+      <div class="step"><b>2. YouTube paketini çıkar</b><p>Video, altyazı, kapak, seçilmiş başlık, yapıştırılmaya hazır açıklama ve yükleme ayarları masaüstündeki YouTube klasörüne gelir.</p><div class="cmd"><code>/youtube &lt;slug&gt;</code><button type="button" data-copy="/youtube ">Kopyala</button></div></div>
+      <div class="step"><b>3. Yükle ve işaretle</b><p>Videoyu YouTube'a yükleyip çizelgedeki saate zamanla. Sonra bu sayfada kartı açıp yayında diye işaretle; izlenme sayılarını da buraya yaz.</p></div>
+      <div class="step"><b>4. Dönem bitince uzat</b><p>Dört ayda bir. Buraya yazdığın sayılara bakar, en iyi giden seriye ağırlık verir, yeni dönemi kurar.</p><div class="cmd"><code>/plan</code><button type="button" data-copy="/plan">Kopyala</button></div></div>
+    </div>
+    <p class="note" style="margin-top:18px">Çizelge dışı filmler çizelgeyi etkilemez: <span class="mono">/animation &lt;konu&gt;</span> her zaman serbest. Depodaki eski filmler denemedir; çizelgede yer almaz.</p>
+  </section>
+
+  <section aria-labelledby="h-src">
+    <div class="section-head"><h2 id="h-src">Kaynaklar</h2></div>
+    <ul class="sources" id="sources"></ul>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+
+<script id="plan-data" type="application/json">{"version":1,"updated":"2026-09-29","channel":{"name":"","artifact":"https://claude.ai/artifact/GDe17unwwX1fY27sByWaVS","period":{"from":"2026-09-29","to":"2027-01-31"},"leadDays":3,"slots":[{"id":"sun","weekday":0,"label":"Pazar","time":"19:00","role":"Ana video. Her hafta çıkar."},{"id":"wed","weekday":3,"label":"Çarşamba","time":"19:00","role":"İkinci video. Yetişmezse atlanır, konu yedeğe düşer."},{"id":"open","weekday":null,"label":"Açılış","time":"","role":"İlk video. Film hazır olur olmaz yayınlanır."}]},"decisions":[{"q":"Seri mi, karışık mı?","a":"Dönüşümlü seriler. Kanal konudan konuya geçer ama rastgele değil: dört ana seri sırayla döner. Her video tek başına izlenir; seri içindeki sıra oynatma listesinde kurulur."},{"q":"Müfredata bağlı mı?","a":"Hayır. Sınav hazırlığını ders anlatan kanallar tutuyor. Biz merak sorularından gidiyoruz; okulda da işlenen konuları işaretliyoruz, öğrenci aradığında bulsun."},{"q":"Hangi günler?","a":"İlk video hazır olur olmaz çıkar. Sonrası Pazar 19.00 ana video (tarih ve coğrafya), Çarşamba 19.00 ikinci video (nasıl çalışır, felsefe, gökyüzü). Haftada tek video çıkacaksa Pazar çıkar."},{"q":"Sıra neye göre?","a":"Önce takvime bağlı konular kendi haftasına oturur (29 Ekim, 21 Aralık gibi). Kalan haftalara seriler sırayla dağılır. Her konunun arkasında bir arama verisi ya da izlenmiş bir örnek var."}],"series":[{"id":"tarih","kind":"ana","title":"Tarih: Neden öyle oldu?","short":"Tarih","category":"history","slot":"sun","minutes":"10–12","about":"Haritalı anlatım. Her video tek bir soruya cevap verir: nasıl kuruldu, nasıl fethedildi, neden yıkıldı. İlk iki ay Osmanlı'dan Cumhuriyet'e uzanan bir yay, sonra dünya tarihi. Türk tarihi konuları Türkiye'deki akademik kaynaklara dayanır.","playlist":"Yayın sırası takvime göre, oynatma listesi sırası kronolojik."},{"id":"cografya","kind":"ana","title":"Coğrafya: Harita neden böyle?","short":"Coğrafya","category":"geography","slot":"sun","minutes":"8–10","about":"Haritaya bakınca akla gelen sorular: ölçek, sınır, su yolu, yer şekli. Türkiye'den ve dünyadan dönüşümlü.","playlist":"Sıra serbest; her video bağımsız."},{"id":"nasil","kind":"ana","title":"Nasıl çalışır?","short":"Nasıl çalışır","category":"technology","slot":"wed","minutes":"8–10","about":"Her gün kullandığımız bir şeyin içini açıp gösteren videolar. İnsanlar bu konuları 'animasyon' kelimesiyle birlikte arıyor.","playlist":"Sıra serbest. Altı video birikince tek parça derleme."},{"id":"felsefe","kind":"ana","title":"Felsefe: Büyük fikirler","short":"Felsefe","category":"philosophy","slot":"wed","minutes":"6–8","about":"Düşünce deneyleri ve yaşam felsefeleri. Kısa, tek fikirli, görselleştirmeye en uygun konular.","playlist":"Sıra serbest."},{"id":"uzay","kind":"deneme","title":"Gökyüzü","short":"Gökyüzü","category":"space","slot":"wed","minutes":"8–10","about":"Deneme serisi. Kasım ve Aralık'taki videoların sonucuna göre devam eder ya da durur.","playlist":"Sıra serbest."},{"id":"doga","kind":"deneme","title":"Doğa: Bir günü","short":"Doğa","category":"documentary","slot":"wed","minutes":"8–10","about":"Bu dönemde videosu yok. İlkbaharda göç mevsimiyle denenebilir.","playlist":"Sıra serbest."}],"milestones":[{"date":"2026-09-29","title":"İlk video","text":"Kanal 'Okyanus ne kadar derin?' ile açılır. Film hazır olur olmaz yayınlanır; sonraki videolar Pazar ve Çarşamba düzenine girer."},{"date":"2026-10-25","title":"Dört hafta: yayın saatini denetle","text":"YouTube Studio'da 'izleyicilerinizin YouTube'da olduğu zamanlar' grafiğine bak. 19.00 tutmuyorsa saati değiştir, günleri değiştirme."},{"date":"2026-11-22","title":"Sekiz hafta: ilk değerlendirme","text":"Seri başına ortalama izlenme ve izlenme süresi karşılaştırılır. En iyi seri fazladan hafta alır, en zayıf deneme serisi durur. Aralık ve Ocak sırası bu karara göre değişebilir."},{"date":"2027-01-17","title":"Yeni çizelge hazırlığı","text":"Şubat–Mayıs çizelgesi için /plan çalıştırılır. 18 Mart (Çanakkale) ve 29 Mayıs (İstanbul'un Fethi yıl dönümü) önceden yerleştirilir."},{"date":"2027-02-01","title":"YouTube eşiği değişiyor","text":"Bu tarihten sonra başvuranlar için para kazanma eşiği 4.000 saatten 8.000 saate çıkıyor. Önce programa girenler etkilenmiyor."}],"videos":[{"no":1,"date":"2026-09-29","slot":"open","series":"cografya","category":"geography","slug":"ocean-depth","status":"planned","minutes":9,"title":"Okyanus ne kadar derin?","angle":"Yüzeyden Mariana Çukuru'nun dibine iniş: ışığın bittiği yer, basınç, derinlerde yaşayanlar.","brief":"Okyanus ne kadar derin? Coğrafya belgeseli, 8–10 dakika. Yüzeyden en derin noktaya doğru in; her derinlikte tanıdık bir ölçüyle karşılaştır (bina, dağ, dalgıç, denizaltı). Işığın bittiği yeri, basıncı ve derinlerde yaşayan canlıları göster. Kategori: geography. Slug: ocean-depth.","hook":null,"school":false,"evidence":["YouTube araması: 'okyanus ne kadar derin'.","Örnek: RealLifeLore, 'The Ocean is Way Deeper Than You Think' 50 Mn; Barış Özcan, 'Dünyanın en derin noktasında ne var?' 4,6 Mn."]},{"no":2,"date":"2026-10-04","slot":"sun","series":"tarih","category":"history","slug":"conquest-of-istanbul","status":"planned","minutes":12,"title":"İstanbul nasıl fethedildi?","angle":"1453 baharında 53 gün süren kuşatma: surlar, toplar ve karadan yürütülen gemiler.","brief":"İstanbul nasıl fethedildi? Tarih belgeseli, haritalı anlatım, 10–12 dakika. 1453 kuşatmasını baştan sona anlat: hazırlık, Rumeli Hisarı, toplar, surlar, gemilerin karadan Haliç'e indirilmesi, 29 Mayıs sabahı ve sonrası. Kategori: history. Slug: conquest-of-istanbul.","hook":null,"school":true,"evidence":["YouTube araması: 'istanbul'un fethi animasyon', 'istanbul'un fethi belgeseli'.","Örnek: Harp Tarihi, 'İstanbul'un Fethi (1453)' 4,6 Mn izlenme."]},{"no":3,"date":"2026-10-07","slot":"wed","series":"nasil","category":"technology","slug":"how-gps-works","status":"planned","minutes":9,"title":"GPS yerini nasıl buluyor?","angle":"Telefon uydulara hiçbir şey göndermez, yalnızca dinler. Dört uydunun saat sinyalinden konum nasıl çıkar?","brief":"GPS yerini nasıl buluyor? Teknoloji belgeseli, 8–10 dakika. Telefonun uyduları yalnızca dinlediğini, konumun saat sinyallerinden nasıl hesaplandığını ve neden en az dört uydu gerektiğini anlat. Kategori: technology. Slug: how-gps-works.","hook":null,"school":false,"evidence":["YouTube araması: 'gps nasıl çalışır'."]},{"no":4,"date":"2026-10-11","slot":"sun","series":"cografya","category":"geography","slug":"map-projections","status":"planned","minutes":9,"title":"Dünya haritası neden yanlış?","angle":"Duvardaki haritada Grönland Afrika kadar görünür; gerçekte Afrika kat kat büyüktür. Küreyi düz kâğıda açmanın bedeli.","brief":"Dünya haritası neden yanlış? Coğrafya belgeseli, haritalı anlatım, 8–10 dakika. Küreyi düz kâğıda açınca neyin bozulduğunu göster: Mercator haritası neden yapıldı, ülkelerin gerçek büyüklükleri nasıl, başka hangi haritalar var. Kategori: geography. Slug: map-projections.","hook":null,"school":true,"evidence":["YouTube araması: 'dünya haritası neden yanlış'.","Örnek: RealLifeLore, 'How the World Map Looks Wildly Different Than You Think' 25 Mn izlenme."]},{"no":5,"date":"2026-10-14","slot":"wed","series":"felsefe","category":"philosophy","slug":"ship-of-theseus","status":"planned","minutes":7,"title":"Theseus'un gemisi","angle":"Bir geminin bütün tahtaları zamanla değiştirilirse o hâlâ aynı gemi midir? Peki ya biz?","brief":"Theseus'un gemisi. Felsefe, 6–8 dakika. Düşünce deneyini kur, farklı cevapları göster, sonra aynı soruyu insana çevir: bedenimiz ve anılarımız değişirken biz aynı kişi miyiz? Kategori: philosophy. Slug: ship-of-theseus.","hook":null,"school":false,"evidence":["YouTube araması: 'theseus'un gemisi', 'theseus'un gemisi paradoksu'."]},{"no":6,"date":"2026-10-18","slot":"sun","series":"tarih","category":"history","slug":"rise-of-the-ottomans","status":"planned","minutes":11,"title":"Osmanlı nasıl kuruldu?","angle":"Söğüt'teki küçük bir uç beyliği, yüz elli yıl içinde iki kıtaya yayılan bir devlete nasıl dönüştü?","brief":"Osmanlı nasıl kuruldu? Tarih belgeseli, haritalı anlatım, 10–12 dakika. Söğüt'teki küçük bir uç beyliğinin büyümesini harita üzerinde izlet: komşu beylikler, Bizans, Bursa, Balkanlara geçiş. Rivayet olanı rivayet diye söyle. Kategori: history. Slug: rise-of-the-ottomans.","hook":null,"school":true,"evidence":["YouTube araması: 'osmanlı nasıl kuruldu', 'osmanlı nasıl kuruldu animasyon'.","Örnek: DFT Tarih, 'Osmanlı Nasıl Kuruldu?' 6,7 Mn izlenme."]},{"no":7,"date":"2026-10-21","slot":"wed","series":"nasil","category":"technology","slug":"how-the-internet-works","status":"planned","minutes":9,"title":"İnternet nasıl çalışır?","angle":"Kıtalar arası internet trafiğinin neredeyse tamamı okyanus tabanındaki kablolardan geçiyor. Bir videonun telefonuna yolculuğu.","brief":"İnternet nasıl çalışır? Teknoloji belgeseli, 8–10 dakika. Bir videonun sunucudan telefona yolculuğunu izlet: veri paketleri, yönlendiriciler, okyanus tabanındaki kablolar. Kategori: technology. Slug: how-the-internet-works.","hook":null,"school":false,"evidence":["YouTube araması: 'internet nasıl çalışır', 'denizaltı internet kabloları'."]},{"no":8,"date":"2026-10-25","slot":"sun","series":"tarih","category":"history","slug":"founding-of-the-republic","status":"planned","minutes":11,"title":"Cumhuriyet nasıl kuruldu?","angle":"Mondros'tan 29 Ekim 1923 gecesine beş yıl: işgal altındaki bir ülkeden yeni bir devlete.","brief":"Cumhuriyet nasıl kuruldu? Tarih belgeseli, haritalı anlatım, 10–12 dakika. Mondros Mütarekesi'nden 29 Ekim 1923 gecesine giden yolu harita üzerinde anlat: işgaller, Anadolu'daki direniş, Meclis, cepheler, Lozan, ilan gecesi. Kategori: history. Slug: founding-of-the-republic.","hook":{"date":"2026-10-29","label":"29 Ekim Cumhuriyet Bayramı","fixed":true},"school":true,"evidence":["YouTube araması: 'cumhuriyet nasıl kuruldu', 'cumhuriyet nasıl kuruldu animasyon'."]},{"no":9,"date":"2026-10-28","slot":"wed","series":"felsefe","category":"philosophy","slug":"platos-cave","status":"planned","minutes":7,"title":"Platon'un mağarası","angle":"Hayatı boyunca yalnızca gölgeleri görmüş biri gerçeği görünce ne yapar?","brief":"Platon'un mağarası. Felsefe, 6–8 dakika. Mağara benzetmesini baştan sona canlandır, Platon'un bununla ne anlatmak istediğini açıkla, bugünden bir karşılık bul. Kategori: philosophy. Slug: platos-cave.","hook":null,"school":true,"evidence":["YouTube araması: 'platon mağara alegorisi', 'platon mağara alegorisi ne anlatıyor'.","Örnek: Pelin Dilara Çolak, Platon videosu 370 B izlenme."]},{"no":10,"date":"2026-11-01","slot":"sun","series":"cografya","category":"geography","slug":"turkish-straits","status":"planned","minutes":9,"title":"Boğazlar neden bu kadar önemli?","angle":"İstanbul ve Çanakkale boğazları Karadeniz'in tek çıkışı. Montrö Sözleşmesi geçişi nasıl düzenliyor?","brief":"Boğazlar neden bu kadar önemli? Coğrafya belgeseli, haritalı anlatım, 8–10 dakika. İstanbul ve Çanakkale boğazlarının konumunu, Karadeniz ülkeleri için anlamını ve Montrö Sözleşmesi'nin geçişi nasıl düzenlediğini anlat. Güncel siyasete girme. Kategori: geography. Slug: turkish-straits.","hook":null,"school":true,"evidence":["YouTube araması: 'montrö boğazlar sözleşmesi', 'boğazlar ve kanallar'.","Örnek: Coğrafyanın Kodları, 'Dünya kanallar ve boğazlar' 1,1 Mn izlenme."]},{"no":11,"date":"2026-11-04","slot":"wed","series":"nasil","category":"technology","slug":"how-planes-fly","status":"planned","minutes":9,"title":"Uçak nasıl uçar?","angle":"Yüzlerce tonluk bir makineyi havada tutan kuvvet nereden geliyor?","brief":"Uçak nasıl uçar? Teknoloji belgeseli, 8–10 dakika. Kanadın kaldırma kuvvetini nasıl ürettiğini doğru anlat (yaygın yanlış açıklamaları düzelt), motorun, kanatçıkların ve kuyruğun işini göster. Kategori: technology. Slug: how-planes-fly.","hook":null,"school":false,"evidence":["YouTube araması: 'uçak nasıl uçar', 'uçaklar nasıl uçar'.","Örnek: Animagraffs, 'How a Jet Airliner Works' 19 Mn izlenme."]},{"no":12,"date":"2026-11-08","slot":"sun","series":"tarih","category":"history","slug":"fall-of-the-ottomans","status":"planned","minutes":12,"title":"Osmanlı neden yıkıldı?","angle":"Altı yüz yıllık devlet son yüz yılında adım adım nasıl dağıldı? Toprak kayıplarının haritası.","brief":"Osmanlı neden yıkıldı? Tarih belgeseli, haritalı anlatım, 10–12 dakika. Son yüz yılı harita üzerinde anlat: toprak kayıpları, borçlar, savaşlar, 1 Kasım 1922'de saltanatın kaldırılması. Tek bir nedene bağlama; tarihçilerin öne çıkardığı nedenleri ayrı ayrı göster. Kategori: history. Slug: fall-of-the-ottomans.","hook":null,"school":true,"evidence":["YouTube araması: 'osmanlı neden yıkıldı' ('neden yıkıldı' aramasında ilk sırada).","Örnek: Anime Tarih, 'Osmanlı'nın 600 Yılı' 11 ayda 2,6 Mn izlenme."]},{"no":13,"date":"2026-11-11","slot":"wed","series":"uzay","category":"space","slug":"size-of-the-universe","status":"planned","minutes":9,"title":"Evren ne kadar büyük?","angle":"Dünya'dan gözlemlenebilir evrenin kenarına, her adımda ölçeği büyüterek.","brief":"Evren ne kadar büyük? Uzay belgeseli, 8–10 dakika. Dünya'dan başla, her adımda ölçeği büyüt: Ay, Güneş sistemi, yakın yıldızlar, Samanyolu, komşu galaksiler, gözlemlenebilir evren. Her ölçeği akılda kalacak bir karşılaştırmayla ver. Kategori: space. Slug: size-of-the-universe.","hook":null,"school":false,"evidence":["YouTube araması: 'evren ne kadar büyük', 'evren ne kadar büyük animasyon'.","Örnek: Bebar Bilim, 'Evrenin Akılalmaz Büyüklüğü' 3,5 Mn izlenme."]},{"no":14,"date":"2026-11-15","slot":"sun","series":"cografya","category":"geography","slug":"how-cappadocia-formed","status":"planned","minutes":9,"title":"Kapadokya nasıl oluştu?","angle":"Peribacalarını volkan külü, yağmur ve rüzgâr milyonlarca yılda nasıl oydu?","brief":"Kapadokya nasıl oluştu? Coğrafya belgeseli, 8–10 dakika. Volkanların püskürmesinden peribacalarının oyulmasına kadar geçen süreci adım adım canlandır; insanların bu kayaya neden ve nasıl yerleştiğini de göster. Kategori: geography. Slug: how-cappadocia-formed.","hook":null,"school":true,"evidence":["YouTube araması: 'kapadokya nasıl oluştu'."]},{"no":15,"date":"2026-11-18","slot":"wed","series":"nasil","category":"technology","slug":"how-chips-are-made","status":"planned","minutes":10,"title":"Çip nasıl üretilir?","angle":"Kumdan işlemciye: tırnak kadar bir alana milyarlarca transistör nasıl yerleştiriliyor?","brief":"Çip nasıl üretilir? Teknoloji belgeseli, 8–10 dakika. Silisyum külçesinden bitmiş işlemciye kadar üretim adımlarını göster: levha, ışıkla desen basma, katmanlar, kesme, paketleme. Ölçeği akılda kalacak karşılaştırmalarla ver. Kategori: technology. Slug: how-chips-are-made.","hook":null,"school":false,"evidence":["YouTube araması: 'çip nasıl üretilir', 'işlemci nasıl üretilir'.","Örnek: Branch Education, 'How are Microchips Made?' 11 Mn izlenme."]},{"no":16,"date":"2026-11-22","slot":"sun","series":"tarih","category":"history","slug":"ottomans-and-america","status":"planned","minutes":11,"title":"Osmanlı neden Amerika'ya gitmedi?","angle":"1492'de Atlantik'in öbür yanına ulaşıldığında Osmanlı Akdeniz'in en güçlü devletlerinden biriydi. Neden aynı yola çıkmadı?","brief":"Osmanlı neden Amerika'ya gitmedi? Tarih belgeseli, haritalı anlatım, 10–12 dakika. 1492'de Atlantik geçilirken Osmanlı'nın önceliklerini harita üzerinde göster: Akdeniz, Hint Okyanusu, baharat yolu, Piri Reis'in 1513 haritası. Kesin olmayanı kesinmiş gibi söyleme. Kategori: history. Slug: ottomans-and-america.","hook":null,"school":false,"evidence":["YouTube araması: 'osmanlı neden amerika'ya gitmedi'."]},{"no":17,"date":"2026-11-25","slot":"wed","series":"nasil","category":"technology","slug":"how-ai-writes","status":"planned","minutes":9,"title":"Yapay zekâ bir cümleyi nasıl tamamlıyor?","angle":"Sohbet eden yapay zekâ aslında bir sonraki kelimeyi tahmin ediyor. Bunu nasıl öğreniyor?","brief":"Yapay zekâ bir cümleyi nasıl tamamlıyor? Teknoloji belgeseli, 8–10 dakika. Dil modellerinin bir sonraki kelimeyi nasıl tahmin ettiğini, bunu nasıl öğrendiğini ve neden bazen yanıldığını matematiğe boğmadan anlat. Kategori: technology. Slug: how-ai-writes.","hook":{"date":"2026-11-30","label":"30 Kasım 2022, ChatGPT'nin yayınlanışı","fixed":false},"school":false,"evidence":["YouTube araması: 'yapay zeka nasıl çalışır', 'chatgpt nasıl çalışır'.","Evrim Ağacı son iki ayda bu konuda art arda video yayınladı."]},{"no":18,"date":"2026-11-29","slot":"sun","series":"cografya","category":"geography","slug":"antarctica","status":"planned","minutes":9,"title":"Antarktika neden kimsenin değil?","angle":"Yedi ülke üzerinde hak iddia ediyor ama kıta hiçbir devlete ait değil. 1959 antlaşması ve oraya gitmenin neden zor olduğu.","brief":"Antarktika neden kimsenin değil? Coğrafya belgeseli, haritalı anlatım, 8–10 dakika. Hak iddialarını ve 1959 Antarktika Antlaşması'nı harita üzerinde göster; kıtaya gitmenin neden zor olduğunu ve 'yasak' söylentilerinin aslını anlat. Kategori: geography. Slug: antarctica.","hook":{"date":"2026-12-01","label":"1 Aralık 1959, Antarktika Antlaşması","fixed":false},"school":false,"evidence":["YouTube araması: 'antarktika neden yasak', 'antarktika'ya neden gidilmiyor'.","Örnek: Barış Özcan, 'Antarktika'ya gitmek yasak mı?' 4,8 Mn izlenme."]},{"no":19,"date":"2026-12-02","slot":"wed","series":"felsefe","category":"philosophy","slug":"zeno-paradox","status":"planned","minutes":7,"title":"Zenon paradoksu: Aşil kaplumbağayı neden geçemiyor?","angle":"Hızlı koşucu, önde başlayan kaplumbağayı mantıken hiç geçemez gibi görünür. Gerçekte neden geçer?","brief":"Zenon paradoksu. Felsefe, 6–8 dakika. Aşil ve kaplumbağa yarışını kur, paradoksun neden ikna edici göründüğünü göster, sonra sonsuz adımın sonlu bir mesafeye nasıl sığdığını anlat. Kategori: philosophy. Slug: zeno-paradox.","hook":null,"school":false,"evidence":["YouTube araması: 'zenon paradoksu', 'zenon paradoksu çözümü'."]},{"no":20,"date":"2026-12-06","slot":"sun","series":"tarih","category":"history","slug":"building-the-pyramids","status":"planned","minutes":11,"title":"Piramitler nasıl inşa edildi?","angle":"Milyonlarca taş blok, vinç ve demir alet olmadan nasıl yerine kondu? Bilinenler, tahminler ve uydurmalar.","brief":"Piramitler nasıl inşa edildi? Tarih belgeseli, 10–12 dakika. Büyük Piramit'in yapımını arkeolojik bulgulara dayanarak anlat: taş ocakları, taşıma, rampalar, işçi köyü. Kanıtlanmış olanı, tahmin olanı ve uydurma olanı birbirinden ayır. Kategori: history. Slug: building-the-pyramids.","hook":null,"school":true,"evidence":["YouTube araması: 'piramitler nasıl inşa edildi', 'piramitler nasıl inşa edildi animasyon'.","Örnek: Barış Özcan, 'Büyük Piramidin içinde ne var?' 8,2 Mn izlenme."]},{"no":21,"date":"2026-12-09","slot":"wed","series":"uzay","category":"space","slug":"meteor-showers","status":"planned","minutes":8,"title":"Kayan yıldız aslında nedir?","angle":"Kayan yıldız yıldız değildir: çoğu kum tanesi kadar bir parçacığın atmosferde yanışıdır. 13–14 Aralık gecesi Geminid yağmuru var.","brief":"Kayan yıldız aslında nedir? Uzay belgeseli, 8–10 dakika. Meteorun ne olduğunu, meteor yağmurlarının neden her yıl aynı günlerde geldiğini ve 13–14 Aralık gecesi Geminid yağmurunun nasıl izleneceğini anlat. Kategori: space. Slug: meteor-showers.","hook":{"date":"2026-12-13","label":"13–14 Aralık, Geminid meteor yağmuru","fixed":true},"school":false,"evidence":["YouTube araması: 'meteor yağmuru ne zaman', 'meteor yağmuru saat kaçta' (mevsimlik arama)."]},{"no":22,"date":"2026-12-13","slot":"sun","series":"cografya","category":"geography","slug":"suez-and-panama","status":"planned","minutes":10,"title":"Süveyş ve Panama: iki kanal dünyayı nasıl küçülttü?","angle":"Biri çölde düz bir su yolu, öbürü gemileri basamak basamak yükselten bir su merdiveni.","brief":"Süveyş ve Panama kanalları. Coğrafya belgeseli, haritalı anlatım, 8–10 dakika. İki kanalın deniz yollarını ne kadar kısalttığını harita üzerinde göster; Süveyş'in düz su yolunu ve Panama'nın havuz sistemini nasıl çalıştığıyla anlat. Kategori: geography. Slug: suez-and-panama.","hook":null,"school":true,"evidence":["YouTube araması: 'süveyş kanalı nasıl çalışır', 'panama kanalı animasyon', 'panama kanalı havuz sistemi'."]},{"no":23,"date":"2026-12-16","slot":"wed","series":"cografya","category":"geography","slug":"why-seasons","status":"planned","minutes":8,"title":"Mevsimler neden oluşur?","angle":"Mevsimleri Güneş'e uzaklık değil, eksen eğikliği belirler: Dünya Güneş'e en yakın konumuna ocak başında gelir.","brief":"Mevsimler neden oluşur? Coğrafya belgeseli, 8–10 dakika. Eksen eğikliğini, gündönümlerini ve ekinoksları göster; 21 Aralık'ın neden en uzun gece olduğunu ve Dünya Güneş'e en yakınken neden kış yaşadığımızı açıkla. Kategori: geography. Slug: why-seasons.","hook":{"date":"2026-12-21","label":"21 Aralık kış gündönümü, yılın en uzun gecesi","fixed":true},"school":true,"evidence":["YouTube araması: 'mevsimler nasıl oluşur'."]},{"no":24,"date":"2026-12-20","slot":"sun","series":"tarih","category":"history","slug":"soviet-collapse","status":"planned","minutes":12,"title":"Sovyetler Birliği neden dağıldı?","angle":"Yüzölçümü bakımından dünyanın en büyük devleti 1991'in son günlerinde nasıl dağıldı?","brief":"Sovyetler Birliği neden dağıldı? Tarih belgeseli, haritalı anlatım, 10–12 dakika. Son yılları harita üzerinde anlat: ekonomi, Afganistan, Çernobil, reformlar, cumhuriyetlerin ayrılışı, Aralık 1991. Tek bir nedene bağlama. Kategori: history. Slug: soviet-collapse.","hook":{"date":"2026-12-26","label":"26 Aralık 1991, dağılışın 35. yılı","fixed":false},"school":true,"evidence":["YouTube araması: 'sovyetler neden yıkıldı', 'sovyetler nasıl dağıldı'.","Örnek: Anime Tarih, 'Sovyetler Birliği Tarihi' 3,4 Mn izlenme."]},{"no":25,"date":"2026-12-23","slot":"wed","series":"felsefe","category":"philosophy","slug":"stoicism","status":"planned","minutes":8,"title":"Stoacılık: elimizde olan ve olmayan","angle":"Epiktetos'tan Marcus Aurelius'a, iki bin yılı aşkın bir düşünce okulu.","brief":"Stoacılık. Felsefe, 6–8 dakika. Stoacılığın temel fikrini (elimizde olanla olmayanı ayırmak) Epiktetos, Seneca ve Marcus Aurelius üzerinden anlat. Kişisel gelişim sloganlarına çevirme; filozofların gerçekten ne dediğini aktar. Kategori: philosophy. Slug: stoicism.","hook":null,"school":false,"evidence":["YouTube araması: 'stoacılık nedir', 'marcus aurelius felsefesi'.","Örnek: Bebar Bilim, 'Marcus Aurelius Belgeseli' 1,4 Mn izlenme."]},{"no":26,"date":"2026-12-27","slot":"sun","series":"cografya","category":"geography","slug":"aral-sea","status":"planned","minutes":9,"title":"Aral Gölü nasıl kurudu?","angle":"Bir zamanlar dünyanın en büyük göllerinden biriydi. Elli yılda büyük bölümü nasıl çöle döndü?","brief":"Aral Gölü nasıl kurudu? Coğrafya belgeseli, haritalı anlatım, 8–10 dakika. Gölün küçülmesini yıllar içinde harita üzerinde göster: onu besleyen iki nehir, pamuk sulaması, tuzlanma, karaya oturan gemiler, kuzeydeki kurtarma çalışması. Kategori: geography. Slug: aral-sea.","hook":null,"school":false,"evidence":["YouTube araması: 'aral gölü neden kurudu', 'aral gölü nasıl kurudu'."]},{"no":27,"date":"2026-12-30","slot":"wed","series":"tarih","category":"history","slug":"why-january-first","status":"planned","minutes":8,"title":"Yıl neden 1 Ocak'ta başlıyor?","angle":"Roma takviminden Gregoryen düzeltmesine, oradan Türkiye'nin 1926'da bu takvime geçişine.","brief":"Yıl neden 1 Ocak'ta başlıyor? Tarih belgeseli, 8–10 dakika. Takvimin hikâyesini anlat: Roma takvimi, Jül Sezar, 1582 Gregoryen düzeltmesi, kaybolan günler, Türkiye'nin 1926'da bu takvime geçişi. Yılbaşı kutlaması tartışmasına girme; konu takvim. Kategori: history. Slug: why-january-first.","hook":{"date":"2027-01-01","label":"1 Ocak, yılbaşı","fixed":true},"school":false,"evidence":["YouTube araması: 'takvim nasıl bulundu'."]},{"no":28,"date":"2027-01-03","slot":"sun","series":"tarih","category":"history","slug":"korea-divided","status":"planned","minutes":11,"title":"Kore neden ikiye bölündü?","angle":"1945'te haritaya çizilen bir çizgi bir ülkeyi nasıl kalıcı olarak ikiye ayırdı?","brief":"Kore neden ikiye bölündü? Tarih belgeseli, haritalı anlatım, 10–12 dakika. 1945'te çizilen hattan Kore Savaşı'na ve bugünkü sınıra giden süreci harita üzerinde anlat. Türk tugayının savaştaki yerine kısaca değin. Kategori: history. Slug: korea-divided.","hook":null,"school":false,"evidence":["YouTube araması: 'kore neden bölündü', 'kore neden ikiye ayrıldı'.","Örnek: RealLifeLore, 'Why North Korea is the Hardest Country to Escape' 21 Mn izlenme."]},{"no":29,"date":"2027-01-06","slot":"wed","series":"nasil","category":"technology","slug":"how-touchscreens-work","status":"planned","minutes":8,"title":"Dokunmatik ekran parmağını nasıl tanıyor?","angle":"Ekran neden eldivenle çalışmıyor? Camın altındaki görünmez ızgara.","brief":"Dokunmatik ekran nasıl çalışır? Teknoloji belgeseli, 8–10 dakika. Camın altındaki katmanları aç; parmağın ekranda neyi değiştirdiğini, çoklu dokunmanın nasıl algılandığını ve ekranın neden eldivenle çalışmadığını göster. Kategori: technology. Slug: how-touchscreens-work.","hook":{"date":"2027-01-09","label":"9 Ocak 2007, ilk iPhone'un tanıtımının 20. yılı","fixed":false},"school":false,"evidence":["YouTube araması: 'dokunmatik ekran nasıl çalışır'.","Örnek: Branch Education, 'How Do Touchscreens Work?' 4 Mn izlenme."]},{"no":30,"date":"2027-01-10","slot":"sun","series":"cografya","category":"geography","slug":"how-pamukkale-formed","status":"planned","minutes":8,"title":"Pamukkale nasıl oluştu?","angle":"Sıcak su yamaçtan aşağı akarken bembeyaz teraslar nasıl örüldü?","brief":"Pamukkale nasıl oluştu? Coğrafya belgeseli, 8–10 dakika. Sıcak suyun yeraltından çıkışından travertenlerin oluşumuna kadar süreci adım adım canlandır; Hierapolis'i ve travertenlerin bugün nasıl korunduğunu da göster. Kategori: geography. Slug: how-pamukkale-formed.","hook":null,"school":true,"evidence":["YouTube araması: 'pamukkale nasıl oluştu', 'pamukkale travertenleri nasıl oluştu'."]},{"no":31,"date":"2027-01-13","slot":"wed","series":"uzay","category":"space","slug":"fermi-paradox","status":"planned","minutes":9,"title":"Fermi paradoksu: Herkes nerede?","angle":"Evren bu kadar büyük ve bu kadar yaşlıysa neden kimseyle karşılaşmadık?","brief":"Fermi paradoksu: Herkes nerede? Uzay belgeseli, 8–10 dakika. Paradoksu kur (yıldız sayısı, evrenin yaşı, sessizlik), sonra öne sürülen açıklamaları sırayla göster. Hiçbirini kanıtlanmış gibi sunma. Kategori: space. Slug: fermi-paradox.","hook":null,"school":false,"evidence":["YouTube araması: 'fermi paradoksu'.","Örnek: Barış Özcan, 'Herkes Nerede?' 5,9 Mn; Kurzgesagt, 'The Fermi Paradox' 35 Mn izlenme."]},{"no":32,"date":"2027-01-17","slot":"sun","series":"tarih","category":"history","slug":"fall-of-the-hittites","status":"planned","minutes":11,"title":"Hititler nasıl yok oldu?","angle":"Mısır'la boy ölçüşen Anadolu devleti MÖ 12. yüzyılda neden tarih sahnesinden çekildi?","brief":"Hititler nasıl yok oldu? Tarih belgeseli, haritalı anlatım, 10–12 dakika. Hitit devletinin gücünü (Kadeş, Hattuşa) ve Tunç Çağı'nın sonundaki çöküşü anlat. Kesin bilinmeyeni kesinmiş gibi söyleme; öne sürülen nedenleri ayrı ayrı göster. Kategori: history. Slug: fall-of-the-hittites.","hook":null,"school":true,"evidence":["YouTube araması: 'hititler nasıl yok oldu'."]},{"no":33,"date":"2027-01-20","slot":"wed","series":"nasil","category":"technology","slug":"how-nuclear-plants-work","status":"planned","minutes":9,"title":"Nükleer santral nasıl çalışır?","angle":"Reaktör özünde bir su ısıtıcısı: atom çekirdeğinden türbine giden yol.","brief":"Nükleer santral nasıl çalışır? Teknoloji belgeseli, 8–10 dakika. Atom çekirdeğinin bölünmesinden elektriğe giden yolu göster: yakıt çubukları, kontrol çubukları, su ve buhar çevrimi, türbin, soğutma kulesi. Güvenlik katmanlarını da anlat; santral tartışmasında taraf tutma. Kategori: technology. Slug: how-nuclear-plants-work.","hook":null,"school":false,"evidence":["YouTube araması: 'nükleer santral nasıl çalışır', 'nükleer santral nasıl çalışır animasyon'."]},{"no":34,"date":"2027-01-24","slot":"sun","series":"tarih","category":"history","slug":"fall-of-rome","status":"planned","minutes":11,"title":"Roma neden çöktü?","angle":"Akdeniz'i çevreleyen imparatorluk batıda nasıl parçalandı, doğuda neden bin yıl daha yaşadı?","brief":"Roma neden çöktü? Tarih belgeseli, haritalı anlatım, 10–12 dakika. İmparatorluğun en geniş sınırlarından Batı Roma'nın sonuna giden süreci harita üzerinde anlat: bölünme, göçler, ekonomi, ordu. Doğu Roma'nın neden ayakta kaldığını da göster. Tek bir nedene bağlama. Kategori: history. Slug: fall-of-rome.","hook":null,"school":true,"evidence":["YouTube araması: 'roma neden çöktü', 'roma imparatorluğu neden çöktü'.","Örnek: Anime Tarih, 'Kuruluşundan Yıkılışına Roma İmparatorluğu' 3 Mn izlenme."]},{"no":35,"date":"2027-01-27","slot":"wed","series":"uzay","category":"space","slug":"how-black-holes-form","status":"planned","minutes":9,"title":"Kara delik nasıl oluşur?","angle":"Büyük bir yıldız ömrünün sonunda kendi içine nasıl çöker?","brief":"Kara delik nasıl oluşur? Uzay belgeseli, 8–10 dakika. Büyük bir yıldızın ömrünü ve çöküşünü anlat; olay ufkunu, kara deliğin çevresinde zamanın ve ışığın nasıl davrandığını ve kara deliklerin nasıl gözlendiğini göster. Kategori: space. Slug: how-black-holes-form.","hook":null,"school":false,"evidence":["YouTube araması: 'kara delik nasıl oluşur', 'kara delik nedir'.","Örnek: Kurzgesagt, 'Black Holes Explained' 29 Mn izlenme."]},{"no":36,"date":"2027-01-31","slot":"sun","series":"cografya","category":"geography","slug":"why-turkey-has-earthquakes","status":"planned","minutes":10,"title":"Türkiye'de neden bu kadar çok deprem oluyor?","angle":"Anadolu büyük levhaların arasında sıkışıyor. Kuzey Anadolu ve Doğu Anadolu fayları nasıl çalışıyor?","brief":"Türkiye'de neden bu kadar çok deprem oluyor? Coğrafya belgeseli, haritalı anlatım, 8–10 dakika. Levhaların hareketini, Kuzey Anadolu ve Doğu Anadolu faylarını ve depremin nasıl oluştuğunu göster. 6 Şubat 2023 depremlerine saygılı bir dille değin; korku dili kullanma, tahmin yürütme. Kategori: geography. Slug: why-turkey-has-earthquakes.","hook":{"date":"2027-02-06","label":"6 Şubat depremlerinin yıl dönümü","fixed":true},"school":true,"evidence":["YouTube araması: 'türkiye neden deprem ülkesi', 'deprem nasıl oluşur animasyon'.","Örnek: Anime Tarih, 'Türkiye Cumhuriyeti'nin En Büyük 15 Depremi' 2,3 Mn izlenme."]}],"compilations":[{"id":"derleme-1","date":"2026-12-05","title":"Tek parça: Osmanlı'dan Cumhuriyet'e beş soru","status":"planned","parts":[6,2,16,12,8],"text":"Beş tarih videosu kronolojik sırayla tek videoda birleşir. Yeni üretim gerekmez: npm run compile."},{"id":"derleme-2","date":"2027-01-16","title":"Tek parça: altı şey nasıl çalışır?","status":"planned","parts":[3,7,11,15,17,29],"text":"Altı 'nasıl çalışır' videosu tek videoda birleşir. Yeni üretim gerekmez: npm run compile."}],"reserve":[{"series":"tarih","title":"Moğollar nasıl durduruldu?","evidence":"Arama: 'moğollar nasıl durduruldu', 'moğollar nasıl yok oldu'."},{"series":"tarih","title":"İpek Yolu dünyayı nasıl birbirine bağladı?","evidence":"Arama: 'ipek yolu animasyon'. Okulda da işleniyor."},{"series":"tarih","title":"Osmanlı neden sanayileşemedi?","evidence":"Arama: 'osmanlı neden sanayileşemedi', 'osmanlı neden geri kaldı'."},{"series":"tarih","title":"Göbeklitepe neden gömüldü?","evidence":"Arama: 'göbeklitepe neden gömüldü'. Örnek: Ruhi Çenet'in Göbeklitepe belgeseli."},{"series":"tarih","title":"Sanayi Devrimi nasıl başladı?","evidence":"Arama: 'sanayi devrimi animasyon'."},{"series":"tarih","title":"Çanakkale 1915 (18 Mart için)","evidence":"Arama: 'çanakkale savaşı animasyon'. Örnek: Random Animasyon 1,3 Mn."},{"series":"tarih","title":"Malazgirt 1071 (26 Ağustos için)","evidence":"Arama: 'malazgirt savaşı animasyon'."},{"series":"tarih","title":"Bir ülke alfabesini nasıl değiştirdi? (Harf Devrimi)","evidence":"Arama: 'harf devrimi neden yapıldı'. Bugün de tartışılan bir konu; kanal oturduktan sonra, taraf tutmadan."},{"series":"cografya","title":"Avustralya'nın büyük bölümü neden boş?","evidence":"Örnek: RealLifeLore, 'Why 95% of Australia is Empty' 14 Mn."},{"series":"cografya","title":"Dünyanın en tuhaf sınırları","evidence":"Örnek: RealLifeLore, 'The World's Strangest Borders Part 2' 14 Mn."},{"series":"nasil","title":"Borsa nasıl çalışır?","evidence":"Arama: 'borsa nasıl çalışır animasyon'. Para konusu olduğu için kanal para kazanmaya başladıktan sonra; yatırım tavsiyesi verilmez."},{"series":"nasil","title":"Kalp nasıl çalışır?","evidence":"Arama: 'kalp nasıl çalışır animasyon'. Sağlık konusu olduğu için kanal oturduktan sonra."},{"series":"nasil","title":"Beyin nasıl çalışır?","evidence":"Arama: 'beyin nasıl çalışır animasyon'."},{"series":"nasil","title":"Buzdolabı ve klima nasıl soğutur?","evidence":"Arama: 'buzdolabı nasıl çalışır animasyon', 'klima nasıl çalışır animasyon'."},{"series":"nasil","title":"Elektrik nasıl üretilir?","evidence":"Arama: 'elektrik nasıl üretilir'."},{"series":"nasil","title":"Roket nasıl uçar?","evidence":"Arama: 'roket nasıl çalışır', 'roket nasıl uçar'."},{"series":"felsefe","title":"Tramvay ikilemi","evidence":"Arama: 'tramvay ikilemi'."},{"series":"felsefe","title":"Mahkûm ikilemi","evidence":"Arama: 'mahkum ikilemi', 'oyun teorisi mahkum ikilemi'."},{"series":"felsefe","title":"Schrödinger'in kedisi","evidence":"Arama: 'schrödinger'in kedisi'."},{"series":"felsefe","title":"Simülasyonda mı yaşıyoruz?","evidence":"Arama: 'simülasyon teorisi'."},{"series":"uzay","title":"Ay olmasaydı ne olurdu?","evidence":"Arama: 'ay olmasaydı ne olurdu'."},{"series":"doga","title":"Leylekler nereye göç eder? (Mart için)","evidence":"Arama: 'leylek göçü animasyon', 'leylekler nereye göç eder'."},{"series":"doga","title":"Arılar olmasaydı ne olurdu?","evidence":"Arama: 'arılar olmasaydı ne olurdu'."}],"sources":[{"title":"YouTube kanal sayfaları, en çok izlenen videolar (29 Eylül 2026'da okundu): DFT Tarih, Harp Tarihi, Anime Tarih, Kronik Tarih, Coğrafyanın Kodları, Bebar Bilim, Barış Özcan, Pelin Dilara Çolak, Random Animasyon, Kurzgesagt, RealLifeLore, OverSimplified, TED-Ed, Branch Education, Animagraffs, Primal Space","url":""},{"title":"YouTube arama önerileri (29 Eylül 2026'da okundu)","url":""},{"title":"YouTube Yardım: seri oynatma listeleri","url":"https://support.google.com/youtube/answer/6084043?hl=en"},{"title":"YouTube Blog: İş Ortağı Programı'nda 2027 değişiklikleri","url":"https://blog.youtube/news-and-events/youtube-partner-program-updates-2027-new-opportunities-earn/"},{"title":"YouTube Yardım: para kazanma politikaları","url":"https://support.google.com/youtube/answer/1311392?hl=en"},{"title":"MEB Türkiye Yüzyılı Maarif Modeli: tarih dersi programı","url":"https://tymm.meb.gov.tr/ogretim-programlari/ders/tarih-dersi"},{"title":"MEB Türkiye Yüzyılı Maarif Modeli: coğrafya dersi programı","url":"https://tymm.meb.gov.tr/ogretim-programlari/ders/cografya-dersi"},{"title":"Kış gündönümü 2026 (timeanddate)","url":"https://www.timeanddate.com/calendar/winter-solstice.html"},{"title":"Geminid meteor yağmuru 2026 (timeanddate)","url":"https://www.timeanddate.com/astronomy/meteor-shower/geminids.html"},{"title":"Yayın saatleri: pazarlama bloglarının önerisi, resmî veri değil (icerikfikri.com)","url":"https://icerikfikri.com/youtube-kesfet-saatleri-2024---yasal-yontem"}],"built":"2026-09-29","statusLabels":{"planned":"Planlandı","produced":"Film hazır","packaged":"Paket hazır","published":"Yayında","skipped":"Atlandı"}}</script>
+<script>
+(function () {
+  'use strict';
+  var plan = JSON.parse(document.getElementById('plan-data').textContent);
+  var MONTHS = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+  var DAYS = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+  var STATUS = plan.statusLabels;
+  var lead = plan.channel.leadDays == null ? 3 : plan.channel.leadDays;
+
+  // dates are YYYY-MM-DD strings; arithmetic at UTC noon so no time zone shifts a day
+  function toDate(s) { return new Date(s + 'T12:00:00Z'); }
+  function iso(d) { return d.toISOString().slice(0, 10); }
+  function addDays(s, n) { var d = toDate(s); d.setUTCDate(d.getUTCDate() + n); return iso(d); }
+  function diff(a, b) { return Math.round((toDate(b) - toDate(a)) / 86400000); }
+  function todayStr() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function dayNo(s) { return toDate(s).getUTCDay(); }
+  function monday(s) { var n = dayNo(s); return addDays(s, n === 0 ? -6 : 1 - n); }
+  function dm(s) { var d = toDate(s); return d.getUTCDate() + ' ' + MONTHS[d.getUTCMonth()]; }
+  function span(a, b) {                                  // "5–11 Ekim", or "28 Ara – 3 Oca" across months
+    var x = toDate(a), y = toDate(b);
+    if (x.getUTCMonth() === y.getUTCMonth()) return x.getUTCDate() + '–' + y.getUTCDate() + ' ' + MONTHS[y.getUTCMonth()];
+    return x.getUTCDate() + ' ' + MONTHS[x.getUTCMonth()].slice(0, 3) + ' – ' + y.getUTCDate() + ' ' + MONTHS[y.getUTCMonth()].slice(0, 3);
+  }
+  function dmy(s) { return dm(s) + ' ' + toDate(s).getUTCFullYear(); }
+  function rel(s) { var n = diff(TODAY, s); return n === 0 ? 'bugün' : n > 0 ? n + ' gün sonra' : (-n) + ' gün önce'; }
+  function hhmm(t) { return (t || '').replace(':', '.'); }
+  var TODAY = todayStr();
+
+  function el(tag, attrs) {
+    var e = document.createElement(tag);
+    if (attrs) Object.keys(attrs).forEach(function (k) {
+      var v = attrs[k];
+      if (v == null || v === false) return;
+      if (k === 'class') e.className = v;
+      else if (k === 'text') e.textContent = v;
+      else if (k === 'style') e.setAttribute('style', v);
+      else e.setAttribute(k, v === true ? '' : v);
+    });
+    for (var i = 2; i < arguments.length; i++) {
+      var c = arguments[i];
+      if (c == null || c === false) continue;
+      e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+    }
+    return e;
+  }
+  function seriesOf(id) { return plan.series.filter(function (s) { return s.id === id; })[0] || { id: id, short: id, title: id }; }
+  function slotOf(id) { return plan.channel.slots.filter(function (s) { return s.id === id; })[0] || { label: '', time: '' }; }
+  function color(id) { return 'var(--s-' + id + ')'; }
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  var videos = plan.videos.slice().sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : a.no - b.no; });
+  var marks = {};                                  // from the shared store: what the owner ticked and typed
+  var state = { series: {}, sunOnly: false };
+  plan.series.forEach(function (s) { state.series[s.id] = true; });
+
+  function status(v) { var m = marks['v' + pad(v.no)]; return m && m.published ? 'published' : v.status; }
+  function nextToMake() { return videos.filter(function (v) { return status(v) === 'planned'; })[0]; }
+  function nextToAir() {
+    var open = videos.filter(function (v) { var s = status(v); return s !== 'published' && s !== 'skipped'; });
+    return open.filter(function (v) { return v.date >= TODAY; })[0] || open[0];
+  }
+
+  /* masthead */
+  (function () {
+    var p = plan.channel.period, box = document.getElementById('period');
+    box.appendChild(el('span', { text: dmy(p.from) + ' – ' + dmy(p.to) }));
+    box.appendChild(el('span', { text: plan.videos.length + ' video' }));
+    box.appendChild(el('span', { text: plan.channel.slots.filter(function (s) { return s.time; }).map(function (s) { return s.label + ' ' + hhmm(s.time); }).join(' · ') }));
+    var n = diff(TODAY, p.from);
+    if (n > 0) box.appendChild(el('span', { text: 'başlangıca ' + n + ' gün' }));
+  })();
+
+  /* now */
+  function ticket(v, kind) {
+    var sl = slotOf(v.slot), s = seriesOf(v.series), st = status(v);
+    var open = !sl.time;                              // the opening video: no fixed weekday or hour
+    var slotText = open ? 'Açılış videosu' : sl.label + ' ' + hhmm(sl.time) + ', ' + rel(v.date);
+    var when = kind === 'make' && !open ? addDays(v.date, -lead) : v.date;
+    var d = toDate(when);
+    var sub, cmd = null;
+    if (open && st === 'planned') {
+      sub = 'Açılış videosu. Film hazır olur olmaz yayınlanır.';
+      cmd = '/next';
+    } else if (kind === 'make') {
+      sub = 'Üretim için son gün, ' + rel(when) + '. Yayın: ' + dm(v.date) + ' ' + sl.label + ' ' + hhmm(sl.time) + '.';
+      cmd = '/next';
+    } else if (st === 'planned') sub = slotText + '. Film henüz üretilmedi.';
+    else if (st === 'produced') { sub = slotText + '. Film hazır, YouTube paketi bekliyor.'; cmd = '/youtube ' + v.slug; }
+    else sub = slotText + '. Paket hazır; YouTube\'a yükleyip ' + (open ? 'yayınla.' : 'saate zamanla.');
+    var what = el('div', { class: 'what' },
+      el('p', { class: 'eyebrow', text: kind === 'make' ? 'Sıradaki üretim' : 'Sıradaki yayın' }),
+      el('h3', { text: v.title }),
+      el('p', { class: 'sub', text: '#' + v.no + ' · ' + s.short + ' · ' + sub }));
+    if (cmd) what.appendChild(command(cmd));
+    return el('div', { class: 'ticket' + (kind === 'air' ? ' onair' : '') },
+      el('div', { class: 'when' },
+        el('span', { class: 'd', text: String(d.getUTCDate()) }),
+        el('span', { class: 'm', text: MONTHS[d.getUTCMonth()] }),
+        el('span', { class: 't', text: DAYS[d.getUTCDay()] })),
+      what);
+  }
+  function renderNow() {
+    var box = document.getElementById('now');
+    box.textContent = '';
+    var air = nextToAir(), make = nextToMake();
+    if (air) box.appendChild(ticket(air, 'air'));
+    // when the next video to air is also the next to make, the second ticket shows the one after it
+    if (make && air && air.no === make.no) make = videos.filter(function (v) { return status(v) === 'planned' && v.no !== air.no; })[0];
+    if (make) box.appendChild(ticket(make, 'make'));
+    if (!air && !make) box.appendChild(el('p', { class: 'lede', text: 'Bu dönemin bütün videoları yayında. Yeni dönem için Claude Code\'da /plan çalıştır.' }));
+    var order = ['published', 'packaged', 'produced', 'planned'], counts = {};
+    videos.forEach(function (v) { var s = status(v); counts[s] = (counts[s] || 0) + 1; });
+    var meter = el('div', { class: 'meter', role: 'img', 'aria-label': order.map(function (k) { return STATUS[k] + ' ' + (counts[k] || 0); }).join(', ') });
+    var legend = el('div', { class: 'legend' });
+    order.forEach(function (k) {
+      if (counts[k]) meter.appendChild(el('span', { class: k, style: 'flex:' + counts[k] + ' 1 0' }));
+      legend.appendChild(el('span', null, el('i', { class: 'meter-key ' + k, style: 'background:' + ({ published: 'var(--done)', packaged: 'var(--ink)', produced: 'var(--ink-3)', planned: 'var(--rule)' })[k] }), STATUS[k] + ' ' + (counts[k] || 0)));
+    });
+    var ms = (plan.milestones || []).filter(function (m) { return m.date >= TODAY; })[0];
+    if (ms) legend.appendChild(el('span', { text: 'Sıradaki dönüm noktası: ' + dm(ms.date) + ', ' + ms.title.toLocaleLowerCase('tr') }));
+    box.appendChild(el('div', { class: 'tally' }, meter, legend));
+  }
+
+  /* shared pieces */
+  function command(text) {
+    var code = el('code', { text: text });
+    var b = el('button', { type: 'button', 'data-copy': text, text: 'Kopyala' });
+    return el('div', { class: 'cmd' }, code, b);
+  }
+  document.addEventListener('click', function (ev) {
+    var b = ev.target.closest && ev.target.closest('button[data-copy]');
+    if (!b) return;
+    var text = b.getAttribute('data-copy');
+    var done = function () { var old = b.textContent; b.textContent = 'Kopyalandı'; setTimeout(function () { b.textContent = old; }, 1400); };
+    var select = function () { var c = b.parentNode.querySelector('code'); var r = document.createRange(); r.selectNodeContents(c); var s = getSelection(); s.removeAllRanges(); s.addRange(r); };
+    try { navigator.clipboard.writeText(text).then(done, select); } catch (e) { select(); }
+  });
+
+  /* decisions, series, reserve, sources */
+  (function () {
+    var d = document.getElementById('decisions');
+    plan.decisions.forEach(function (x) { d.appendChild(el('div', { class: 'decision' }, el('span', { class: 'q', text: x.q }), el('span', { class: 'a', text: x.a }))); });
+    var s = document.getElementById('series');
+    plan.series.forEach(function (x) {
+      var n = plan.videos.filter(function (v) { return v.series === x.id; }).length, sl = slotOf(x.slot);
+      s.appendChild(el('div', { class: 'series-row', style: '--c:' + color(x.id) },
+        el('div', { class: 'name' }, el('i'), el('span', { text: x.title })),
+        el('div', { class: 'meta', text: sl.label + ' · ' + x.minutes + ' dk · ' + n + ' video' + (x.kind === 'deneme' ? ' · deneme' : '') }),
+        el('div', { class: 'about' }, x.about, el('em', { text: x.playlist }))));
+    });
+    var r = document.getElementById('reserve');
+    plan.series.forEach(function (x) {
+      var items = (plan.reserve || []).filter(function (i) { return i.series === x.id; });
+      if (!items.length) return;
+      var ul = el('ul');
+      items.forEach(function (i) { ul.appendChild(el('li', null, i.title, el('span', { text: i.evidence }))); });
+      r.appendChild(el('div', { style: '--c:' + color(x.id) }, el('h3', null, el('i'), el('span', { text: x.short })), ul));
+    });
+    var src = document.getElementById('sources');
+    (plan.sources || []).forEach(function (x) { src.appendChild(el('li', null, x.url ? el('a', { href: x.url, target: '_blank', rel: 'noopener', text: x.title }) : x.title)); });
+    document.getElementById('foot').textContent = 'Kaynak: channel/plan.json · son güncelleme ' + dmy(plan.updated) + ' · sayfa ' + dmy(plan.built) + ' tarihinde üretildi';
+  })();
+
+  /* filters */
+  (function () {
+    var f = document.getElementById('filters');
+    plan.series.forEach(function (s) {
+      var b = el('button', { type: 'button', class: 'chip', id: 'f-' + s.id, 'aria-pressed': 'true', style: '--c:' + color(s.id) }, el('i'), s.short);
+      b.addEventListener('click', function () { state.series[s.id] = !state.series[s.id]; b.setAttribute('aria-pressed', String(state.series[s.id])); applyFilters(); });
+      f.appendChild(b);
+    });
+    f.appendChild(el('span', { class: 'gap' }));
+    var only = el('button', { type: 'button', class: 'chip', id: 'f-sun', 'aria-pressed': 'false', text: 'Yalnızca Pazar' });
+    only.addEventListener('click', function () { state.sunOnly = !state.sunOnly; only.setAttribute('aria-pressed', String(state.sunOnly)); applyFilters(); });
+    f.appendChild(only);
+  })();
+  function applyFilters() {
+    Array.prototype.forEach.call(document.querySelectorAll('.card'), function (c) {
+      c.hidden = !state.series[c.getAttribute('data-series')] || (state.sunOnly && c.getAttribute('data-slot') === 'wed');
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.week'), function (w) {
+      var cards = w.querySelectorAll('.card');
+      w.hidden = cards.length > 0 && Array.prototype.every.call(cards, function (c) { return c.hidden; });
+    });
+  }
+
+  /* board */
+  function card(v) {
+    var s = seriesOf(v.series), sl = slotOf(v.slot), st = status(v);
+    var c = el('article', { class: 'card', id: 'v' + pad(v.no), 'data-series': v.series, 'data-slot': v.slot, 'data-no': String(v.no), style: '--c:' + color(v.series) });
+    c.appendChild(el('div', { class: 'top' },
+      el('span', { class: 'no', text: '#' + v.no }),
+      el('span', { class: 'day', text: sl.label }),
+      el('span', { text: dm(v.date) + ' · ' + (sl.time ? hhmm(sl.time) : 'hazır olunca') }),
+      el('span', { class: 'ser', text: s.short })));
+    c.appendChild(el('h3', { text: v.title }));
+    c.appendChild(el('p', { class: 'angle', text: v.angle }));
+    var tags = el('div', { class: 'tags' });
+    tags.appendChild(el('span', { class: 'tag status ' + st, 'data-role': 'status', text: STATUS[st] || st }));
+    if (v.hook) tags.appendChild(el('span', { class: 'tag hook' + (v.hook.fixed ? ' fixed' : ''), text: v.hook.label }));
+    if (v.school) tags.appendChild(el('span', { class: 'tag', text: 'Okulda da işleniyor' }));
+    tags.appendChild(el('span', { class: 'tag', text: '≈ ' + v.minutes + ' dk' }));
+    c.appendChild(tags);
+
+    var body = el('div', { class: 'more-body' });
+    if (v.evidence && v.evidence.length) {
+      var ul = el('ul');
+      v.evidence.forEach(function (e) { ul.appendChild(el('li', { text: e })); });
+      body.appendChild(el('div', null, el('div', { class: 'lab', text: 'Neden bu konu' }), ul));
+    }
+    if (v.brief) body.appendChild(el('div', null, el('div', { class: 'lab', text: 'Filme verilecek istek' }), el('p', { text: v.brief })));
+    var cmd = v.status === 'planned' ? '/next ' + v.no : v.status === 'produced' ? '/youtube ' + v.slug : null;
+    if (cmd) body.appendChild(el('div', null, el('div', { class: 'lab', text: 'Komut' }), command(cmd)));
+    body.appendChild(el('div', { 'data-role': 'mark' }));
+    c.appendChild(el('details', { class: 'more' }, el('summary', { text: 'Ayrıntı ve işaretleme' }), body));
+    return c;
+  }
+  function renderBoard() {
+    var board = document.getElementById('board');
+    board.textContent = '';
+    var make = nextToMake();
+    var weeks = {};
+    videos.forEach(function (v) { var k = monday(v.date); (weeks[k] = weeks[k] || { videos: [], bands: [] }).videos.push(v); });
+    (plan.milestones || []).forEach(function (m) { var k = monday(m.date); (weeks[k] = weeks[k] || { videos: [], bands: [] }).bands.push({ date: m.date, kind: 'milestone', title: m.title, text: m.text }); });
+    (plan.compilations || []).forEach(function (c) {
+      var k = monday(c.date);
+      (weeks[k] = weeks[k] || { videos: [], bands: [] }).bands.push({ date: c.date, kind: 'compile', title: c.title, text: c.text + ' Bölümler: ' + c.parts.map(function (n) { return '#' + n; }).join(', ') + '.' });
+    });
+    var lastMonth = '';
+    Object.keys(weeks).sort().forEach(function (k) {
+      var w = weeks[k], end = addDays(k, 6);
+      var label = w.videos.length ? w.videos[w.videos.length - 1].date : w.bands[0].date;
+      var mkey = label.slice(0, 7);
+      if (mkey !== lastMonth) {
+        lastMonth = mkey;
+        var n = videos.filter(function (v) { return v.date.slice(0, 7) === mkey; }).length;
+        board.appendChild(el('h3', { class: 'month' }, MONTHS[Number(mkey.slice(5)) - 1] + ' ' + mkey.slice(0, 4), el('small', { text: n ? n + ' video' : '' })));
+        board.appendChild(el('div', { class: 'lanes-head', 'aria-hidden': 'true' }, el('span', { text: 'Hafta' }),
+          el('span', { text: slotOf('wed').label + ' ' + hhmm(slotOf('wed').time) }), el('span', { text: slotOf('sun').label + ' ' + hhmm(slotOf('sun').time) })));
+      }
+      w.bands.sort(function (a, b) { return a.date < b.date ? -1 : 1; }).forEach(function (b) {
+        board.appendChild(el('div', { class: 'band ' + b.kind },
+          el('span', { class: 'wk', text: dm(b.date) + (b.kind === 'compile' ? ' ' + DAYS[dayNo(b.date)] : '') }),
+          el('div', { class: 'body' }, el('b', { text: b.title }), el('span', { text: b.text }))));
+      });
+      if (!w.videos.length) return;
+      var isNow = TODAY >= k && TODAY <= end;
+      var row = el('div', { class: 'week' + (isNow ? ' thisweek' : '') });
+      var wk = el('div', { class: 'wk' }, span(k, end));
+      if (isNow) wk.appendChild(el('b', { text: 'bu hafta' }));
+      row.appendChild(wk);
+      ['wed', 'sun'].forEach(function (slot) {
+        var v = w.videos.filter(function (x) { return x.slot === slot; })[0];
+        if (!v && slot === 'wed') v = w.videos.filter(function (x) { return x.slot !== 'wed' && x.slot !== 'sun'; })[0];
+        if (!v) { row.appendChild(el('div', { class: 'cell empty', text: slotOf(slot).label + ': video yok' })); return; }
+        var c = card(v);
+        if (make && make.no === v.no) c.classList.add('next');
+        row.appendChild(el('div', { class: 'cell' }, c));
+      });
+      board.appendChild(row);
+    });
+  }
+
+  /* marks: kept in the artifact's shared store, so they survive republishes and Claude can read them */
+  var db = null, canWrite = null, saving = {};
+  function markForm(v) {
+    var key = 'v' + pad(v.no), m = marks[key] || {};
+    if (!db) return el('p', { class: 'note', text: 'İşaretleme bu sayfa claude.ai üzerinde, giriş yapılmış hâlde açıldığında çalışır.' });
+    if (canWrite === false) return m.published ? el('p', { class: 'note', text: 'Yayında' + (m.url ? ': ' + m.url : '') }) : el('p', { class: 'note', text: 'Bu sayfayı yalnızca görüntüleyebilirsin.' });
+    var pub = el('input', { type: 'checkbox', id: 'pub-' + v.no }); pub.checked = !!m.published;
+    var url = el('input', { type: 'url', id: 'url-' + v.no, placeholder: 'https://youtu.be/…', inputmode: 'url' }); url.value = m.url || '';
+    var views = el('input', { type: 'number', id: 'views-' + v.no, min: '0', step: '1', inputmode: 'numeric' }); views.value = m.views == null ? '' : m.views;
+    var avg = el('input', { type: 'number', id: 'avg-' + v.no, min: '0', max: '100', step: '1', inputmode: 'numeric' }); avg.value = m.avg == null ? '' : m.avg;
+    var msg = el('span', { class: 'note', role: 'status' });
+    var btn = el('button', { type: 'button', class: 'btn', id: 'save-' + v.no, text: 'Kaydet' });
+    btn.addEventListener('click', function () {
+      if (saving[key]) return;
+      var body = { no: v.no, slug: v.slug, published: pub.checked, url: url.value.trim(), updated: todayStr() };
+      if (views.value !== '') body.views = Number(views.value);
+      if (avg.value !== '') body.avg = Number(avg.value);
+      saving[key] = true; btn.disabled = true; msg.textContent = 'Kaydediliyor…';
+      db.doc('marks/' + key).set(body).then(function () { msg.textContent = 'Kaydedildi.'; }, function (e) {
+        msg.textContent = e && e.code === 'invalid_argument' ? 'Bu sayfaya yazma iznin yok.' : 'Kaydedilemedi, birazdan yeniden dene.';
+      }).then(function () { saving[key] = false; btn.disabled = false; });
+    });
+    return el('div', null, el('div', { class: 'lab', text: 'YouTube' }),
+      el('div', { class: 'mark' },
+        el('label', { class: 'check', for: 'pub-' + v.no }, pub, 'YouTube\'da yayında'),
+        el('label', { class: 'wide', for: 'url-' + v.no }, 'Video adresi', url),
+        el('label', { for: 'views-' + v.no }, 'İzlenme', views),
+        el('label', { for: 'avg-' + v.no }, 'Ortalama izlenme yüzdesi', avg),
+        el('div', { class: 'row' }, btn, msg)));
+  }
+  function applyMarks() {
+    var make = nextToMake();
+    videos.forEach(function (v) {
+      var c = document.getElementById('v' + pad(v.no));
+      if (!c) return;
+      var st = status(v), tag = c.querySelector('[data-role="status"]');
+      tag.className = 'tag status ' + st; tag.textContent = STATUS[st] || st;
+      c.classList.toggle('next', !!make && make.no === v.no);
+      var slot = c.querySelector('[data-role="mark"]');
+      if (slot.contains(document.activeElement)) return;      // never rebuild a form the viewer is typing in
+      slot.textContent = ''; slot.appendChild(markForm(v));
+    });
+    renderNow();
+  }
+
+  renderNow();
+  renderBoard();
+  applyMarks();
+
+  if (window.claude && typeof window.claude.use === 'function') {
+    Promise.all([window.claude.use('db'), window.claude.use('user')]).then(function (r) {
+      if (!r[0]) return;
+      db = r[0];
+      var ask = r[1] && r[1].can ? r[1].can('data.write') : Promise.resolve(null);
+      ask.then(function (ok) {
+        canWrite = ok;
+        applyMarks();
+        db.collection('marks').onSnapshot(function (snap) {
+          var next = {};
+          snap.docs.forEach(function (d) { next[d.id] = d.data(); });
+          marks = next;
+          applyMarks();
+        }, function () { /* the store went away for this view; the page keeps working from the plan */ });
+      });
+    });
+  }
+})();
+</script>

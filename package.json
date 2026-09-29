@@ -13,7 +13,10 @@
     "soundtrack": "node tools/soundtrack.mjs",
     "poster": "node tools/poster.mjs",
     "thumbnail": "node tools/thumbnail.mjs",
-    "verify": "node tools/verify-purity.mjs"
+    "verify": "node tools/verify-purity.mjs",
+    "plan": "node tools/plan.mjs",
+    "topics": "node tools/topics.mjs",
+    "compile": "node tools/compile.mjs"
   },
   "engines": {
     "node": ">=20"

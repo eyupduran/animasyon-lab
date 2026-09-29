@@ -1,10 +1,19 @@
 # Animasyon Lab
 
-Tarayıcıda çalışan eğitim animasyonlarının ve denemelerinin koleksiyonu. Her animasyon `animations/` altında **kendi başına bir projedir**. Kendi kodu, paketleri, derleme komutu, görsel dili ve README'si vardır. Ortak bir motor ya da şablon yoktur; her yeni animasyon konusunun gerektirdiği teknikle (Three.js, Babylon.js, WebGPU, Canvas, SVG, video…) sıfırdan yazılır. Depo kökü yalnızca ortak işleri yapar: boş bir animasyon klasörü açmak, avatar kütüphanesini yönetmek ve hepsini tek bir sitede yayınlamak.
+Kodla çizilen eğitim filmleri. Kanal filmleri `youtube/` altında, denemeler `animations/` altında; her film **kendi başına bir projedir**. Kendi kodu, paketleri, derleme komutu, görsel dili ve README'si vardır. Ortak bir motor ya da şablon yoktur; her yeni animasyon konusunun gerektirdiği teknikle (Three.js, Babylon.js, WebGPU, Canvas, SVG, video…) sıfırdan yazılır. Depo kökü yalnızca ortak işleri yapar: boş bir animasyon klasörü açmak, avatar kütüphanesini yönetmek ve hepsini tek bir sitede yayınlamak.
 
 **Canlı site:** https://eyupduran.github.io/animasyon-lab/ · `main` dalına yapılan her gönderimde otomatik güncellenir.
 
-## Animasyonlar
+## Kanal filmleri
+
+YouTube kanalı için yapılan filmler `youtube/` altında durur ve sitede ayrı bir sayfada listelenir: https://eyupduran.github.io/animasyon-lab/kanal/
+
+| Film | Kategori | Teknik | Açıklama |
+|---|---|---|---|
+
+## Denemeler
+
+Kanaldan önceki çalışmalar ve denemeler. `animations/` altında, oldukları gibi duruyorlar; kanala yüklenmezler.
 
 | Animasyon | Kategori | Teknik | Açıklama |
 |---|---|---|---|
@@ -43,9 +52,11 @@ Ham modeller git'te tutulmaz (`catalog.json` → `source`).
 ## Film istemek
 
 ```
-/animation bal arısının bir günü, belgesel     # anlatımlı film: metin ve ses → film → sitede yayın, tek istekle
+/next                                          # yayın çizelgesindeki sıradaki videoyu üretir (channel/)
+/animation bal arısının bir günü, belgesel     # çizelge dışı anlatımlı film: metin ve ses → film → yayın
 /short                                         # sözsüz kısa film (fikir verilebilir)
-/youtube <slug>                                # istendiğinde: altyazılı MP4, kapaklar, başlık ve açıklama → Masaüstü\YouTube\<slug>\
+/youtube <slug>                                # YouTube paketi: video, altyazı, kapaklar, başlık
+/plan                                          # çizelgeyi değerlendirir ve sonraki dönemi kurar
 /audit <slug>                                  # bağımsız denetim raporu
 ```
 
@@ -61,6 +72,18 @@ npm run poster -- <slug> --pick 10    # aday kareler; sonra --t <saniye> → pos
 ```
 
 `soundtrack.m4a` yoksa oynatıcı anlatım kayıtlarını ve filmin sesini tarayıcıda kendisi karıştırır (sesini yavaş üreten filmlerde müziğin gelmesi gecikebilir).
+
+## Yayın çizelgesi
+
+Kanalda hangi gün hangi videonun çıkacağı [channel/](channel/README.md) altında durur: [çizelge](channel/PLAN.md), kurallar ve konu araştırması. Tek kaynak `channel/plan.json`.
+
+```
+npm run plan                           # çizelge, sıradaki video işaretli
+npm run plan -- next                   # sıradaki videonun isteği ve üretim için son günü
+npm run plan -- build                  # channel/PLAN.md ve çizelge sayfası
+npm run compile -- derleme-1           # bir serinin videolarını tek parça yapar
+npm run topics -- suggest "osmanlı neden"   # konu araştırması: insanlar YouTube'da ne arıyor
+```
 
 ## Seslendirme (yerel, ücretsiz)
 

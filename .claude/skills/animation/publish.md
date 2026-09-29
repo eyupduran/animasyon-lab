@@ -2,7 +2,7 @@
 
 Bitmiş filmi sitede yayınla. Site filmi video gibi oynatır: oynatıcıyı, sesi ve altyazıyı araçlar ekler (`tools/player`, `tools/build-site.mjs`). MP4 ve kapak bu aşamanın işi **değil**; onları kullanıcı istediği zaman `/youtube <slug>` ile üretir.
 
-Filmin **görünümünü değiştirme.** Kusur görürsen düzeltme, son mesajında listele. Yalnızca bu dosyayı, filmin kendi klasörünü ve adı geçen araçları kullan; başka filmleri, `docs/` klasörünü ve `.claude/skills/youtube/` klasörünü açma.
+Filmin **görünümünü değiştirme.** Kusur görürsen düzeltme, son mesajında listele. Yalnızca bu dosyayı, filmin kendi klasörünü ve adı geçen araçları kullan; başka filmleri, `docs/`, `channel/` ve `.claude/skills/youtube/` klasörlerini açma.
 
 ## Adımlar
 
@@ -15,7 +15,7 @@ Filmin **görünümünü değiştirme.** Kusur görürsen düzeltme, son mesajı
    - `npm run poster -- <slug> --t <saniye>`: seçtiğin kareyi `poster.jpg` yapar. Bu kare site kartında ve oynatıcının açılışında görünür.
 5. **Belgeler:**
    - Filmin `README.md`'si: ne anlattığı, bölümler, nasıl çalıştırıldığı, kaynak özeti.
-   - Kök `README.md` tablosuna bir satır.
+   - Kök `README.md`'ye bir satır: film `youtube/` altındaysa "Kanal filmleri" tablosuna, `animations/` altındaysa "Denemeler" tablosuna.
    - `COST.md`.
 6. **Site:**
    - Kökte `npm run build -- <slug>` çalıştır.
@@ -23,7 +23,7 @@ Filmin **görünümünü değiştirme.** Kusur görürsen düzeltme, son mesajı
    - Oynatıcıyı yerelde bir sunucuyla aç. Oynat'a bas, birkaç noktaya atla. Görüntünün sesle birlikte ilerlediğini ve altyazının göründüğünü kareyle doğrula.
 7. **Yayın:**
    - Türkçe bir commit mesajı yaz ve `main`'e push et.
-   - Canlı adresi doğrula: `https://eyupduran.github.io/animasyon-lab/<slug>/`. Adres 200 dönmeli, oynatıcı açılmalı.
+   - Canlı adresi doğrula: `https://eyupduran.github.io/animasyon-lab/<slug>/`. Adres 200 dönmeli, oynatıcı açılmalı. Kanal filmleri ayrıca `https://eyupduran.github.io/animasyon-lab/kanal/` sayfasında listelenir; film orada görünüyor mu, bak.
 
 ## Son mesaj
 

@@ -33,6 +33,21 @@ Gelenek: anlatı tarihi yazarları (Erik Larson, Jack Hart'ın "Storycraft"ı), 
 - **Bugünün değerleriyle yargılama, ama kötülüğü de yumuşatma.** Olayı açıkça söyle, yorumu izleyiciye bırak.
 - **Efsane ile belgeyi ayır:** "Anlatılana göre…" ya da "Bu hikâye çok sevilir, ama o döneme ait bir kaynakta geçmiyor."
 
+## Türk tarihi anlatırken
+
+İzleyici Türkiye'de. Konuyu okulda öğrendi, büyüklerinden dinledi; anlatılanlar onun kendi geçmişi. Anlatı bu izleyicinin bildiği çerçeveyle çelişirse "bize böyle öğretilmedi" der ve videoyu kapatır. Bu bölüm Türkler, Selçuklu, Osmanlı, Cumhuriyet ve Türkiye'nin savaşları, antlaşmaları için geçerlidir; dünya tarihinde kaynak dili serbesttir.
+
+- **Ana anlatıyı Türkiye'deki akademik kaynaklardan kur.** Sırasıyla: TDV İslâm Ansiklopedisi (`islamansiklopedisi.org.tr`), Türk Tarih Kurumu yayınları, Atatürk Araştırma Merkezi (Cumhuriyet dönemi için), Türkiye'deki üniversitelerin yayınları ve DergiPark'taki hakemli makaleler, Halil İnalcık, Feridun Emecen, İlber Ortaylı gibi tarihçilerin çalışmaları. Çerçeve ve adlandırma için MEB ders kitapları.
+- **Yabancı kaynak yardımcıdır.** Yalnızca Türk kaynaklarının da doğruladığı bir ayrıntıyı zenginleştirmek için kullan (bir tanığın günlüğü, bir ölçü, bir harita). Ana anlatıyı yabancı bir kaynaktan ya da yabancı dildeki ansiklopedi maddesinden kurma.
+- **Çelişki varsa** Türkiye'deki akademik kaynağı esas al. Tartışmalı ayrıntı hikâye için şart değilse hiç girme. Şartsa Türk tarihçilerin görüşünü anlat ve konunun tartışıldığını tek cümleyle söyle.
+- **Adlar Türkiye'de öğretildiği gibi.** "İstanbul'un Fethi", "Kurtuluş Savaşı", "Çanakkale Savaşları", "Fatih Sultan Mehmed", "Kanuni Sultan Süleyman". Yer adları bugünkü Türkçe adlarıyla; eski adı gerekiyorsa bir kez an.
+- **Sayılar Türk kaynaklarındaki aralıkla.** Ordu büyüklüğü, kayıp, gemi sayısı gibi rakamlarda tek kesin sayı verme; Türk tarihçilerin verdiği aralığı söyle.
+- **Rivayeti rivayet diye söyle.** Çok sevilen ama belgesi olmayan hikâyeleri ne kesin bilgi gibi sun ne de alaya al: "rivayete göre", "anlatılır ki". "Aslında size yanlış öğrettiler" tonu yok.
+- **Saygılı dil.** İzleyicinin atalarından söz ediyorsun. Küçümseme, alay ve bugünün siyasetine gönderme yok. Övgü de abartılmaz; olayın büyüklüğünü sıfatlar değil olayın kendisi gösterir.
+- **Doğruluk kuralı aynen geçerli.** Kaynakta olmayan şey söylenmez. Bu bölüm neyin doğru olduğunu değil, hangi kaynaktan ve hangi dille anlatılacağını belirler.
+
+`RESEARCH.md`'de her bilginin yanına kaynağını yaz; Türk tarihi konusunda yabancı kaynaktan alınan her ayrıntının yanında onu doğrulayan Türk kaynağı da dursun.
+
 ## Tarihleri ve adları söylemek
 
 - Yıllar sözcükle ve doğal: "bin dört yüz elli üç", "milattan önce dört yüz seksen". Yılın tamamını her seferinde söyleme; bir kez kur, sonra "iki yıl sonra", "o yaz".
