@@ -1,4 +1,4 @@
-// Renders an animation to an MP4 for YouTube, frame by frame in headless Chrome.
+// Renders an animation to an MP4, frame by frame in headless Chrome.
 //   npm run video -- <slug> [--subs burn] [--fps 30] [--size 1920x1080] [--from 0] [--to 60] [--crf 18]
 // Output (renders/ is not in git):
 //   animations/<kategori>/<slug>/renders/<slug>.mp4             picture + soundtrack (narration and effects)

@@ -1,19 +1,10 @@
 # Animasyon Lab
 
-Kodla çizilen eğitim filmleri. Kanal filmleri `youtube/` altında, denemeler `animations/` altında; her film **kendi başına bir projedir**. Kendi kodu, paketleri, derleme komutu, görsel dili ve README'si vardır. Ortak bir motor ya da şablon yoktur; her yeni animasyon konusunun gerektirdiği teknikle (Three.js, Babylon.js, WebGPU, Canvas, SVG, video…) sıfırdan yazılır. Depo kökü yalnızca ortak işleri yapar: boş bir animasyon klasörü açmak, avatar kütüphanesini yönetmek ve hepsini tek bir sitede yayınlamak.
+Tarayıcıda çalışan, kodla çizilen animasyonların koleksiyonu. Her animasyon `animations/` altında **kendi başına bir projedir**. Kendi kodu, paketleri, derleme komutu, görsel dili ve README'si vardır. Ortak bir motor ya da şablon yoktur; her yeni animasyon konusunun gerektirdiği teknikle (Three.js, Babylon.js, WebGPU, Canvas, SVG, video…) sıfırdan yazılır. Depo kökü yalnızca ortak işleri yapar: boş bir animasyon klasörü açmak, avatar kütüphanesini yönetmek ve hepsini tek bir sitede yayınlamak.
 
 **Canlı site:** https://eyupduran.github.io/animasyon-lab/ · `main` dalına yapılan her gönderimde otomatik güncellenir.
 
-## Kanal filmleri
-
-**Şimdi Anladım** YouTube kanalı için yapılan filmler `youtube/` altında durur ve sitede ayrı bir sayfada listelenir: https://eyupduran.github.io/animasyon-lab/channel/
-
-| Film | Kategori | Teknik | Açıklama |
-|---|---|---|---|
-
-## Denemeler
-
-Kanaldan önceki çalışmalar ve denemeler. `animations/` altında, oldukları gibi duruyorlar; kanala yüklenmezler.
+## Animasyonlar
 
 | Animasyon | Kategori | Teknik | Açıklama |
 |---|---|---|---|
@@ -52,11 +43,8 @@ Ham modeller git'te tutulmaz (`catalog.json` → `source`).
 ## Film istemek
 
 ```
-/next                                          # yayın çizelgesindeki sıradaki videoyu üretir (channel/)
-/animation bal arısının bir günü, belgesel     # çizelge dışı anlatımlı film: metin ve ses → film → yayın
+/animation bal arısının bir günü, belgesel     # anlatımlı film: metin ve ses → film → sitede yayın, tek istekle
 /short                                         # sözsüz kısa film (fikir verilebilir)
-/youtube <slug>                                # YouTube paketi: video, altyazı, kapaklar, başlık
-/plan                                          # çizelgeyi değerlendirir ve sonraki dönemi kurar
 /audit <slug>                                  # bağımsız denetim raporu
 ```
 
@@ -73,18 +61,6 @@ npm run poster -- <slug> --pick 10    # aday kareler; sonra --t <saniye> → pos
 
 `soundtrack.m4a` yoksa oynatıcı anlatım kayıtlarını ve filmin sesini tarayıcıda kendisi karıştırır (sesini yavaş üreten filmlerde müziğin gelmesi gecikebilir).
 
-## Yayın çizelgesi
-
-Kanalda hangi gün hangi videonun çıkacağı [channel/](channel/README.md) altında durur: [çizelge](channel/PLAN.md), kurallar ve konu araştırması. Tek kaynak `channel/plan.json`.
-
-```
-npm run plan                           # çizelge, sıradaki video işaretli
-npm run plan -- next                   # sıradaki videonun isteği ve üretim için son günü
-npm run plan -- build                  # channel/PLAN.md ve çizelge sayfası
-npm run compile -- derleme-1           # bir serinin videolarını tek parça yapar
-npm run topics -- suggest "osmanlı neden"   # konu araştırması: insanlar YouTube'da ne arıyor
-```
-
 ## Seslendirme (yerel, ücretsiz)
 
 Anlatım sesleri bu bilgisayarda üretilir; dışarıya hiçbir şey gönderilmez. Dört motor var: **OmniVoice**, **Supertonic 3**, **Chatterbox** ve **EMA-TTS**; hepsinin lisansı ticari kullanıma açık, atıf şartı yok. Sesler sentetiktir, gerçek bir kişiden kopyalanmamıştır. Liste ve açıklama [assets/voices/README.md](assets/voices/README.md) dosyasında.
@@ -99,7 +75,7 @@ Animasyon söylenecek satırları `narration/lines.json` dosyasına yazar (`{ "v
 
 Kurulum (bir kez): `C:\ProgramData	ts_lab\omni` Python ortamı (PyTorch CUDA, `omnivoice`, `faster-whisper`), modeller `C:\ProgramData	ts_lab\hf` altında.
 
-## YouTube videosu
+## Video
 
 ```
 npm run video -- <slug>                # renders/<slug>.mp4 (temiz) + <slug>-altyazili.mp4 + .srt + -chapters.txt
@@ -108,16 +84,6 @@ npm run verify -- <slug>               # renderAt(t) saflık testi: aynı an ayn
 ```
 
 Altyazı sesle ilerler: bir cümle (uzunsa bir parçası) en fazla iki satırlık bir parça olarak baştan yerleşir, kelimeler anlatıcı söyledikçe tek tek belirir; bant yok, yumuşak gölge var (Inter Medium, `assets/fonts/`). Kurallar ve görünüş `tools/lib/film.mjs` içinde (`CUE`, `SUB_STYLE`); `.srt`, altyazılı video ve site oynatıcısı aynı kaynaktan beslenir.
-
-Claude Code'da `/youtube <slug>` komutu bütün işi yapar: iki videoyu, altyazıyı, bölüm listesini, kapakları ve YouTube metnini `Masaüstü\YouTube\<slug>\` klasörüne çıkarır ([.claude/skills/youtube/SKILL.md](.claude/skills/youtube/SKILL.md)).
-
-Kapak görselleri de kodla çizilir:
-
-```
-npm run thumbnail -- <slug>            # animations/<kategori>/<slug>/renders/thumbnail-<n>-<ad>.jpg (ana kapak + 2 alternatif, 1920×1080)
-```
-
-Animasyon `thumbnail.html` sayfasını sunar (`?v=<n>` bir konsept çizer; sözleşme `tools/thumbnail.mjs` içinde). Kapaklar kanalın seri kimliğini [assets/thumbnail-kit/kit.js](assets/thumbnail-kit/kit.js) kitinden alır: "ANİMASYON LAB" işareti, kategori renginde kenar şeridi ve etiket, ızgaraya oturan büyük başlık, ortak renk işleme. Sağ alt köşe YouTube'un süre rozeti için boş kalır. Ana görsel her videoda filmin kendi karesinden ya da kodundan gelir: `?v=1` ana kapak, `?v=2` ve `?v=3` A/B alternatifleri.
 
 Film `?video=1` adresinde `window.__film` nesnesini sunar: `duration`, `renderAt(t)`; varsa `narration: [{ id, at }]`, `chapters: [{ t, title }]`, `sound(from, to)`. Araç kareleri headless Chrome'da tek tek çizer, altyazıyı anlatım metninden ve kelime zamanlarından üretir, anlatım kayıtlarını filmin kendi sesinin üstüne karıştırır ve ffmpeg ile birleştirir (`tools/lib/film.mjs`). Eski animasyonların `window.__video` sözleşmesi de desteklenir. `.srt` dosyası YouTube'a ayrıca yüklenir, izleyici altyazıyı açıp kapatabilir.
 
@@ -135,7 +101,6 @@ animasyon-lab/
 │  ├─ history/ · technology/ · software/ …
 ├─ assets/avatars/             isteğe bağlı avatar kütüphanesi: catalog.json, models/*.glb, thumbs/*.jpg
 ├─ assets/voices/              anlatıcı sesleri: catalog.json + her sesin kimlik kaydı
-├─ assets/thumbnail-kit/       YouTube kapaklarının ortak kanal kimliği
 ├─ assets/fonts/               altyazı yazı tipi (Inter, SIL OFL)
 ├─ tools/
 │  ├─ lib/animations.mjs        kategori listesi; araçlar animasyonu slug ile bulur
@@ -143,7 +108,7 @@ animasyon-lab/
 │  ├─ avatars.mjs               avatar kütüphanesi: list, add, use, thumbs
 │  ├─ voice.mjs                 yerel seslendirme (OmniVoice, Piper) + Whisper denetimi
 │  ├─ tts/                      motor çalışanları: OmniVoice, Supertonic, Chatterbox, EMA-TTS (+ Whisper denetimi)
-│  ├─ render-video.mjs          YouTube için MP4 (temiz + altyazılı) + SRT + bölüm listesi
+│  ├─ render-video.mjs          MP4 (temiz + altyazılı) + SRT + bölüm listesi
 │  ├─ burn-subs.mjs             altyazıyı görüntüye basar (npm run subs)
 │  ├─ soundtrack.mjs            site oynatıcısının ses dosyası (npm run soundtrack)
 │  ├─ poster.mjs                site kartı ve oynatıcı açılışı için kare (npm run poster)

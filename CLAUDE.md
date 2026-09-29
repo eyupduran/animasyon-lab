@@ -1,13 +1,13 @@
 # Animasyon Lab
 
-**Şimdi Anladım** adlı YouTube kanalı için kodla üretilen filmler: belgesel, tarih, coğrafya, bilim, yazılım, kısa film. **Filmi nasıl yapacağın tamamen sana bırakılmıştır.** Teknik, görsel dil, kamera, yapı, paket, dosya düzeni: hepsi senin kararın. Bu depo bir kalıp değildir; önceki filmler örnek değildir.
+Kodla üretilen filmler: belgesel, tarih, coğrafya, bilim, yazılım, kısa film. **Filmi nasıl yapacağın tamamen sana bırakılmıştır.** Teknik, görsel dil, kamera, yapı, paket, dosya düzeni: hepsi senin kararın. Bu depo bir kalıp değildir; önceki filmler örnek değildir.
 
 ## Yalnızca şunlar şart
 
-1. **Yalnızca kod.** Görüntü, hareket, müzik ve efekt sesleri senin yazdığın kodla üretilir. Üretken görsel/video/ses modeli ve ücretli servis yok. Anlatım sesi yalnızca yerel araçla: `npm run voice -- <slug>`.
-2. **Doğru bilgi.** Her sayı, tarih ve ad güvenilir kaynağa dayanır (`RESEARCH.md`); emin olunmayan yuvarlak ve temkinli söylenir. Ekrana yazılan bilgi de buna dahildir. Türk tarihi konularında anlatı Türkiye'deki akademik kaynaklara dayanır; izleyici Türkiye'de.
-3. **Türüne uygun, sade anlatım.** Anlatım metni türünün diliyle yazılır: belgesel belgesel gibi, tarih tarih gibi, yazılım yazılımcıya anlatır gibi; doğal ve sade Türkçe, insan yazmış gibi, izleyiciyi sıkmadan. Yazım kuralları yalnızca metin aşamasında okunur.
-4. **Önceki filmlere ve depodaki notlara bakma.** Film yaparken `youtube/` ve `animations/` altındaki başka filmlerin klasörlerini, `docs/` ve `channel/` klasörlerini açma; kod, görünüm ya da teknik örneği alma. Her film sıfırdan.
+1. **Yalnızca kod.** Görüntü, hareket, müzik ve efekt sesleri senin yazdığın kodla üretilir. Üretken görsel/video/ses modeli ve ücretli servis yok. Anlatım sesi yalnızca yerel, ücretsiz araçla: `npm run voice -- <slug>`.
+2. **Doğru bilgi.** Her sayı, tarih ve ad güvenilir kaynağa dayanır (`RESEARCH.md`); emin olunmayan yuvarlak ve temkinli söylenir. Ekrana yazılan bilgi de buna dahildir.
+3. **Türüne uygun anlatım.** Anlatım metni türünün diliyle yazılır: belgesel belgesel gibi, tarih tarih gibi, yazılım yazılımcıya anlatır gibi; doğal Türkçe, insan yazmış gibi. Yazım kuralları yalnızca metin aşamasında okunur.
+4. **Önceki filmlere ve depodaki notlara bakma.** `animations/` altındaki başka klasörleri ve `docs/` klasörünü açma; kod, görünüm ya da teknik örneği alma. Her film sıfırdan.
 5. **Tek teknik söz** (videoya çevirebilmek için): sayfa `?video=1` ile açıldığında şunu sunar:
    ```js
    window.__film = {
@@ -22,12 +22,7 @@
 
 ## Klasör ve adlar
 
-Filmlerin iki evi var, düzenleri aynı (`<kategori>/<slug>/`):
-
-- `youtube/`: YouTube kanalının filmleri. **Bundan sonra yapılan her film buraya gider**, çizelgeden gelsin gelmesin. `npm run new -- youtube/<kategori>/<slug> "<Başlık>"`.
-- `animations/`: denemeler ve ilk çalışmalar. Olduğu gibi durur; yeni film buraya yalnızca istek "deneme" ya da "test" diyorsa açılır. `npm run new -- <kategori>/<slug> "<Başlık>"`.
-
-Kategori ve slug İngilizce (documentary, history, geography, biology, physics, chemistry, math, space, technology, software, philosophy, economy, short). Slug bütün depoda tektir; sitedeki adres iki evde de `…/animasyon-lab/<slug>/`. Kanal filmleri sitede ayrı bir sayfada listelenir (`…/animasyon-lab/channel/`). `animation.json` içindeki `build` komutu `output` klasörüne kendi başına açılan bir `index.html` üretir. Ekrandaki metinler, README ve commit mesajları düzgün Türkçe.
+`animations/<kategori>/<slug>/` (kategori ve slug İngilizce: documentary, history, geography, biology, physics, chemistry, math, space, technology, software, short). `npm run new -- <kategori>/<slug> "<Başlık>"` boş klasörü açar. `animation.json` içindeki `build` komutu `output` klasörüne kendi başına açılan bir `index.html` üretir. Ekrandaki metinler, README ve commit mesajları düzgün Türkçe.
 
 ## Anlatım sesi
 
@@ -41,6 +36,4 @@ Kullanıcı tek istek verir (`/animation <konu>` ya da `/short [fikir]`) ve site
 - **Film:** yalnızca film. Anlatım varsa görüntü onun zamanlarına göre yapılır. Paket işleri yapılmaz.
 - **Yayın:** saflık denetimi, ses dosyası, poster, README, site, commit ve push.
 
-Kanalın yayın çizelgesi `channel/` altındadır (`channel/README.md`). `/next` sıradaki konuyu oradan alıp aynı akışı çalıştırır; `/plan` çizelgeyi düzeltir ve uzatır. Çizelge yalnızca konuyu ve günü belirler, filmin nasıl yapılacağına karışmaz. Çizelge dışı deneme filmleri için `/animation` ve `/short` her zaman serbesttir.
-
-YouTube paketini kullanıcı ayrıca ister: `/youtube <slug>`. Altyazılı ve altyazısız MP4, .srt, bölümler, kanalın seri kimliğinde kapaklar, başlık, açıklama ve etiketler masaüstündeki YouTube klasörüne gider.
+MP4 gerekirse: `npm run video -- <slug>`. Bu depoda ücretli servis ve API anahtarı kullanılmaz.

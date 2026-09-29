@@ -1,6 +1,6 @@
 ---
 name: short
-description: Sözsüz ya da az sözlü kısa filmi (30–90 saniye) tek istekle baştan sona yapar ve sitede video gibi oynayacak şekilde yayınlar (MP4 ve kapaklar ayrıca /youtube ile); hikâye, karakter, görsel dil ve teknik tamamen filmi yapan modele aittir.
+description: Sözsüz ya da az sözlü kısa filmi (30–90 saniye) tek istekle baştan sona yapar ve sitede video gibi oynayacak şekilde yayınlar; hikâye, karakter, görsel dil ve teknik tamamen filmi yapan modele aittir.
 argument-hint: <fikir ya da brief; boş bırakılabilir>
 disable-model-invocation: true
 ---
@@ -18,7 +18,7 @@ Sen **yürütücüsün**: işi iki aşamada, sırayla, ayrı yardımcı ajanlara
 
 Agent aracı yoksa aşamaları bu sırayla kendin yap; yayın dosyasını film bitmeden okuma.
 
-Son mesajın: canlı adres (sitede video gibi oynar), süre, filmi yapanın kendi anlatımıyla ne yapıldığı ve YouTube paketi için `/youtube <slug>` hatırlatması.
+Son mesajın: canlı adres (sitede video gibi oynar), süre ve filmi yapanın kendi anlatımıyla ne yapıldığı.
 
 ## Brief (film ajanına)
 
@@ -26,4 +26,4 @@ Yapabileceğin en etkileyici kısa kod animasyonunu üret. Hikâye, karakter, g�
 
 Yaratıcı seçimler senin: sahne, sanat yönü, kamera, mekanik, teknoloji ve etkileşimi önceden belirlenmiş sıradan kalıplara sıkıştırma. İlk akla gelen sıradan web demosuyla yetinme: önce kendi alanında birkaç fikri kısaca tart, videoda en güçlü görünecek özgün olanı seç, sonra onu çalışan bir ürüne dönüştür. Konuyu olduğundan kolay gösteren dekoratif taklit kabul edilmez. Sinematik ve estetik seçimler sonuçta görülsün.
 
-Şart olan yalnızca `CLAUDE.md`'dekiler (yalnızca kod; `window.__film`). Klasör: `npm run new -- youtube/short/<slug> "<Başlık>"` (istek bunun bir deneme olduğunu söylüyorsa `npm run new -- short/<slug> "<Başlık>"`). Kendi işine acımasız bir gözle bak: kareleri çıkarıp incele, zayıf bulduğunu yeniden yap. Commit, kapak, README, test ve yayın senin işin değil. Son mesajın: slug, ne yaptığın, neden öyle yaptığın.
+Şart olan yalnızca `CLAUDE.md`'dekiler (yalnızca kod; `window.__film`). Klasör: `npm run new -- short/<slug> "<Başlık>"`. Kendi işine acımasız bir gözle bak: kareleri çıkarıp incele, zayıf bulduğunu yeniden yap. Commit, kapak, README, test ve yayın senin işin değil. Son mesajın: slug, ne yaptığın, neden öyle yaptığın.
